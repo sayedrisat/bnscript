@@ -1,0 +1,7 @@
+dhori score = 95
+
+jodi score >= 90 {
+  dekhi "excellent"
+} nahole {
+  dekhi "keep going"
+}

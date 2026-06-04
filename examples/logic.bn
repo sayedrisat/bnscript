@@ -1,0 +1,9 @@
+dhori score = 87
+dhori attendance = 95
+dhori passed = score >= 70 ebong attendance >= 80
+
+jodi passed {
+  dekhi "approved"
+} nahole {
+  dekhi "needs review"
+}

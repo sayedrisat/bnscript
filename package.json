@@ -1,0 +1,40 @@
+{
+  "name": "bnscript",
+  "version": "0.1.0-alpha.0",
+  "description": "Automation-first programming language that compiles to readable JavaScript.",
+  "type": "module",
+  "license": "MIT",
+  "bin": {
+    "bn": "./src/cli.js"
+  },
+  "exports": {
+    ".": "./src/compiler.js",
+    "./runtime": "./src/runtime/index.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "automation",
+    "scripting-language",
+    "compiler",
+    "javascript",
+    "nodejs",
+    "ai",
+    "api",
+    "files",
+    "bangla",
+    "developer-tools"
+  ],
+  "files": [
+    "src",
+    "docs",
+    "examples",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "test": "node --test"
+  }
+}
