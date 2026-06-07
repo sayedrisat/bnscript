@@ -56,3 +56,7 @@ export function createGlobalScope() {
 export function createBlockScope(parent) {
   return new Scope({ parent, type: "block" });
 }
+
+export function createFunctionScope(parent) {
+  return new Scope({ parent, type: "function" });
+}

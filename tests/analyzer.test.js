@@ -138,6 +138,72 @@ dekhi value`);
   assert.strictEqual(outerIdentifier.semantic.scopeDepth, 0);
 });
 
+test("analyzer: valid function declaration", () => {
+  const ast = analyzeSource(`kaj greet(name) {
+  ferot name
+}`);
+
+  const declaration = ast.body[0];
+
+  assert.strictEqual(declaration.semantic.declared, true);
+  assert.strictEqual(declaration.semantic.kind, "function");
+  assert.strictEqual(declaration.semantic.mutable, false);
+  assert.strictEqual(declaration.body.semantic.scopeType, "function");
+});
+
+test("analyzer: valid function call", () => {
+  const ast = analyzeSource(`kaj greet(name) {
+  ferot name
+}
+dekhi greet("Risat")`);
+
+  const call = ast.body[1].arguments[0];
+
+  assert.strictEqual(call.type, "CallExpression");
+  assert.strictEqual(call.callee.semantic.resolved, true);
+  assert.strictEqual(call.callee.semantic.symbolKind, "function");
+});
+
+test("analyzer: parameter resolves inside function", () => {
+  const ast = analyzeSource(`kaj identity(value) {
+  ferot value
+}`);
+
+  const identifier = ast.body[0].body.body[0].value;
+
+  assert.strictEqual(identifier.semantic.resolved, true);
+  assert.strictEqual(identifier.semantic.scopeDepth, 0);
+  assert.strictEqual(identifier.semantic.symbolKind, "parameter");
+});
+
+test("analyzer: duplicate parameter", () => {
+  semanticError(
+    () =>
+      analyzeSource(`kaj greet(name, name) {
+  ferot name
+}`),
+    'Duplicate parameter "name"'
+  );
+});
+
+test("analyzer: use before declaration for function call", () => {
+  semanticError(
+    () =>
+      analyzeSource(`dekhi greet("Risat")
+kaj greet(name) {
+  ferot name
+}`),
+    'Use before declaration: "greet"'
+  );
+});
+
+test("analyzer: return outside function error", () => {
+  semanticError(
+    () => analyzeSource("ferot 1"),
+    'Cannot use "ferot" at the top level'
+  );
+});
+
 test("analyzer: top-level ferot", () => {
   const ast = AST.Program(
     [{ type: "ReturnStatement", value: null, ...loc(1) }],

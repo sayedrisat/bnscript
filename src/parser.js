@@ -40,19 +40,17 @@ const EXPRESSION_STARTS = new Set([
 ]);
 
 const UNSUPPORTED_STATEMENTS = new Map([
-  [TOKENS.BAR, '"bar" loops are not supported in Parser Stage 2.'],
-  [TOKENS.JOTOKKHON, '"jotokkhon" loops are not supported in Parser Stage 2.'],
-  [TOKENS.KAJ, '"kaj" functions are not supported in Parser Stage 2.'],
-  [TOKENS.FEROT, '"ferot" returns are not supported in Parser Stage 2.'],
-  [TOKENS.NAO, '"nao" imports are not supported in Parser Stage 2.'],
-  [TOKENS.DAO, '"dao" exports are not supported in Parser Stage 2.'],
-  [TOKENS.BEKKHON, '"bekkhon" break statements are not supported in Parser Stage 2.'],
-  [TOKENS.CHOLO, '"cholo" continue statements are not supported in Parser Stage 2.'],
-  [TOKENS.DHORO, '"dhoro" try blocks are not supported in Parser Stage 2.'],
-  [TOKENS.ERROR, '"error" catch blocks are not supported in Parser Stage 2.'],
-  [TOKENS.SHESHE, '"sheshe" finally blocks are not supported in Parser Stage 2.'],
-  [TOKENS.ABR, '"abr" await expressions are not supported in Parser Stage 2.'],
-  [TOKENS.ASYNC, '"async" functions are not supported in Parser Stage 2.'],
+  [TOKENS.BAR, '"bar" loops are not supported in this alpha compiler.'],
+  [TOKENS.JOTOKKHON, '"jotokkhon" loops are not supported in this alpha compiler.'],
+  [TOKENS.NAO, '"nao" imports are not supported in this alpha compiler.'],
+  [TOKENS.DAO, '"dao" exports are not supported in this alpha compiler.'],
+  [TOKENS.BEKKHON, '"bekkhon" break statements are not supported in this alpha compiler.'],
+  [TOKENS.CHOLO, '"cholo" continue statements are not supported in this alpha compiler.'],
+  [TOKENS.DHORO, '"dhoro" try blocks are not supported in this alpha compiler.'],
+  [TOKENS.ERROR, '"error" catch blocks are not supported in this alpha compiler.'],
+  [TOKENS.SHESHE, '"sheshe" finally blocks are not supported in this alpha compiler.'],
+  [TOKENS.ABR, '"abr" await expressions are not supported in this alpha compiler.'],
+  [TOKENS.ASYNC, '"async" functions are not supported in this alpha compiler.'],
 ]);
 
 export class Parser {
@@ -117,6 +115,10 @@ export class Parser {
         return this.parsePrintStatement();
       case TOKENS.JODI:
         return this.parseIfStatement();
+      case TOKENS.KAJ:
+        return this.parseFunctionDeclaration();
+      case TOKENS.FEROT:
+        return this.parseReturnStatement();
       case TOKENS.LEFT_BRACE:
         return this.finishStatement(this.parseBlockStatement());
       case TOKENS.RIGHT_BRACE:
@@ -145,7 +147,7 @@ export class Parser {
           this.raise(
             token,
             UNSUPPORTED_STATEMENTS.get(token.type),
-            "Use only declarations, print, if/else, blocks, and expressions in Parser Stage 2."
+            "Use declarations, print, if/else, functions, returns, blocks, calls, and expressions in this alpha."
           );
         }
 
@@ -156,7 +158,7 @@ export class Parser {
         this.raise(
           token,
           `Unexpected token "${this.describeToken(token)}".`,
-          "Start a statement with dhori, sthir, dekhi, jodi, a block, or an expression."
+          "Start a statement with dhori, sthir, dekhi, jodi, kaj, ferot, a block, or an expression."
         );
     }
   }
@@ -269,6 +271,83 @@ export class Parser {
     );
   }
 
+  parseFunctionDeclaration() {
+    const startToken = this.consume(TOKENS.KAJ);
+    const nameToken = this.consume(
+      TOKENS.IDENTIFIER,
+      'Expected function name after "kaj".',
+      "Use: kaj greet(name) { ferot name }"
+    );
+
+    this.consume(
+      TOKENS.LEFT_PAREN,
+      'Expected "(" after function name.',
+      "Add parentheses after the function name, even when there are no parameters."
+    );
+
+    const params = [];
+    this.skipNewlines();
+
+    if (!this.check(TOKENS.RIGHT_PAREN)) {
+      do {
+        this.skipNewlines();
+        const paramToken = this.consume(
+          TOKENS.IDENTIFIER,
+          "Expected parameter name.",
+          "Use comma-separated parameter names, like: kaj add(a, b) { }"
+        );
+
+        if (this.check(TOKENS.EQUAL)) {
+          this.raise(
+            this.peek(),
+            "Default parameters are not supported in this compiler stage.",
+            "Use plain parameter names without default values."
+          );
+        }
+
+        params.push(
+          AST.Parameter(
+            paramToken.value,
+            this.locationFrom(paramToken, paramToken)
+          )
+        );
+        this.skipNewlines();
+      } while (this.match(TOKENS.COMMA));
+    }
+
+    const closeToken = this.consume(
+      TOKENS.RIGHT_PAREN,
+      'Expected ")" after function parameters.',
+      'Add ")" before the function body.'
+    );
+
+    const body = this.parseRequiredBlock('"kaj" function');
+    const newlinesAfterBlock = this.skipNewlines();
+    this.ensureCompoundStatementBoundary(newlinesAfterBlock);
+
+    return AST.FunctionDeclaration(
+      nameToken.value,
+      params,
+      body,
+      this.locationFrom(startToken, body || closeToken)
+    );
+  }
+
+  parseReturnStatement() {
+    const startToken = this.consume(TOKENS.FEROT);
+    let value = null;
+    let endNode = startToken;
+
+    if (!this.isExpressionBoundary(this.peek())) {
+      value = this.parseExpression('Expected expression after "ferot".');
+      endNode = value;
+    }
+
+    return this.finishStatement(
+      AST.ReturnStatement(value, this.locationFrom(startToken, endNode))
+    );
+  }
+
   parseBlockStatement() {
     return this.parseBlock();
   }
@@ -357,7 +436,40 @@ export class Parser {
       );
     }
 
-    return this.parsePrimaryExpression();
+    return this.parseCallExpression();
+  }
+
+  parseCallExpression() {
+    let expression = this.parsePrimaryExpression();
+
+    while (this.match(TOKENS.LEFT_PAREN)) {
+      const args = [];
+      this.skipNewlines();
+
+      if (!this.check(TOKENS.RIGHT_PAREN)) {
+        do {
+          this.skipNewlines();
+          args.push(
+            this.parseExpression("Expected argument in function call.")
+          );
+          this.skipNewlines();
+        } while (this.match(TOKENS.COMMA));
+      }
+
+      const closeToken = this.consume(
+        TOKENS.RIGHT_PAREN,
+        'Expected ")" after function call arguments.',
+        'Add ")" to close the function call.'
+      );
+
+      expression = AST.CallExpression(
+        expression,
+        args,
+        this.locationFrom(expression, closeToken)
+      );
+    }
+
+    return expression;
   }
 
   parsePrimaryExpression() {
@@ -428,15 +540,15 @@ export class Parser {
     if (token.type === TOKENS.LEFT_BRACKET) {
       this.raise(
         token,
-        "Array literals are not supported in Parser Stage 2.",
-        "Use identifiers, primitive literals, grouped expressions, unary expressions, or binary expressions."
+        "Array literals are not supported in this alpha compiler.",
+        "Use identifiers, primitive literals, calls, grouped expressions, unary expressions, or binary expressions."
       );
     }
 
     if (token.type === TOKENS.LEFT_BRACE) {
       this.raise(
         token,
-        "Object literals are not supported in Parser Stage 2.",
+        "Object literals are not supported in this alpha compiler.",
         "A block can start a statement, but object expressions are not part of this parser subset."
       );
     }
@@ -444,8 +556,8 @@ export class Parser {
     if (token.type === TOKENS.ABR) {
       this.raise(
         token,
-        '"abr" await expressions are not supported in Parser Stage 2.',
-        "Parser Stage 2 only accepts primitive, identifier, unary, binary, and grouped expressions."
+        '"abr" await expressions are not supported in this alpha compiler.',
+        "This alpha only accepts primitive, identifier, call, unary, binary, and grouped expressions."
       );
     }
 
@@ -491,7 +603,7 @@ export class Parser {
     if (ASSIGNMENT_OPERATORS.has(token.type)) {
       this.raise(
         token,
-        "Assignment expressions are not supported in Parser Stage 2.",
+        "Assignment expressions are not supported in this alpha compiler.",
         "Use declaration syntax like: dhori name = value"
       );
     }
@@ -499,15 +611,15 @@ export class Parser {
     if (token.type === TOKENS.LEFT_PAREN) {
       this.raise(
         token,
-        "Function calls are not supported in Parser Stage 2.",
-        "Parser Stage 2 only supports identifiers and primitive expressions."
+        'Unexpected "(" after statement.',
+        "Write function calls directly after a callee expression, like: greet(name)"
       );
     }
 
     if (token.type === TOKENS.DOT || token.type === TOKENS.LEFT_BRACKET) {
       this.raise(
         token,
-        "Member and index access are not supported in Parser Stage 2.",
+        "Member and index access are not supported in this alpha compiler.",
         "Use a plain identifier for this parser subset."
       );
     }

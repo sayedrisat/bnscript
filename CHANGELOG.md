@@ -1,5 +1,54 @@
 # Changelog
 
+## Day 4 - 2026-06-05 (Functions Stage 7)
+
+### Completed: Function Support
+- Added parser support for `kaj` function declarations, positional parameters, `ferot` return statements, and call expressions.
+- Added AST factories for `FunctionDeclaration`, parameters, `ReturnStatement`, and `CallExpression`.
+- Added semantic analysis for function declarations, function scopes, parameter declarations, duplicate parameters, return placement, and call callee resolution.
+- Added JavaScript generation for `function`, `return`, and direct function calls.
+- Added function examples and integration fixtures.
+- Updated public documentation for the newly supported function subset.
+
+### Tests Added
+- Parser coverage for function declarations, multiple parameters, returns, calls, and nested function bodies.
+- Analyzer coverage for valid functions, valid calls, return placement, duplicate parameters, parameter resolution, and use-before-declaration calls.
+- Generator coverage for function declarations, returns, calls, and a complete function program.
+- Integration coverage for `tests/integration/functions.bn`.
+
+### Files Changed
+- `src/ast.js`
+- `src/parser.js`
+- `src/scope.js`
+- `src/analyzer.js`
+- `src/generator.js`
+- `tests/parser.test.js`
+- `tests/analyzer.test.js`
+- `tests/generator.test.js`
+- `tests/functions.integration.test.js`
+- `tests/integration/functions.bn`
+- `examples/functions.bn`
+- `README.md`
+- `docs/getting-started.md`
+- `docs/language-spec.md`
+- `CHANGELOG.md`
+- `NEXT_TASK.md`
+
+### Known Issues
+- Loops, arrays, objects, imports/exports, async/await, member access, assignments, default parameters, function expressions, and package publishing remain unimplemented.
+- Function declarations are validated in source order, so calls before declaration are reported as use-before-declaration.
+
+### Test Result
+- `npm.cmd test` passed 103 tests.
+- `node src/cli.js check examples/functions.bn` passed.
+- `node src/cli.js build examples/functions.bn` passed.
+- `node src/cli.js run examples/functions.bn` printed `Hello Risat`.
+
+### Recommended Next Task
+- Stage 7 Functions Review
+
+---
+
 ## Day 3 - 2026-06-04 (Public Release Preparation)
 
 ### Completed: Public Release Preparation

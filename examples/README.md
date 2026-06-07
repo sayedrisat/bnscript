@@ -17,3 +17,4 @@ node src/cli.js run examples/hello.bn
 | `variables.bn` | Variables, constants, booleans, and printing values |
 | `if.bn` | Conditional control flow with `jodi` and `nahole` |
 | `logic.bn` | Arithmetic, comparison, and logical expressions |
+| `functions.bn` | Function declarations, returns, parameters, and calls |

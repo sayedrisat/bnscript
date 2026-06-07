@@ -96,6 +96,10 @@ export class Generator {
       case "BlockStatement":
       case "Block":
         return this.emitBlockStatement(node);
+      case "FunctionDeclaration":
+        return this.emitFunctionDeclaration(node);
+      case "ReturnStatement":
+        return this.emitReturnStatement(node);
       default:
         return this.unsupported(node);
     }
@@ -145,6 +149,24 @@ export class Generator {
     this.emitter.dedent();
   }
 
+  emitFunctionDeclaration(node) {
+    const params = (node.params || []).map((param) =>
+      typeof param === "string" ? param : param.name
+    );
+    this.emitter.emitLine(`function ${node.name}(${params.join(", ")}) {`);
+    this.emitBlockBody(node.body);
+    this.emitter.emitLine("}");
+  }
+
+  emitReturnStatement(node) {
+    if (node.value) {
+      this.emitter.emitLine(`return ${this.generateExpression(node.value)};`);
+      return;
+    }
+
+    this.emitter.emitLine("return;");
+  }
+
   generateExpression(node) {
     switch (node?.type) {
       case "Identifier":
@@ -161,9 +183,29 @@ export class Generator {
         return this.generateUnaryExpression(node);
       case "BinaryExpression":
         return this.generateBinaryExpression(node);
+      case "CallExpression":
+        return this.generateCallExpression(node);
       default:
         return this.unsupported(node);
     }
+  }
+
+  generateCallExpression(node) {
+    const callee = this.formatCallCallee(node.callee);
+    const args = (node.arguments || []).map((argument) =>
+      this.generateExpression(argument)
+    );
+    return `${callee}(${args.join(", ")})`;
+  }
+
+  formatCallCallee(node) {
+    const callee = this.generateExpression(node);
+
+    if (node?.type === "Identifier" || node?.type === "CallExpression") {
+      return callee;
+    }
+
+    return `(${callee})`;
   }
 
   generateUnaryExpression(node) {

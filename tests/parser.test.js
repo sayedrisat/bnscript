@@ -181,6 +181,64 @@ test("parser: else-if chain", () => {
   assert.strictEqual(statement.elseBlock.body[0].arguments[0].value, "F");
 });
 
+test("parser: function declaration", () => {
+  const statement = firstStatement(`kaj greet(name) {
+  ferot name
+}`);
+
+  assert.strictEqual(statement.type, "FunctionDeclaration");
+  assert.strictEqual(statement.name, "greet");
+  assert.strictEqual(statement.params.length, 1);
+  assert.strictEqual(statement.params[0].name, "name");
+  assert.strictEqual(statement.body.type, "BlockStatement");
+  assert.strictEqual(statement.body.body[0].type, "ReturnStatement");
+});
+
+test("parser: function with multiple params", () => {
+  const statement = firstStatement(`kaj add(a, b, c) {
+  ferot a + b + c
+}`);
+
+  assert.strictEqual(statement.type, "FunctionDeclaration");
+  assert.deepStrictEqual(
+    statement.params.map((param) => param.name),
+    ["a", "b", "c"]
+  );
+});
+
+test("parser: return statement", () => {
+  const statement = firstStatement("ferot 42");
+
+  assert.strictEqual(statement.type, "ReturnStatement");
+  assert.strictEqual(statement.value.type, "NumberLiteral");
+  assert.strictEqual(statement.value.value, 42);
+});
+
+test("parser: function call", () => {
+  const expression = firstStatement('greet("Risat")').expression;
+
+  assert.strictEqual(expression.type, "CallExpression");
+  assert.strictEqual(expression.callee.type, "Identifier");
+  assert.strictEqual(expression.callee.name, "greet");
+  assert.strictEqual(expression.arguments.length, 1);
+  assert.strictEqual(expression.arguments[0].value, "Risat");
+});
+
+test("parser: nested function body", () => {
+  const statement = firstStatement(`kaj outer(name) {
+  kaj inner(value) {
+    ferot value
+  }
+  ferot inner(name)
+}`);
+
+  assert.strictEqual(statement.type, "FunctionDeclaration");
+  assert.strictEqual(statement.body.body[0].type, "FunctionDeclaration");
+  assert.strictEqual(statement.body.body[0].name, "inner");
+  assert.strictEqual(statement.body.body[1].type, "ReturnStatement");
+  assert.strictEqual(statement.body.body[1].value.type, "CallExpression");
+});
+
 test("parser: nested block", () => {
   const statement = firstStatement(`{
   {

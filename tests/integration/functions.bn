@@ -1,0 +1,5 @@
+kaj greet(name) {
+  ferot "Hello " + name
+}
+
+dekhi greet("Risat")

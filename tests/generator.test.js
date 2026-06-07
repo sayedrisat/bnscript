@@ -128,6 +128,63 @@ let opposite = !true;`)
   );
 });
 
+test("generator: function declaration output", () => {
+  const output = compileSource(`kaj greet(name) {
+  dekhi name
+}`);
+
+  assert.strictEqual(
+    output,
+    expected(`function greet(name) {
+  console.log(name);
+}`)
+  );
+});
+
+test("generator: return output", () => {
+  const output = compileSource(`kaj identity(value) {
+  ferot value
+}`);
+
+  assert.strictEqual(
+    output,
+    expected(`function identity(value) {
+  return value;
+}`)
+  );
+});
+
+test("generator: function call output", () => {
+  const output = compileSource(`kaj greet(name) {
+  ferot name
+}
+dekhi greet("Risat")`);
+
+  assert.strictEqual(
+    output,
+    expected(`function greet(name) {
+  return name;
+}
+console.log(greet("Risat"));`)
+  );
+});
+
+test("generator: complete function program", () => {
+  const output = compileSource(`kaj greet(name) {
+  ferot "Hello " + name
+}
+
+dekhi greet("Risat")`);
+
+  assert.strictEqual(
+    output,
+    expected(`function greet(name) {
+  return "Hello " + name;
+}
+console.log(greet("Risat"));`)
+  );
+});
+
 test("generator: complete mini-program generation", () => {
   const output = compileSource(`sthir limit = 10
 dhori count = 5

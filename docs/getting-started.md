@@ -1,6 +1,6 @@
 # Getting Started With BN Script
 
-BN Script is an automation-first language that compiles to JavaScript. The v0.1 alpha supports declarations, printing, conditionals, blocks, primitive values, and basic expressions.
+BN Script is an automation-first language that compiles to JavaScript. The v0.1 alpha supports declarations, printing, conditionals, functions, blocks, primitive values, calls, and basic expressions.
 
 ## Requirements
 
@@ -84,12 +84,21 @@ jodi version >= 0.1 {
 } nahole {
   dekhi "not ready"
 }
+
+kaj greet(person) {
+  ferot "Hello " + person
+}
+
+dekhi greet("Risat")
 ```
 
 Supported today:
 
 - `dhori`, `sthir`, and `dekhi`
 - `jodi` / `nahole`
+- `kaj` function declarations
+- `ferot` return statements inside functions
+- Function parameters and calls
 - Blocks with `{` and `}`
 - Numbers, strings, booleans, null, and identifiers
 - Unary `na` and `-`
@@ -98,4 +107,6 @@ Supported today:
 
 ## Current Limits
 
-Loops, functions, modules, assignments, arrays, objects, calls, member access, async/await syntax, AI helpers, package publishing, editor tooling, LSP, and REPL support are planned but not implemented in this alpha.
+Loops, modules, assignments, arrays, objects, member access, async/await syntax, AI helpers, package publishing, editor tooling, LSP, and REPL support are planned but not implemented in this alpha.
+
+Function support currently covers named `kaj` declarations, positional parameters, `ferot`, and direct calls. Default parameters, function expressions, arrow functions, and methods are not implemented yet.

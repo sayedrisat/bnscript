@@ -2,10 +2,11 @@
 
 > Public alpha note: this document describes the intended BN Script language design.
 > The v0.1.0 alpha implementation currently supports declarations, printing,
-> conditionals, blocks, primitive literals, identifiers, grouped expressions,
-> unary expressions, and binary expressions. Planned sections such as loops,
-> functions, modules, async/await, arrays, objects, calls, file helpers, HTTP,
-> and AI helpers are design targets, not fully compiled features yet.
+> conditionals, function declarations, return statements, function calls, blocks,
+> primitive literals, identifiers, grouped expressions, unary expressions, and
+> binary expressions. Planned sections such as loops, modules, async/await,
+> arrays, objects, file helpers, HTTP, and AI helpers are design targets, not
+> fully compiled features yet.
 
 > **Status:** Draft — Architecture Design Phase
 > **Target Runtime:** Node.js (JavaScript output)
@@ -390,6 +391,11 @@ bar i = 0 theke 100 {
 
 ## 9. Functions
 
+Implementation note: the current alpha supports named `kaj` declarations,
+positional parameters, `ferot` statements inside function bodies, and direct
+function calls. Default parameters, function expressions, arrow functions,
+methods, and async functions remain future work.
+
 ### 9.1 Function Declaration
 
 ```
@@ -412,7 +418,10 @@ dhori message = greet("Risat")
 dekhi message
 ```
 
-### 9.3 Default Parameters
+### 9.3 Default Parameters (Future)
+
+Default parameters are part of the language design but are not implemented in
+the current alpha compiler.
 
 ```
 kaj greet(name, prefix = "Hello") {
@@ -859,11 +868,11 @@ jodi na success {
 
 | Version | Features                                              |
 |---------|-------------------------------------------------------|
-| v0.1    | Variables, constants, print, if/else, loops, functions, basic expressions |
-| v0.2    | HTTP requests, file operations, async/await, error handling |
-| v0.3    | AI integration, modules (import/export), JSON operations |
-| v0.4    | Standard library expansion, arrow functions, destructuring |
-| v0.5    | Package manager integration, REPL, debugging support  |
+| v0.1    | Variables, constants, print, if/else, functions, calls, basic expressions |
+| v0.2    | Assignments, loops, arrays, objects, member access |
+| v0.3    | HTTP requests, file operations, async/await, error handling |
+| v0.4    | AI integration, modules (import/export), JSON operations |
+| v0.5    | Standard library expansion, package manager integration, REPL, debugging support |
 | v1.0    | Stable release, full documentation, editor plugins    |
 
 ---

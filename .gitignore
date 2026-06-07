@@ -17,6 +17,13 @@ temp/
 
 # Local/private project notes
 private-notes/
+AGENTS.md
+PROJECT_STATUS.md
+TASKS.md
+DECISIONS.md
+NEXT_TASK.md
+ARCHITECTURE_PATCH_REPORT.md
+architecture_review.md
 
 # Generated example outputs
 examples/*.js

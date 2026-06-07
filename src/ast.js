@@ -50,6 +50,26 @@ export function BlockStatement(body, location = {}) {
   return node("BlockStatement", { body }, location);
 }
 
+export function FunctionDeclaration(name, params, body, location = {}) {
+  return node(
+    "FunctionDeclaration",
+    { name, params, body, isAsync: false, isExported: false },
+    location
+  );
+}
+
+export function Parameter(name, location = {}, defaultValue = null) {
+  return {
+    name,
+    defaultValue,
+    ...locationFields(location),
+  };
+}
+
+export function ReturnStatement(value = null, location = {}) {
+  return node("ReturnStatement", { value }, location);
+}
+
 export function ExpressionStatement(expression, location = {}) {
   return node("ExpressionStatement", { expression }, location);
 }
@@ -82,6 +102,10 @@ export function BinaryExpression(operator, left, right, location = {}) {
   return node("BinaryExpression", { operator, left, right }, location);
 }
 
+export function CallExpression(callee, args, location = {}) {
+  return node("CallExpression", { callee, arguments: args }, location);
+}
+
 export default {
   Program,
   VarDeclaration,
@@ -89,6 +113,9 @@ export default {
   PrintStatement,
   IfStatement,
   BlockStatement,
+  FunctionDeclaration,
+  Parameter,
+  ReturnStatement,
   ExpressionStatement,
   Identifier,
   NumberLiteral,
@@ -97,4 +124,5 @@ export default {
   NullLiteral,
   UnaryExpression,
   BinaryExpression,
+  CallExpression,
 };

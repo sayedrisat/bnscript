@@ -1,5 +1,9 @@
 import { createError } from "./errors.js";
-import { createBlockScope, createGlobalScope } from "./scope.js";
+import {
+  createBlockScope,
+  createFunctionScope,
+  createGlobalScope,
+} from "./scope.js";
 
 const MAX_ERRORS = 20;
 
@@ -67,6 +71,8 @@ export class SemanticAnalyzer {
       case "LogicalExpression":
         this.visit(node.left);
         return this.visit(node.right);
+      case "CallExpression":
+        return this.visitCallExpression(node);
       case "ReturnStatement":
         return this.visitReturnStatement(node);
       case "BreakStatement":
@@ -199,6 +205,14 @@ export class SemanticAnalyzer {
     this.visit(node.value);
   }
 
+  visitCallExpression(node) {
+    this.visit(node.callee);
+
+    for (const argument of node.arguments || []) {
+      this.visit(argument);
+    }
+  }
+
   visitBreakStatement(node) {
     if (this.loopDepth === 0) {
       this.addError(
@@ -270,20 +284,40 @@ export class SemanticAnalyzer {
     }
 
     this.functionDepth += 1;
-    this.withScope(createBlockScope(this.currentScope), () => {
+    this.withScope(createFunctionScope(this.currentScope), () => {
       for (const param of node.params || []) {
         const name = typeof param === "string" ? param : param.name;
-        this.currentScope.declare(name, {
+        const result = this.currentScope.declare(name, {
           kind: "parameter",
           mutable: true,
           declaration: param,
           line: param.line || node.line,
           column: param.column || node.column,
         });
+
+        if (!result.ok) {
+          this.addError(
+            param,
+            `Duplicate parameter "${name}" in function "${node.name}".`,
+            `Rename this parameter or remove the earlier parameter on line ${result.existing.line}.`
+          );
+        }
       }
-      this.visit(node.body);
+      this.visitFunctionBody(node.body);
     });
     this.functionDepth -= 1;
+  }
+
+  visitFunctionBody(node) {
+    this.markChecked(node);
+    node.semantic.scopeType = "function";
+
+    for (const statement of node.body || []) {
+      this.visit(statement);
+      if (this.errors.length >= MAX_ERRORS) {
+        break;
+      }
+    }
   }
 
   visitUnknownNode(node) {

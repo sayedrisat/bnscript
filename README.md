@@ -19,6 +19,7 @@ BN Script is not trying to replace JavaScript or TypeScript. It is a focused scr
 - Bangla-transliterated keywords such as `dhori`, `sthir`, `dekhi`, `jodi`, and `nahole`
 - Newline-oriented syntax with no required semicolons
 - Strict equality output: BN Script `==` compiles to JavaScript `===`
+- Function declarations with `kaj`, `ferot` returns, parameters, and calls
 - Built-in runtime foundation for HTTP, file, environment, and wait helpers
 - Structured compiler diagnostics with file and line information
 - Zero runtime npm dependencies in the current alpha
@@ -135,6 +136,10 @@ Commands:
 - `sthir` constant declarations
 - `dekhi` print statements
 - `jodi` and `nahole` conditionals
+- `kaj` function declarations
+- `ferot` return statements inside functions
+- Function parameters
+- Function calls
 - Block statements
 - Expression statements
 - Identifiers
@@ -147,15 +152,17 @@ Commands:
 
 ## Current Limitations
 
-The v0.1 alpha intentionally does not parse or generate loops, functions, imports, exports, assignments, arrays, objects, calls, member access, indexing, async/await syntax, AI helpers, package publishing flows, editor tooling, an LSP, or a REPL.
+The v0.1 alpha intentionally does not parse or generate loops, imports, exports, assignments, arrays, objects, member access, indexing, async/await syntax, AI helpers, package publishing flows, editor tooling, an LSP, or a REPL.
+
+Function support is intentionally small: named `kaj` declarations, positional parameters, `ferot`, and direct calls are supported. Default parameters, function expressions, arrow functions, methods, recursion-specific checks, and higher-order function semantics are not implemented yet.
 
 The design documents include planned language features that are not fully implemented yet. For the exact current behavior, prefer this README, [`docs/getting-started.md`](docs/getting-started.md), and the test suite.
 
 ## Roadmap
 
-- `v0.1.x`: stabilize current compiler subset, CLI behavior, docs, and examples
-- `v0.2`: assignment parsing, loops, member access, calls, arrays, and objects
-- `v0.3`: functions, returns, imports, exports, and richer runtime integration
+- `v0.1.x`: stabilize function support, current compiler subset, CLI behavior, docs, and examples
+- `v0.2`: assignment parsing, loops, member access, arrays, and objects
+- `v0.3`: imports, exports, and richer runtime integration
 - `v0.4`: async/await syntax, file/API automation helpers, AI helper implementation
 - `v0.5`: REPL, source maps, improved diagnostics, and editor tooling planning
 - `v1.0`: stable language subset, public package workflow, and production documentation
