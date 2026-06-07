@@ -9,9 +9,32 @@ This release is intended for early contributors, language-design review, and com
 - Real compiler pipeline implemented: lexer, parser, AST, semantic analyzer, JavaScript generator
 - CLI commands available: `check`, `build`, and `run`
 - Runtime helper foundation implemented for fetch, file, env, wait, and runtime errors
-- Test-backed alpha subset with declarations, printing, conditionals, blocks, and expressions
+- Test-backed alpha subset with declarations, printing, conditionals, functions, calls, blocks, and expressions
 - Public README, getting started guide, CLI reference, examples, and release metadata
 - MIT License prepared for open-source distribution
+
+## Update: Stage 7 Functions
+
+Function support is now available in the alpha branch.
+
+Supported:
+
+- `kaj` function declarations
+- `ferot` return statements
+- Function parameters
+- Function calls
+
+Example:
+
+```bn
+kaj greet(name) {
+  ferot "Hello " + name
+}
+
+dekhi greet("Risat")
+```
+
+This compiles to JavaScript function declarations and calls.
 
 ## Architecture
 
@@ -31,6 +54,7 @@ Current examples live in `examples/`:
 - `variables.bn`
 - `if.bn`
 - `logic.bn`
+- `functions.bn`
 
 Example:
 
@@ -48,7 +72,7 @@ jodi name == "BN Script" {
 
 - Stabilize the alpha compiler subset
 - Add assignment parsing and richer expressions
-- Add loops, function declarations, calls, arrays, and objects
+- Add loops, arrays, objects, member access, and indexing
 - Expand runtime integration for file/API automation
 - Implement AI helpers
 - Add source maps, editor tooling, LSP planning, and REPL planning
@@ -57,11 +81,10 @@ jodi name == "BN Script" {
 ## Known Limitations
 
 - Loops are not parsed yet.
-- Functions are not parsed yet.
 - Imports and exports are not parsed yet.
 - Assignment expressions are not parsed yet.
-- Arrays, objects, calls, member access, and indexing are not parsed yet.
+- Arrays, objects, member access, and indexing are not parsed yet.
 - Async/await syntax is not parsed yet.
+- Default parameters, function expressions, arrow functions, and methods are not implemented yet.
 - Runtime AI helpers are not implemented yet.
 - Public package publishing has not been performed.
-- This repository folder did not contain a `.git` directory during release preparation, so Git commands must be run from the real repository checkout before publishing.
