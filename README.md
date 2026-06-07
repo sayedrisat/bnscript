@@ -1,193 +1,400 @@
-# BN Script
+# 🚀 BN Script
 
-BN Script is an automation-first programming language that compiles to readable JavaScript. It is built for small scripts that automate files, APIs, AI workflows, environment tasks, and everyday developer operations.
+**An automation-first programming language that compiles to JavaScript.**
 
-BN Script is currently in `v0.1.0-alpha.0`. The compiler architecture is real and test-backed, while the implemented language surface is intentionally small.
+BN Script is a programming language designed to make automation scripts easier to write, read, and maintain while still generating clean JavaScript that runs on Node.js.
 
-## Why BN Script Exists
+It combines a real compiler architecture with a beginner-friendly syntax inspired by Bangla-transliterated keywords.
 
-JavaScript is powerful, but routine automation can still feel noisy: reading files, calling APIs, checking environment variables, waiting between retries, and eventually using AI helpers all require repeated setup.
+---
 
-BN Script exists to make those workflows easier to write and easier to read while still compiling to JavaScript that Node.js can run.
+## ✨ Current Status
 
-BN Script is not trying to replace JavaScript or TypeScript. It is a focused scripting language for automation.
+**Version:** `v0.1.0-alpha.0`
 
-## Features
+### Implemented
 
-- Real compiler pipeline: lexer, parser, AST, semantic analyzer, JavaScript generator
-- Readable JavaScript output for Node.js
-- Bangla-transliterated keywords such as `dhori`, `sthir`, `dekhi`, `jodi`, and `nahole`
-- Newline-oriented syntax with no required semicolons
-- Strict equality output: BN Script `==` compiles to JavaScript `===`
-- Function declarations with `kaj`, `ferot` returns, parameters, and calls
-- Built-in runtime foundation for HTTP, file, environment, and wait helpers
-- Structured compiler diagnostics with file and line information
-- Zero runtime npm dependencies in the current alpha
-- Native Node.js test suite
+✅ Lexer
+✅ Parser
+✅ Abstract Syntax Tree (AST)
+✅ Semantic Analyzer
+✅ JavaScript Generator
+✅ Runtime System
+✅ CLI Tool
+✅ Function Support
+✅ 103+ Automated Tests
 
-## Architecture
+---
 
-BN Script uses a staged compiler architecture:
+## 🔥 Why BN Script?
+
+Modern automation often requires repetitive JavaScript boilerplate for:
+
+* File operations
+* API requests
+* Environment variables
+* Task automation
+* Future AI workflows
+
+BN Script aims to make these workflows simpler while still compiling into readable JavaScript.
+
+Instead of replacing JavaScript, BN Script sits on top of it.
+
+Write BN Script.
+
+Compile to JavaScript.
+
+Run anywhere Node.js runs.
+
+---
+
+## 🏗 Architecture
+
+BN Script follows a real compiler pipeline:
 
 ```text
-Source (.bn)
-  -> Lexer
-  -> Parser
-  -> AST
-  -> Semantic Analyzer
-  -> JavaScript Generator
-  -> JavaScript (.js)
+BN Script Source
+        ↓
+      Lexer
+        ↓
+      Parser
+        ↓
+ Semantic Analyzer
+        ↓
+ JavaScript Generator
+        ↓
+      Runtime
+        ↓
+        CLI
 ```
 
-Key source modules:
+Unlike simple text replacement tools, BN Script performs proper parsing, semantic analysis, and code generation.
 
-- `src/lexer.js` tokenizes BN Script source.
-- `src/parser.js` builds the AST with recursive descent parsing.
-- `src/analyzer.js` validates scope and semantic rules.
-- `src/generator.js` emits JavaScript.
-- `src/compiler.js` runs the full pipeline.
-- `src/cli.js` provides `check`, `build`, and `run`.
+---
 
-## Installation
+## 🚀 Quick Example
 
-BN Script requires Node.js 18 or newer.
+### BN Script
 
-Clone the repository and install dependencies:
+```bn
+kaj greet(name) {
+  ferot "Hello " + name
+}
 
-```sh
-git clone <repo-url>
+dekhi greet("Risat")
+```
+
+### Generated JavaScript
+
+```js
+function greet(name) {
+  return "Hello " + name;
+}
+
+console.log(greet("Risat"));
+```
+
+### Output
+
+```txt
+Hello Risat
+```
+
+---
+
+## ✨ Features
+
+### Variables
+
+```bn
+dhori name = "Risat"
+```
+
+### Constants
+
+```bn
+sthir version = 0.1
+```
+
+### Output
+
+```bn
+dekhi "Hello World"
+```
+
+### Conditionals
+
+```bn
+jodi score >= 90 {
+  dekhi "Excellent"
+} nahole {
+  dekhi "Keep Going"
+}
+```
+
+### Functions
+
+```bn
+kaj greet(name) {
+  ferot "Hello " + name
+}
+
+dekhi greet("Risat")
+```
+
+### Literals
+
+```bn
+sotti
+mittha
+khali
+```
+
+### Operators
+
+```bn
++
+-
+*
+/
+%
+**
+==
+!=
+>
+<
+>=
+<=
+ebong
+othoba
+na
+```
+
+---
+
+## 📦 Installation
+
+Requirements:
+
+* Node.js 18+
+
+Clone the repository:
+
+```bash
+git clone https://github.com/sayedrisat/bnscript.git
 cd bnscript
 npm install
 ```
 
-This alpha has no external package dependencies, but `npm install` prepares the local package workflow.
+Run tests:
 
-Run the test suite:
-
-```sh
+```bash
 npm test
 ```
 
-On PowerShell systems that block `npm.ps1`, use:
+Windows PowerShell:
 
 ```powershell
 npm.cmd test
 ```
 
-## Example
+---
 
-BN Script:
+## 🖥 CLI Usage
 
-```bn
-dhori name = "BN Script"
-sthir version = 0.1
+Check a BN Script file:
 
-jodi version >= 0.1 {
-  dekhi name
-} nahole {
-  dekhi "not ready"
-}
-```
-
-Generated JavaScript:
-
-```js
-let name = "BN Script";
-const version = 0.1;
-
-if (version >= 0.1) {
-  console.log(name);
-} else {
-  console.log("not ready");
-}
-```
-
-More examples live in [`examples/`](examples/).
-
-## CLI Usage
-
-Use the local alpha CLI from the repository root:
-
-```sh
+```bash
 node src/cli.js check examples/hello.bn
+```
+
+Build JavaScript:
+
+```bash
 node src/cli.js build examples/hello.bn
+```
+
+Run directly:
+
+```bash
 node src/cli.js run examples/hello.bn
 ```
 
-After package linking or installation, the intended command form is:
+Future installed usage:
 
-```sh
+```bash
 bn check file.bn
 bn build file.bn
 bn run file.bn
 ```
 
-Commands:
+---
 
-| Command | Description |
-| --- | --- |
-| `check` | Parse and semantically validate a `.bn` file. |
-| `build` | Compile a `.bn` file to a sibling `.js` file. |
-| `run` | Compile a `.bn` file to a temporary ES module and execute it. |
+## 📚 Supported In Alpha
 
-## Supported In v0.1 Alpha
+### Declarations
 
-- `dhori` variable declarations
-- `sthir` constant declarations
-- `dekhi` print statements
-- `jodi` and `nahole` conditionals
-- `kaj` function declarations
-- `ferot` return statements inside functions
-- Function parameters
-- Function calls
-- Block statements
-- Expression statements
-- Identifiers
-- Number, string, boolean, and null literals
-- Booleans: `sotti`, `mittha`
-- Null: `khali`
-- Unary operators: `na`, `-`
-- Binary operators: `+`, `-`, `*`, `/`, `%`, `**`, `==`, `!=`, `>`, `<`, `>=`, `<=`, `ebong`, `othoba`
-- Grouped expressions with parentheses
+* `dhori`
+* `sthir`
 
-## Current Limitations
+### Output
 
-The v0.1 alpha intentionally does not parse or generate loops, imports, exports, assignments, arrays, objects, member access, indexing, async/await syntax, AI helpers, package publishing flows, editor tooling, an LSP, or a REPL.
+* `dekhi`
 
-Function support is intentionally small: named `kaj` declarations, positional parameters, `ferot`, and direct calls are supported. Default parameters, function expressions, arrow functions, methods, recursion-specific checks, and higher-order function semantics are not implemented yet.
+### Conditions
 
-The design documents include planned language features that are not fully implemented yet. For the exact current behavior, prefer this README, [`docs/getting-started.md`](docs/getting-started.md), and the test suite.
+* `jodi`
+* `nahole`
 
-## Roadmap
+### Functions
 
-- `v0.1.x`: stabilize function support, current compiler subset, CLI behavior, docs, and examples
-- `v0.2`: assignment parsing, loops, member access, arrays, and objects
-- `v0.3`: imports, exports, and richer runtime integration
-- `v0.4`: async/await syntax, file/API automation helpers, AI helper implementation
-- `v0.5`: REPL, source maps, improved diagnostics, and editor tooling planning
-- `v1.0`: stable language subset, public package workflow, and production documentation
+* `kaj`
+* `ferot`
+* Parameters
+* Function Calls
 
-## Contributing
+### Expressions
 
-Contributions are welcome during the alpha, especially focused compiler fixes, tests, examples, and documentation improvements.
+* Identifiers
+* Number Literals
+* String Literals
+* Boolean Literals
+* Null Literals
+* Unary Operators
+* Binary Operators
+* Parenthesized Expressions
 
-Before opening a pull request:
+### Values
 
-1. Keep changes scoped to one compiler stage or documentation topic.
-2. Add or update tests when behavior changes.
-3. Run `npm test`.
-4. Document any known limitation introduced by the change.
+```bn
+sotti
+mittha
+khali
+```
 
-Good first areas include parser edge cases, diagnostic clarity, integration fixtures, and beginner-friendly examples.
+---
 
-## Documentation
+## ⚠ Current Limitations
 
-- [Getting Started](docs/getting-started.md)
-- [CLI Reference](docs/cli.md)
-- [Language Specification](docs/language-spec.md)
-- [Compiler Architecture](docs/compiler-architecture.md)
-- [Runtime Design](docs/runtime-design.md)
+Not implemented yet:
 
-## License
+* Assignment Expressions
+* While Loops
+* For Loops
+* Arrays
+* Objects
+* Imports / Exports
+* Async / Await
+* AI Runtime Helpers
+* Package Manager
+* REPL
+* LSP
+* VS Code Extension
 
-BN Script is released under the MIT License. See [LICENSE](LICENSE).
+This project is currently in Alpha and focused on compiler stability.
+
+---
+
+## 🗺 Roadmap
+
+### v0.2
+
+* Assignment Expressions
+* Variable Reassignment
+* Compound Assignment Operators
+
+### v0.3
+
+* While Loops
+* For Loops
+
+### v0.4
+
+* Arrays
+* Objects
+
+### v0.5
+
+* Imports / Exports
+* Modules
+
+### Future
+
+* AI Runtime Helpers
+* REPL
+* Language Server Protocol (LSP)
+* VS Code Extension
+* Package Ecosystem
+
+---
+
+## 🧪 Testing
+
+Current test coverage includes:
+
+* Lexer Tests
+* Parser Tests
+* Semantic Analyzer Tests
+* Generator Tests
+* Runtime Tests
+* CLI Tests
+* Integration Tests
+
+**103+ tests passing**
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome.
+
+Good first contributions:
+
+* Compiler improvements
+* Parser edge cases
+* Better diagnostics
+* Documentation
+* Examples
+* Tests
+
+Before submitting a PR:
+
+1. Run tests
+2. Add/update tests
+3. Keep changes focused
+4. Document limitations
+
+---
+
+## 📖 Documentation
+
+* Getting Started
+* CLI Reference
+* Language Specification
+* Compiler Architecture
+* Runtime Design
+
+See the `docs/` directory.
+
+---
+
+## ⭐ Support The Project
+
+If you find BN Script interesting:
+
+* Star the repository
+* Report bugs
+* Open feature requests
+* Share the project
+
+Repository:
+
+https://github.com/sayedrisat/bnscript
+
+---
+
+## 📄 License
+
+Released under the MIT License.
+
+See `LICENSE` for details.
