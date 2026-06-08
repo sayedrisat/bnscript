@@ -329,6 +329,101 @@ test("parser: missing while block", () => {
   );
 });
 
+test("parser: array literals", () => {
+  const empty = firstStatement("dhori items = []").initializer;
+  const single = firstStatement("dhori items = [1]").initializer;
+  const multiple = firstStatement("dhori items = [1, 2, 3]").initializer;
+  const strings = firstStatement('dhori names = ["a", "b"]').initializer;
+
+  assert.strictEqual(empty.type, "ArrayLiteral");
+  assert.strictEqual(empty.elements.length, 0);
+  assert.strictEqual(single.elements[0].value, 1);
+  assert.strictEqual(multiple.elements.length, 3);
+  assert.strictEqual(strings.elements[1].value, "b");
+});
+
+test("parser: nested arrays", () => {
+  const expression = firstStatement("dhori matrix = [[1], [2, 3]]").initializer;
+
+  assert.strictEqual(expression.type, "ArrayLiteral");
+  assert.strictEqual(expression.elements[0].type, "ArrayLiteral");
+  assert.strictEqual(expression.elements[1].elements[1].value, 3);
+});
+
+test("parser: object literals", () => {
+  const expression = firstStatement(`dhori user = {
+  name: "Risat",
+  age: 25
+}`).initializer;
+
+  assert.strictEqual(expression.type, "ObjectLiteral");
+  assert.strictEqual(expression.properties.length, 2);
+  assert.strictEqual(expression.properties[0].key, "name");
+  assert.strictEqual(expression.properties[0].value.value, "Risat");
+  assert.strictEqual(expression.properties[1].key, "age");
+  assert.strictEqual(expression.properties[1].value.value, 25);
+});
+
+test("parser: nested objects", () => {
+  const expression = firstStatement(`dhori user = {
+  profile: {
+    city: "Dhaka"
+  }
+}`).initializer;
+
+  assert.strictEqual(expression.type, "ObjectLiteral");
+  assert.strictEqual(expression.properties[0].value.type, "ObjectLiteral");
+  assert.strictEqual(expression.properties[0].value.properties[0].key, "city");
+});
+
+test("parser: member access", () => {
+  const expression = firstStatement("user.name").expression;
+
+  assert.strictEqual(expression.type, "MemberExpression");
+  assert.strictEqual(expression.object.name, "user");
+  assert.strictEqual(expression.property, "name");
+  assert.strictEqual(expression.computed, false);
+});
+
+test("parser: chained member access", () => {
+  const expression = firstStatement("user.profile.city").expression;
+
+  assert.strictEqual(expression.type, "MemberExpression");
+  assert.strictEqual(expression.property, "city");
+  assert.strictEqual(expression.object.type, "MemberExpression");
+  assert.strictEqual(expression.object.property, "profile");
+});
+
+test("parser: index access", () => {
+  const expression = firstStatement("names[0]").expression;
+
+  assert.strictEqual(expression.type, "MemberExpression");
+  assert.strictEqual(expression.object.name, "names");
+  assert.strictEqual(expression.property.value, 0);
+  assert.strictEqual(expression.computed, true);
+});
+
+test("parser: chained index and member access", () => {
+  const expression = firstStatement("users[0].name").expression;
+
+  assert.strictEqual(expression.type, "MemberExpression");
+  assert.strictEqual(expression.property, "name");
+  assert.strictEqual(expression.object.type, "MemberExpression");
+  assert.strictEqual(expression.object.computed, true);
+});
+
+test("parser: assignment to member and index", () => {
+  const memberAssignment = firstStatement('user.name = "Sayed"').expression;
+  const indexAssignment = firstStatement('names[0] = "Updated"').expression;
+
+  assert.strictEqual(memberAssignment.type, "AssignmentExpression");
+  assert.strictEqual(memberAssignment.target.type, "MemberExpression");
+  assert.strictEqual(memberAssignment.target.property, "name");
+  assert.strictEqual(indexAssignment.type, "AssignmentExpression");
+  assert.strictEqual(indexAssignment.target.type, "MemberExpression");
+  assert.strictEqual(indexAssignment.target.computed, true);
+});
+
 test("parser: nested block", () => {
   const statement = firstStatement(`{
   {

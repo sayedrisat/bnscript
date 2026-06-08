@@ -9,7 +9,7 @@ This release is intended for early contributors, language-design review, and com
 - Real compiler pipeline implemented: lexer, parser, AST, semantic analyzer, JavaScript generator
 - CLI commands available: `check`, `build`, and `run`
 - Runtime helper foundation implemented for fetch, file, env, wait, and runtime errors
-- Test-backed alpha subset with declarations, assignments, printing, conditionals, while loops, functions, calls, blocks, and expressions
+- Test-backed alpha subset with declarations, assignments, printing, conditionals, while loops, functions, calls, arrays, objects, member/index access, blocks, and expressions
 - Public README, getting started guide, CLI reference, examples, and release metadata
 - MIT License prepared for open-source distribution
 
@@ -60,6 +60,37 @@ jotokkhon i < 3 {
 
 This compiles to JavaScript assignment expressions and `while` statements.
 
+## Update: Stage 10 Composite Data
+
+Array literals, object literals, member access, index access, and member/index
+assignment targets are now available in the alpha branch.
+
+Supported:
+
+- Array literals, including nested arrays
+- Object literals, including nested objects
+- Member access such as `user.name`
+- Index access such as `names[0]`
+- Assignment to member and index targets
+
+Example:
+
+```bn
+dhori user = {
+  name: "Risat",
+  profile: {
+    city: "Dhaka"
+  }
+}
+
+dekhi user.profile.city
+
+user.name = "Sayed"
+dekhi user.name
+```
+
+This compiles to JavaScript object literals, property access, and assignments.
+
 ## Architecture
 
 BN Script compiles through clear compiler stages:
@@ -81,6 +112,8 @@ Current examples live in `examples/`:
 - `functions.bn`
 - `assignments.bn`
 - `while.bn`
+- `arrays.bn`
+- `objects.bn`
 
 Example:
 
@@ -98,7 +131,7 @@ jodi name == "BN Script" {
 
 - Stabilize the alpha compiler subset
 - Add richer expressions
-- Add counted loops, for-each loops, arrays, objects, member access, and indexing
+- Add counted loops and for-each loops
 - Expand runtime integration for file/API automation
 - Implement AI helpers
 - Add source maps, editor tooling, LSP planning, and REPL planning
@@ -108,7 +141,6 @@ jodi name == "BN Script" {
 
 - Counted `bar` loops and for-each loops are not parsed yet.
 - Imports and exports are not parsed yet.
-- Arrays, objects, member access, and indexing are not parsed yet.
 - Async/await syntax is not parsed yet.
 - Default parameters, function expressions, arrow functions, and methods are not implemented yet.
 - Runtime AI helpers are not implemented yet.

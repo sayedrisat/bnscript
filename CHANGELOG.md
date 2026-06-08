@@ -1,5 +1,57 @@
 # Changelog
 
+## Day 6 - 2026-06-08 (Composite Data Stage 10)
+
+### Completed: Arrays, Objects, Members, and Indexes
+- Added parser support for array literals, object literals, member access, index access, and chained access.
+- Added assignment target support for member and index expressions while keeping direct `sthir` reassignment protection.
+- Added AST factories for `ArrayLiteral`, `ObjectLiteral`, `ObjectProperty`, and `MemberExpression`.
+- Added semantic analysis for array elements, object property values, member access bases, index bases, computed index expressions, and member/index assignments.
+- Added JavaScript generation for arrays, objects, member access, index access, and member/index assignment.
+- Added array and object examples plus integration fixtures.
+- Updated public documentation for Stage 10 support.
+
+### Tests Added
+- Lexer coverage for array/object/member/index punctuation.
+- Parser coverage for arrays, nested arrays, objects, nested objects, member access, chained access, indexing, and member/index assignment targets.
+- Analyzer coverage for array/object identifier resolution, member/index base resolution, undeclared bases, and member/index assignments.
+- Generator coverage for arrays, nested arrays, objects, nested objects, chained access, indexing, and member/index assignment output.
+- Integration coverage for `tests/integration/arrays.bn` and `tests/integration/objects.bn`.
+
+### Files Changed
+- `src/ast.js`
+- `src/parser.js`
+- `src/analyzer.js`
+- `src/generator.js`
+- `tests/lexer.test.js`
+- `tests/parser.test.js`
+- `tests/analyzer.test.js`
+- `tests/generator.test.js`
+- `tests/stage10.integration.test.js`
+- `tests/integration/arrays.bn`
+- `tests/integration/objects.bn`
+- `examples/arrays.bn`
+- `examples/objects.bn`
+- `examples/README.md`
+- `README.md`
+- `docs/getting-started.md`
+- `docs/language-spec.md`
+- `docs/compiler-architecture.md`
+- `CHANGELOG.md`
+
+### Known Issues
+- Counted `bar` loops, for-each loops, imports/exports, async/await, AI helpers, package publishing, default parameters, function expressions, and advanced type/shape validation remain unimplemented.
+
+### Test Result
+- `npm.cmd test` passed 152 tests.
+- `node src/cli.js run examples/arrays.bn` printed `Risat`, `Script`, `2`.
+- `node src/cli.js run examples/objects.bn` printed `Risat`, `Dhaka`, `Sayed`, `BN`.
+
+### Recommended Next Task
+- Stage 10 Composite Data Review
+
+---
+
 ## Day 5 - 2026-06-08 (Assignments Stage 8 and While Stage 9)
 
 ### Completed: Assignment Expressions and While Loops

@@ -108,6 +108,28 @@ test('lexer: punctuation', () => {
   assert.strictEqual(tokens[9].type, TOKENS.SEMICOLON);
 });
 
+test('lexer: array object and member punctuation', () => {
+  const source = 'names[0].profile = { name: "Risat" }';
+  const tokens = tokenize(source);
+  const types = tokens.map((token) => token.type);
+
+  assert.deepStrictEqual(types, [
+    TOKENS.IDENTIFIER,
+    TOKENS.LEFT_BRACKET,
+    TOKENS.NUMBER,
+    TOKENS.RIGHT_BRACKET,
+    TOKENS.DOT,
+    TOKENS.IDENTIFIER,
+    TOKENS.EQUAL,
+    TOKENS.LEFT_BRACE,
+    TOKENS.IDENTIFIER,
+    TOKENS.COLON,
+    TOKENS.STRING,
+    TOKENS.RIGHT_BRACE,
+    TOKENS.EOF,
+  ]);
+});
+
 test('lexer: single-line comments', () => {
   const tokens = tokenize('// comment\ndhori');
   assert.strictEqual(tokens[0].type, TOKENS.NEWLINE);

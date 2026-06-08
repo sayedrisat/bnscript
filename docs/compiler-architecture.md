@@ -3,9 +3,9 @@
 > Public alpha note: this architecture describes the full intended compiler
 > shape. The v0.1.0 alpha implements the core pipeline and a deliberately small
 > language subset including declarations, assignments, printing, conditionals,
-> `jotokkhon` while loops, functions, calls, blocks, and primitive expressions.
-> Some sections describe future parser, generator, and runtime behavior that is
-> not available yet.
+> `jotokkhon` while loops, functions, calls, arrays, objects, member/index
+> access, blocks, and primitive expressions. Some sections describe future
+> parser, generator, and runtime behavior that is not available yet.
 
 > **Status:** Draft — Architecture Design Phase
 > **Implementation Language:** JavaScript (Node.js)
@@ -351,7 +351,7 @@ This allows the compiler to report multiple errors in a single run instead of st
 // x = 20  or  x += 5
 {
     type: "AssignmentExpression",
-    target: Identifier,         // Current alpha supports identifier targets only
+    target: Identifier | MemberExpression, // identifier, member, or index target
     operator: "=",              // "=", "+=", "-=", "*=", "/="
     value: Expression,          // Right-hand side
     line: 1, column: 1
@@ -756,11 +756,22 @@ x += 5                ->  x += 5;
 x -= 2                ->  x -= 2;
 x *= 3                ->  x *= 3;
 x /= 2                ->  x /= 2;
+user.name = "Sayed"   ->  user.name = "Sayed";
+names[0] = "Updated"  ->  names[0] = "Updated";
 ```
 
 #### Print
 ```
 dekhi x, y            →  console.log(x, y);
+```
+
+#### Arrays, Objects, Members, and Indexes
+```
+["a", "b"]            ->  ["a","b"]
+{ name: "Risat" }     ->  { name: "Risat" }
+user.name             ->  user.name
+names[0]              ->  names[0]
+users[0].name         ->  users[0].name
 ```
 
 #### Control Flow

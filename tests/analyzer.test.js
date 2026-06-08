@@ -227,6 +227,111 @@ test("analyzer: undeclared condition variable", () => {
   );
 });
 
+test("analyzer: array literal values resolve identifiers", () => {
+  const ast = analyzeSource(`dhori first = 1
+dhori values = [first, 2]`);
+
+  const identifier = ast.body[1].initializer.elements[0];
+
+  assert.strictEqual(identifier.type, "Identifier");
+  assert.strictEqual(identifier.semantic.resolved, true);
+  assert.strictEqual(identifier.semantic.symbolKind, "variable");
+});
+
+test("analyzer: object literal values resolve identifiers", () => {
+  const ast = analyzeSource(`dhori city = "Dhaka"
+dhori user = {
+  profile: {
+    city: city
+  }
+}`);
+
+  const cityIdentifier =
+    ast.body[1].initializer.properties[0].value.properties[0].value;
+
+  assert.strictEqual(cityIdentifier.type, "Identifier");
+  assert.strictEqual(cityIdentifier.semantic.resolved, true);
+  assert.strictEqual(cityIdentifier.semantic.symbolKind, "variable");
+});
+
+test("analyzer: member access resolves base", () => {
+  const ast = analyzeSource(`dhori user = {
+  name: "Risat"
+}
+dekhi user.name`);
+
+  const expression = ast.body[1].arguments[0];
+
+  assert.strictEqual(expression.type, "MemberExpression");
+  assert.strictEqual(expression.object.semantic.resolved, true);
+});
+
+test("analyzer: chained member access resolves base", () => {
+  const ast = analyzeSource(`dhori user = {
+  profile: {
+    city: "Dhaka"
+  }
+}
+dekhi user.profile.city`);
+
+  const expression = ast.body[1].arguments[0];
+
+  assert.strictEqual(expression.type, "MemberExpression");
+  assert.strictEqual(expression.object.object.semantic.resolved, true);
+});
+
+test("analyzer: index access resolves base and index", () => {
+  const ast = analyzeSource(`dhori names = ["Risat"]
+dhori index = 0
+dekhi names[index]`);
+
+  const expression = ast.body[2].arguments[0];
+
+  assert.strictEqual(expression.type, "MemberExpression");
+  assert.strictEqual(expression.object.semantic.resolved, true);
+  assert.strictEqual(expression.property.semantic.resolved, true);
+});
+
+test("analyzer: undeclared member access base", () => {
+  semanticError(
+    () => analyzeSource("dekhi user.name"),
+    'Use before declaration: "user"'
+  );
+});
+
+test("analyzer: undeclared index access base", () => {
+  semanticError(
+    () => analyzeSource("dekhi names[0]"),
+    'Use before declaration: "names"'
+  );
+});
+
+test("analyzer: assignment to member", () => {
+  const ast = analyzeSource(`dhori user = {
+  name: "Risat"
+}
+user.name = "Sayed"`);
+
+  const assignment = ast.body[1].expression;
+
+  assert.strictEqual(assignment.type, "AssignmentExpression");
+  assert.strictEqual(assignment.target.type, "MemberExpression");
+  assert.strictEqual(assignment.target.object.semantic.resolved, true);
+  assert.strictEqual(assignment.semantic.resolved, true);
+});
+
+test("analyzer: assignment to index", () => {
+  const ast = analyzeSource(`dhori names = ["Risat"]
+names[0] = "Updated"`);
+
+  const assignment = ast.body[1].expression;
+
+  assert.strictEqual(assignment.type, "AssignmentExpression");
+  assert.strictEqual(assignment.target.type, "MemberExpression");
+  assert.strictEqual(assignment.target.object.semantic.resolved, true);
+  assert.strictEqual(assignment.semantic.resolved, true);
+});
+
 test("analyzer: valid function declaration", () => {
   const ast = analyzeSource(`kaj greet(name) {
   ferot name

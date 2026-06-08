@@ -1,0 +1,18 @@
+dhori user = {
+  name: "Risat",
+  profile: {
+    city: "Dhaka"
+  }
+}
+
+dekhi user.name
+dekhi user.profile.city
+
+user.name = "Sayed"
+dekhi user.name
+
+dhori users = [{
+  name: "BN"
+}]
+
+dekhi users[0].name

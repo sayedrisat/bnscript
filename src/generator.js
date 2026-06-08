@@ -196,6 +196,12 @@ export class Generator {
         return this.generateAssignmentExpression(node);
       case "CallExpression":
         return this.generateCallExpression(node);
+      case "MemberExpression":
+        return this.generateMemberExpression(node);
+      case "ArrayLiteral":
+        return this.generateArrayLiteral(node);
+      case "ObjectLiteral":
+        return this.generateObjectLiteral(node);
       default:
         return this.unsupported(node);
     }
@@ -203,6 +209,49 @@ export class Generator {
 
   generateAssignmentExpression(node) {
     return `${this.generateExpression(node.target)} ${node.operator} ${this.generateExpression(node.value)}`;
+  }
+
+  generateArrayLiteral(node) {
+    return `[${(node.elements || [])
+      .map((element) => this.generateExpression(element))
+      .join(",")}]`;
+  }
+
+  generateObjectLiteral(node) {
+    const properties = (node.properties || []).map((property) => {
+      return `${this.formatObjectKey(property.key)}: ${this.generateExpression(property.value)}`;
+    });
+    return properties.length > 0 ? `{ ${properties.join(", ")} }` : "{}";
+  }
+
+  formatObjectKey(key) {
+    return /^[A-Za-z_$][A-Za-z0-9_$]*$/.test(key)
+      ? key
+      : JSON.stringify(key);
+  }
+
+  generateMemberExpression(node) {
+    const object = this.formatMemberObject(node.object);
+
+    if (node.computed) {
+      return `${object}[${this.generateExpression(node.property)}]`;
+    }
+
+    return `${object}.${node.property}`;
+  }
+
+  formatMemberObject(node) {
+    const object = this.generateExpression(node);
+
+    if (
+      node?.type === "Identifier" ||
+      node?.type === "MemberExpression" ||
+      node?.type === "CallExpression"
+    ) {
+      return object;
+    }
+
+    return `(${object})`;
   }
 
   generateCallExpression(node) {
@@ -216,7 +265,11 @@ export class Generator {
   formatCallCallee(node) {
     const callee = this.generateExpression(node);
 
-    if (node?.type === "Identifier" || node?.type === "CallExpression") {
+    if (
+      node?.type === "Identifier" ||
+      node?.type === "CallExpression" ||
+      node?.type === "MemberExpression"
+    ) {
       return callee;
     }
 

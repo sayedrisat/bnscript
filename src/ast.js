@@ -114,6 +114,26 @@ export function CallExpression(callee, args, location = {}) {
   return node("CallExpression", { callee, arguments: args }, location);
 }
 
+export function MemberExpression(object, property, computed = false, location = {}) {
+  return node("MemberExpression", { object, property, computed }, location);
+}
+
+export function ArrayLiteral(elements, location = {}) {
+  return node("ArrayLiteral", { elements }, location);
+}
+
+export function ObjectLiteral(properties, location = {}) {
+  return node("ObjectLiteral", { properties }, location);
+}
+
+export function ObjectProperty(key, value, location = {}) {
+  return {
+    key,
+    value,
+    ...locationFields(location),
+  };
+}
+
 export default {
   Program,
   VarDeclaration,
@@ -135,4 +155,8 @@ export default {
   BinaryExpression,
   AssignmentExpression,
   CallExpression,
+  MemberExpression,
+  ArrayLiteral,
+  ObjectLiteral,
+  ObjectProperty,
 };

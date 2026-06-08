@@ -1,0 +1,8 @@
+dhori names = ["Risat", "BN"]
+dekhi names[0]
+
+names[1] = "Script"
+dekhi names[1]
+
+dhori matrix = [[1], [2, 3]]
+dekhi matrix[1][0]

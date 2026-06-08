@@ -23,8 +23,11 @@ It combines a real compiler architecture with a beginner-friendly syntax inspire
 ✅ CLI Tool
 ✅ Assignment Expressions
 ✅ While Loops
+✅ Array Literals
+✅ Object Literals
+✅ Member and Index Access
 ✅ Function Support
-✅ 125+ Automated Tests
+✅ 152 Automated Tests
 
 ---
 
@@ -153,6 +156,29 @@ jotokkhon i < 3 {
 }
 ```
 
+### Arrays
+
+```bn
+dhori names = ["Risat", "BN"]
+dekhi names[0]
+names[1] = "Script"
+```
+
+### Objects
+
+```bn
+dhori user = {
+  name: "Risat",
+  profile: {
+    city: "Dhaka"
+  }
+}
+
+dekhi user.name
+dekhi user.profile.city
+user.name = "Sayed"
+```
+
 ### Functions
 
 ```bn
@@ -261,6 +287,11 @@ bn run file.bn
 - Assignment expressions
 - Variable reassignment
 - Compound assignment: `+=`, `-=`, `*=`, `/=`
+- Array literals
+- Object literals
+- Member access
+- Index access
+- Assignment to member and index targets
 - `kaj` function declarations
 - `ferot` return statements inside functions
 - Function parameters
@@ -283,11 +314,7 @@ Not implemented yet:
 
 * Counted `bar` Loops
 * For-Each Loops
-* Arrays
-* Objects
 * Imports / Exports
-* Member Access
-* Indexing
 * Async / Await
 * AI Runtime Helpers
 * Package Manager
@@ -305,22 +332,21 @@ This project is currently in Alpha and focused on compiler stability.
 
 * Counted Loops
 * For-Each Loops
-* Member Access
 
 ### v0.3
-
-* Arrays
-* Objects
-
-### v0.4
 
 * Imports / Exports
 * Modules
 
-### v0.5
+### v0.4
 
 * Async / Await
 * File/API Automation Helpers
+
+### v0.5
+
+* Runtime Helper Expansion
+* Source Maps
 
 ### Future
 
@@ -344,7 +370,7 @@ Current test coverage includes:
 * CLI Tests
 * Integration Tests
 
-**125+ tests passing**
+**152 tests passing**
 
 ---
 

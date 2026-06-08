@@ -204,6 +204,83 @@ while (i < 3) {
   );
 });
 
+test("generator: array literal output", () => {
+  const output = compileSource(`dhori names = ["Risat", "BN"]
+dekhi names[0]`);
+
+  assert.strictEqual(
+    output,
+    expected(`let names = ["Risat","BN"];
+console.log(names[0]);`)
+  );
+});
+
+test("generator: nested array output", () => {
+  const output = compileSource(`dhori matrix = [[1], [2, 3]]
+dekhi matrix[1][0]`);
+
+  assert.strictEqual(
+    output,
+    expected(`let matrix = [[1],[2,3]];
+console.log(matrix[1][0]);`)
+  );
+});
+
+test("generator: object literal output", () => {
+  const output = compileSource(`dhori user = {
+  name: "Risat",
+  age: 25
+}
+dekhi user.name`);
+
+  assert.strictEqual(
+    output,
+    expected(`let user = { name: "Risat", age: 25 };
+console.log(user.name);`)
+  );
+});
+
+test("generator: nested object output", () => {
+  const output = compileSource(`dhori user = {
+  profile: {
+    city: "Dhaka"
+  }
+}
+dekhi user.profile.city`);
+
+  assert.strictEqual(
+    output,
+    expected(`let user = { profile: { city: "Dhaka" } };
+console.log(user.profile.city);`)
+  );
+});
+
+test("generator: chained index and member access output", () => {
+  const output = compileSource(`dhori users = [{ name: "Risat" }]
+dekhi users[0].name`);
+
+  assert.strictEqual(
+    output,
+    expected(`let users = [{ name: "Risat" }];
+console.log(users[0].name);`)
+  );
+});
+
+test("generator: assignment to member and index output", () => {
+  const output = compileSource(`dhori user = { name: "Risat" }
+dhori names = ["Risat"]
+user.name = "Sayed"
+names[0] = "Updated"`);
+
+  assert.strictEqual(
+    output,
+    expected(`let user = { name: "Risat" };
+let names = ["Risat"];
+user.name = "Sayed";
+names[0] = "Updated";`)
+  );
+});
+
 test("generator: function declaration output", () => {
   const output = compileSource(`kaj greet(name) {
   dekhi name

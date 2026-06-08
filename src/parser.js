@@ -37,6 +37,8 @@ const EXPRESSION_STARTS = new Set([
   TOKENS.NA,
   TOKENS.MINUS,
   TOKENS.LEFT_PAREN,
+  TOKENS.LEFT_BRACKET,
+  TOKENS.LEFT_BRACE,
 ]);
 
 const UNSUPPORTED_STATEMENTS = new Map([
@@ -412,11 +414,11 @@ export class Parser {
 
     const operatorToken = this.previous();
 
-    if (target.type !== "Identifier") {
+    if (!this.isAssignmentTarget(target)) {
       this.raise(
         operatorToken,
         "Invalid assignment target.",
-        "Only identifiers can be assigned to in this alpha compiler."
+        "Assign to an identifier, member, or index target, like: count = 1, user.name = value, or names[0] = value."
       );
     }
 
@@ -487,37 +489,86 @@ export class Parser {
       );
     }
 
-    return this.parseCallExpression();
+    return this.parsePostfixExpression();
   }
 
-  parseCallExpression() {
+  parsePostfixExpression() {
     let expression = this.parsePrimaryExpression();
 
-    while (this.match(TOKENS.LEFT_PAREN)) {
-      const args = [];
-      this.skipNewlines();
+    while (true) {
+      if (this.match(TOKENS.LEFT_PAREN)) {
+        const args = [];
+        this.skipNewlines();
 
-      if (!this.check(TOKENS.RIGHT_PAREN)) {
-        do {
-          this.skipNewlines();
-          args.push(
-            this.parseExpression("Expected argument in function call.")
-          );
-          this.skipNewlines();
-        } while (this.match(TOKENS.COMMA));
+        if (!this.check(TOKENS.RIGHT_PAREN)) {
+          do {
+            this.skipNewlines();
+            args.push(
+              this.parseExpression("Expected argument in function call.")
+            );
+            this.skipNewlines();
+          } while (this.match(TOKENS.COMMA));
+        }
+
+        const closeToken = this.consume(
+          TOKENS.RIGHT_PAREN,
+          'Expected ")" after function call arguments.',
+          'Add ")" to close the function call.'
+        );
+
+        expression = AST.CallExpression(
+          expression,
+          args,
+          this.locationFrom(expression, closeToken)
+        );
+        continue;
       }
 
-      const closeToken = this.consume(
-        TOKENS.RIGHT_PAREN,
-        'Expected ")" after function call arguments.',
-        'Add ")" to close the function call.'
-      );
+      if (this.match(TOKENS.DOT)) {
+        const dotToken = this.previous();
+        const propertyToken = this.consume(
+          TOKENS.IDENTIFIER,
+          'Expected property name after ".".',
+          "Use member access like: user.name"
+        );
 
-      expression = AST.CallExpression(
-        expression,
-        args,
-        this.locationFrom(expression, closeToken)
-      );
+        expression = AST.MemberExpression(
+          expression,
+          propertyToken.value,
+          false,
+          this.locationFrom(expression, propertyToken)
+        );
+        continue;
+      }
+
+      if (this.match(TOKENS.LEFT_BRACKET)) {
+        const openToken = this.previous();
+
+        if (this.check(TOKENS.RIGHT_BRACKET)) {
+          this.raise(
+            this.peek(),
+            'Expected expression inside "[]".',
+            "Place an index expression between the brackets."
+          );
+        }
+
+        const property = this.parseExpression("Expected index expression.");
+        const closeToken = this.consume(
+          TOKENS.RIGHT_BRACKET,
+          'Expected "]" after index expression.',
+          'Add "]" to close the index access.'
+        );
+
+        expression = AST.MemberExpression(
+          expression,
+          property,
+          true,
+          this.locationFrom(expression, closeToken)
+        );
+        continue;
+      }
+
+      break;
     }
 
     return expression;
@@ -587,23 +638,15 @@ export class Parser {
       };
     }
 
+    if (this.check(TOKENS.LEFT_BRACKET)) {
+      return this.parseArrayLiteral();
+    }
+
+    if (this.check(TOKENS.LEFT_BRACE)) {
+      return this.parseObjectLiteral();
+    }
+
     const token = this.peek();
-    if (token.type === TOKENS.LEFT_BRACKET) {
-      this.raise(
-        token,
-        "Array literals are not supported in this alpha compiler.",
-        "Use identifiers, primitive literals, calls, grouped expressions, unary expressions, or binary expressions."
-      );
-    }
-
-    if (token.type === TOKENS.LEFT_BRACE) {
-      this.raise(
-        token,
-        "Object literals are not supported in this alpha compiler.",
-        "A block can start a statement, but object expressions are not part of this parser subset."
-      );
-    }
-
     if (token.type === TOKENS.ABR) {
       this.raise(
         token,
@@ -616,6 +659,76 @@ export class Parser {
       token,
       `Expected expression, but found "${this.describeToken(token)}".`,
       "Use a number, string, boolean, khali, identifier, unary operator, or grouped expression."
+    );
+  }
+
+  parseArrayLiteral() {
+    const openToken = this.consume(TOKENS.LEFT_BRACKET);
+    const elements = [];
+    this.skipNewlines();
+
+    if (!this.check(TOKENS.RIGHT_BRACKET)) {
+      do {
+        this.skipNewlines();
+        elements.push(this.parseExpression("Expected array element."));
+        this.skipNewlines();
+      } while (this.match(TOKENS.COMMA) && !this.check(TOKENS.RIGHT_BRACKET));
+    }
+
+    const closeToken = this.consume(
+      TOKENS.RIGHT_BRACKET,
+      'Expected "]" after array literal.',
+      'Add "]" to close the array literal.'
+    );
+
+    return AST.ArrayLiteral(elements, this.locationFrom(openToken, closeToken));
+  }
+
+  parseObjectLiteral() {
+    const openToken = this.consume(TOKENS.LEFT_BRACE);
+    const properties = [];
+    this.skipNewlines();
+
+    if (!this.check(TOKENS.RIGHT_BRACE)) {
+      do {
+        this.skipNewlines();
+        const keyToken = this.consumeObjectKey();
+        this.consume(
+          TOKENS.COLON,
+          'Expected ":" after object property name.',
+          'Use object properties like: name: "Risat"'
+        );
+        this.skipNewlines();
+        const value = this.parseExpression("Expected object property value.");
+        properties.push(
+          AST.ObjectProperty(
+            keyToken.value,
+            value,
+            this.locationFrom(keyToken, value)
+          )
+        );
+        this.skipNewlines();
+      } while (this.match(TOKENS.COMMA) && !this.check(TOKENS.RIGHT_BRACE));
+    }
+
+    const closeToken = this.consume(
+      TOKENS.RIGHT_BRACE,
+      'Expected "}" after object literal.',
+      'Add "}" to close the object literal.'
+    );
+
+    return AST.ObjectLiteral(properties, this.locationFrom(openToken, closeToken));
+  }
+
+  consumeObjectKey() {
+    if (this.match(TOKENS.IDENTIFIER, TOKENS.STRING)) {
+      return this.previous();
+    }
+
+    this.raise(
+      this.peek(),
+      "Expected object property name.",
+      "Use an identifier or string property name before ':'."
     );
   }
 
@@ -670,8 +783,8 @@ export class Parser {
     if (token.type === TOKENS.DOT || token.type === TOKENS.LEFT_BRACKET) {
       this.raise(
         token,
-        "Member and index access are not supported in this alpha compiler.",
-        "Use a plain identifier for this parser subset."
+        `Unexpected "${this.describeToken(token)}" after statement.`,
+        "Place member or index access directly after an expression, like: user.name or names[0]."
       );
     }
 
@@ -785,6 +898,10 @@ export class Parser {
 
   describeToken(token) {
     return token.value || token.type;
+  }
+
+  isAssignmentTarget(node) {
+    return node?.type === "Identifier" || node?.type === "MemberExpression";
   }
 
   sourceLine(line) {

@@ -4,10 +4,11 @@
 > The v0.1.0 alpha implementation currently supports declarations, assignment
 > expressions, printing, conditionals, `jotokkhon` while loops, function
 > declarations, return statements, function calls, blocks, primitive literals,
-> identifiers, grouped expressions, unary expressions, and binary expressions.
+> array literals, object literals, member access, index access, identifiers,
+> grouped expressions, unary expressions, and binary expressions.
 > Planned sections such as counted loops, for-each loops, modules, async/await,
-> arrays, objects, file helpers, HTTP, and AI helpers are design targets, not
-> fully compiled features yet.
+> file helpers, HTTP, and AI helpers are design targets, not fully compiled
+> features yet.
 
 > **Status:** Draft — Architecture Design Phase
 > **Target Runtime:** Node.js (JavaScript output)
@@ -159,6 +160,9 @@ BN Script has a small, practical type system. Types are inferred at compile time
 
 ### 5.2 Composite Types
 
+The current alpha supports array and object literals, including nested arrays
+and nested objects.
+
 | Type     | Syntax                          | JS Mapping     |
 |----------|---------------------------------|----------------|
 | Array    | `[1, 2, 3]`                     | `Array`        |
@@ -217,7 +221,7 @@ const API_URL = "https://api.example.com";
 
 ### 6.3 Assignment
 
-The current alpha supports identifier assignment targets only.
+The current alpha supports identifier, member, and index assignment targets.
 
 ```
 dhori x = 10
@@ -227,6 +231,8 @@ x += 1              // add and assign
 x -= 1              // subtract and assign
 x *= 2              // multiply and assign
 x /= 2              // divide and assign
+user.name = "Sayed" // member assignment
+names[0] = "Updated" // index assignment
 ```
 
 Compiles to:
@@ -238,6 +244,8 @@ x += 1;
 x -= 1;
 x *= 2;
 x /= 2;
+user.name = "Sayed";
+names[0] = "Updated";
 ```
 
 ### 6.4 Identifier Rules
@@ -713,6 +721,10 @@ These are available without imports:
 | `sthir X = 5`     | `const X = 5;`             |
 | `x = x + 1`       | `x = x + 1;`              |
 | `x += 1`          | `x += 1;`                 |
+| `dhori a = [1,2]` | `let a = [1,2];`          |
+| `dhori u = { name: "Risat" }` | `let u = { name: "Risat" };` |
+| `u.name`          | `u.name`                  |
+| `a[0]`            | `a[0]`                    |
 | `dekhi x`         | `console.log(x);`          |
 | `jodi x > 0 { }` | `if (x > 0) { }`          |
 | `nahole { }`      | `else { }`                 |
@@ -896,8 +908,8 @@ jodi na success {
 
 | Version | Features                                              |
 |---------|-------------------------------------------------------|
-| v0.1    | Variables, constants, assignments, print, if/else, while loops, functions, calls, basic expressions |
-| v0.2    | Counted loops, for-each loops, arrays, objects, member access |
+| v0.1    | Variables, constants, assignments, print, if/else, while loops, functions, calls, arrays, objects, member/index access, basic expressions |
+| v0.2    | Counted loops and for-each loops |
 | v0.3    | HTTP requests, file operations, async/await, error handling |
 | v0.4    | AI integration, modules (import/export), JSON operations |
 | v0.5    | Standard library expansion, package manager integration, REPL, debugging support |

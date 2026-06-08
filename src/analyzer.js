@@ -74,6 +74,12 @@ export class SemanticAnalyzer {
         return this.visit(node.right);
       case "CallExpression":
         return this.visitCallExpression(node);
+      case "MemberExpression":
+        return this.visitMemberExpression(node);
+      case "ArrayLiteral":
+        return this.visitArrayLiteral(node);
+      case "ObjectLiteral":
+        return this.visitObjectLiteral(node);
       case "ReturnStatement":
         return this.visitReturnStatement(node);
       case "BreakStatement":
@@ -176,38 +182,52 @@ export class SemanticAnalyzer {
     node.semantic.operator = node.operator;
     node.semantic.scopeType = this.currentScope.type;
 
-    if (node.target?.type === "Identifier") {
-      const resolution = this.resolveIdentifier(node.target, {
-        assignmentTarget: true,
-      });
-
-      if (resolution && !resolution.symbol.mutable) {
-        this.addError(
-          node.target,
-          `Cannot reassign constant "${node.target.name}".`,
-          `Use "dhori" instead of "sthir" if "${node.target.name}" needs to change.`
-        );
-      }
-
-      if (resolution) {
-        node.semantic.resolved = true;
-        node.semantic.targetKind = resolution.symbol.kind;
-        node.semantic.targetMutable = resolution.symbol.mutable;
-        node.semantic.declarationLine = resolution.symbol.line;
-      } else {
-        node.semantic.resolved = false;
-      }
-    } else {
-      this.visit(node.target);
-      node.semantic.resolved = false;
+    if (!this.isAssignmentTarget(node.target)) {
       this.addError(
         node,
         "Invalid assignment target.",
-        "Only identifiers can be assigned to in this alpha compiler."
+        "Assign to an identifier, member, or index target."
+      );
+      this.visit(node.target);
+      this.visit(node.value);
+      node.semantic.resolved = false;
+      return;
+    }
+
+    const targetResolution = this.visitAssignmentTarget(node.target);
+
+    if (targetResolution && !targetResolution.symbol.mutable) {
+      this.addError(
+        node.target,
+        `Cannot reassign constant "${node.target.name}".`,
+        `Use "dhori" instead of "sthir" if "${node.target.name}" needs to change.`
       );
     }
 
+    if (targetResolution) {
+      node.semantic.resolved = true;
+      node.semantic.targetKind = targetResolution.symbol.kind;
+      node.semantic.targetMutable = targetResolution.symbol.mutable;
+      node.semantic.declarationLine = targetResolution.symbol.line;
+    } else {
+      node.semantic.resolved = node.target?.type === "MemberExpression";
+    }
+
     this.visit(node.value);
+  }
+
+  visitAssignmentTarget(node) {
+    if (node?.type === "Identifier") {
+      return this.resolveIdentifier(node, {
+        assignmentTarget: true,
+      });
+    }
+
+    if (node?.type === "MemberExpression") {
+      this.visitMemberExpression(node);
+    }
+
+    return null;
   }
 
   visitWhileStatement(node) {
@@ -240,6 +260,30 @@ export class SemanticAnalyzer {
 
     for (const argument of node.arguments || []) {
       this.visit(argument);
+    }
+  }
+
+  visitMemberExpression(node) {
+    this.markChecked(node);
+    this.visit(node.object);
+
+    if (node.computed) {
+      this.visit(node.property);
+    }
+  }
+
+  visitArrayLiteral(node) {
+    this.markChecked(node);
+    for (const element of node.elements || []) {
+      this.visit(element);
+    }
+  }
+
+  visitObjectLiteral(node) {
+    this.markChecked(node);
+    for (const property of node.properties || []) {
+      this.markChecked(property);
+      this.visit(property.value);
     }
   }
 
@@ -430,6 +474,10 @@ export class SemanticAnalyzer {
         checked: true,
       };
     }
+  }
+
+  isAssignmentTarget(node) {
+    return node?.type === "Identifier" || node?.type === "MemberExpression";
   }
 
   addError(node, message, suggestion) {
