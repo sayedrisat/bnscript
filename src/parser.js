@@ -41,7 +41,6 @@ const EXPRESSION_STARTS = new Set([
 
 const UNSUPPORTED_STATEMENTS = new Map([
   [TOKENS.BAR, '"bar" loops are not supported in this alpha compiler.'],
-  [TOKENS.JOTOKKHON, '"jotokkhon" loops are not supported in this alpha compiler.'],
   [TOKENS.NAO, '"nao" imports are not supported in this alpha compiler.'],
   [TOKENS.DAO, '"dao" exports are not supported in this alpha compiler.'],
   [TOKENS.BEKKHON, '"bekkhon" break statements are not supported in this alpha compiler.'],
@@ -115,6 +114,8 @@ export class Parser {
         return this.parsePrintStatement();
       case TOKENS.JODI:
         return this.parseIfStatement();
+      case TOKENS.JOTOKKHON:
+        return this.parseWhileStatement();
       case TOKENS.KAJ:
         return this.parseFunctionDeclaration();
       case TOKENS.FEROT:
@@ -271,6 +272,20 @@ export class Parser {
     );
   }
 
+  parseWhileStatement() {
+    const startToken = this.consume(TOKENS.JOTOKKHON);
+    const condition = this.parseExpression('Expected condition after "jotokkhon".');
+    const body = this.parseRequiredBlock('"jotokkhon" loop');
+    const newlinesAfterBlock = this.skipNewlines();
+    this.ensureCompoundStatementBoundary(newlinesAfterBlock);
+
+    return AST.WhileStatement(
+      condition,
+      body,
+      this.locationFrom(startToken, body)
+    );
+  }
+
   parseFunctionDeclaration() {
     const startToken = this.consume(TOKENS.KAJ);
     const nameToken = this.consume(
@@ -385,7 +400,43 @@ export class Parser {
     if (this.isExpressionBoundary(this.peek())) {
       this.raise(this.peek(), message, "Add an expression before the statement ends.");
     }
-    return this.parseBinaryExpression(1);
+    return this.parseAssignmentExpression();
+  }
+
+  parseAssignmentExpression() {
+    const target = this.parseBinaryExpression(1);
+
+    if (!this.match(...ASSIGNMENT_OPERATORS)) {
+      return target;
+    }
+
+    const operatorToken = this.previous();
+
+    if (target.type !== "Identifier") {
+      this.raise(
+        operatorToken,
+        "Invalid assignment target.",
+        "Only identifiers can be assigned to in this alpha compiler."
+      );
+    }
+
+    this.skipNewlines();
+
+    if (this.isExpressionBoundary(this.peek())) {
+      this.raise(
+        this.peek(),
+        `Expected expression after assignment operator "${operatorToken.value}".`,
+        "Add the value to assign on the right-hand side."
+      );
+    }
+
+    const value = this.parseAssignmentExpression();
+    return AST.AssignmentExpression(
+      operatorToken.value,
+      target,
+      value,
+      this.locationFrom(target, value)
+    );
   }
 
   parseBinaryExpression(minPrecedence) {
@@ -603,8 +654,8 @@ export class Parser {
     if (ASSIGNMENT_OPERATORS.has(token.type)) {
       this.raise(
         token,
-        "Assignment expressions are not supported in this alpha compiler.",
-        "Use declaration syntax like: dhori name = value"
+        `Unexpected assignment operator "${token.value}".`,
+        "Place the assignment target before the operator, like: count = count + 1"
       );
     }
 

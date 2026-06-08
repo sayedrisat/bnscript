@@ -128,6 +128,82 @@ let opposite = !true;`)
   );
 });
 
+test("generator: simple assignment output", () => {
+  const output = compileSource(`dhori count = 0
+count = count + 1`);
+
+  assert.strictEqual(
+    output,
+    expected(`let count = 0;
+count = count + 1;`)
+  );
+});
+
+test("generator: compound assignment output", () => {
+  const output = compileSource(`dhori count = 10
+count += 5
+count -= 2
+count *= 3
+count /= 2`);
+
+  assert.strictEqual(
+    output,
+    expected(`let count = 10;
+count += 5;
+count -= 2;
+count *= 3;
+count /= 2;`)
+  );
+});
+
+test("generator: complete assignment program", () => {
+  const output = compileSource(`dhori count = 0
+count = count + 1
+count += 4
+dekhi count`);
+
+  assert.strictEqual(
+    output,
+    expected(`let count = 0;
+count = count + 1;
+count += 4;
+console.log(count);`)
+  );
+});
+
+test("generator: while loop output", () => {
+  const output = compileSource(`dhori i = 0
+jotokkhon i < 3 {
+  dekhi i
+}`);
+
+  assert.strictEqual(
+    output,
+    expected(`let i = 0;
+while (i < 3) {
+  console.log(i);
+}`)
+  );
+});
+
+test("generator: complete while counter program", () => {
+  const output = compileSource(`dhori i = 0
+
+jotokkhon i < 3 {
+  dekhi i
+  i = i + 1
+}`);
+
+  assert.strictEqual(
+    output,
+    expected(`let i = 0;
+while (i < 3) {
+  console.log(i);
+  i = i + 1;
+}`)
+  );
+});
+
 test("generator: function declaration output", () => {
   const output = compileSource(`kaj greet(name) {
   dekhi name

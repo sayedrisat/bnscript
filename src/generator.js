@@ -93,6 +93,8 @@ export class Generator {
         return this.emitter.emitLine(`${this.generateExpression(node.expression)};`);
       case "IfStatement":
         return this.emitIfStatement(node);
+      case "WhileStatement":
+        return this.emitWhileStatement(node);
       case "BlockStatement":
       case "Block":
         return this.emitBlockStatement(node);
@@ -132,6 +134,12 @@ export class Generator {
       this.emitBlockBody(node.elseBlock);
     }
 
+    this.emitter.emitLine("}");
+  }
+
+  emitWhileStatement(node) {
+    this.emitter.emitLine(`while (${this.generateExpression(node.condition)}) {`);
+    this.emitBlockBody(node.body);
     this.emitter.emitLine("}");
   }
 
@@ -183,11 +191,18 @@ export class Generator {
         return this.generateUnaryExpression(node);
       case "BinaryExpression":
         return this.generateBinaryExpression(node);
+      case "Assignment":
+      case "AssignmentExpression":
+        return this.generateAssignmentExpression(node);
       case "CallExpression":
         return this.generateCallExpression(node);
       default:
         return this.unsupported(node);
     }
+  }
+
+  generateAssignmentExpression(node) {
+    return `${this.generateExpression(node.target)} ${node.operator} ${this.generateExpression(node.value)}`;
   }
 
   generateCallExpression(node) {
@@ -223,6 +238,10 @@ export class Generator {
       return `(${this.generateExpression(node)})`;
     }
 
+    if (node?.type === "AssignmentExpression" || node?.type === "Assignment") {
+      return `(${this.generateExpression(node)})`;
+    }
+
     if (node?.type === "UnaryExpression") {
       return `(${this.generateExpression(node)})`;
     }
@@ -248,6 +267,10 @@ export class Generator {
       return parent.operator === "**" && side === "left"
         ? `(${childExpression})`
         : childExpression;
+    }
+
+    if (child?.type === "AssignmentExpression" || child?.type === "Assignment") {
+      return `(${childExpression})`;
     }
 
     if (child?.type !== "BinaryExpression") {

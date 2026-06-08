@@ -239,6 +239,96 @@ test("parser: nested function body", () => {
   assert.strictEqual(statement.body.body[1].value.type, "CallExpression");
 });
 
+test("parser: simple assignment", () => {
+  const expression = firstStatement("count = count + 1").expression;
+
+  assert.strictEqual(expression.type, "AssignmentExpression");
+  assert.strictEqual(expression.operator, "=");
+  assert.strictEqual(expression.target.type, "Identifier");
+  assert.strictEqual(expression.target.name, "count");
+  assert.strictEqual(expression.value.type, "BinaryExpression");
+  assert.strictEqual(expression.value.operator, "+");
+});
+
+test("parser: compound assignments", () => {
+  for (const operator of ["+=", "-=", "*=", "/="]) {
+    const expression = firstStatement(`count ${operator} 2`).expression;
+
+    assert.strictEqual(expression.type, "AssignmentExpression");
+    assert.strictEqual(expression.operator, operator);
+    assert.strictEqual(expression.target.name, "count");
+    assert.strictEqual(expression.value.value, 2);
+  }
+});
+
+test("parser: assignment precedence", () => {
+  const expression = firstStatement("count = count + 1 * 2").expression;
+
+  assert.strictEqual(expression.type, "AssignmentExpression");
+  assert.strictEqual(expression.value.operator, "+");
+  assert.strictEqual(expression.value.left.name, "count");
+  assert.strictEqual(expression.value.right.operator, "*");
+});
+
+test("parser: invalid assignment target", () => {
+  assert.throws(
+    () => firstStatement("5 = x"),
+    (err) =>
+      err.name === "BNError" &&
+      err.category === "ParseError" &&
+      err.message.includes("Invalid assignment target")
+  );
+
+  assert.throws(
+    () => firstStatement('"hello" = x'),
+    (err) =>
+      err.name === "BNError" &&
+      err.category === "ParseError" &&
+      err.message.includes("Invalid assignment target")
+  );
+
+  assert.throws(
+    () => firstStatement("greet() = x"),
+    (err) =>
+      err.name === "BNError" &&
+      err.category === "ParseError" &&
+      err.message.includes("Invalid assignment target")
+  );
+});
+
+test("parser: while loop parses", () => {
+  const statement = firstStatement(`jotokkhon i < 5 {
+  dekhi i
+}`);
+
+  assert.strictEqual(statement.type, "WhileStatement");
+  assert.strictEqual(statement.condition.type, "BinaryExpression");
+  assert.strictEqual(statement.condition.operator, "<");
+  assert.strictEqual(statement.body.type, "BlockStatement");
+});
+
+test("parser: while loop body parses", () => {
+  const statement = firstStatement(`jotokkhon i < 3 {
+  dekhi i
+  i = i + 1
+}`);
+
+  assert.strictEqual(statement.body.body.length, 2);
+  assert.strictEqual(statement.body.body[0].type, "PrintStatement");
+  assert.strictEqual(statement.body.body[1].type, "ExpressionStatement");
+  assert.strictEqual(statement.body.body[1].expression.type, "AssignmentExpression");
+});
+
+test("parser: missing while block", () => {
+  assert.throws(
+    () => parseSource("jotokkhon i < 5"),
+    (err) =>
+      err.name === "BNError" &&
+      err.category === "ParseError" &&
+      err.message.includes('Expected "{" to start "jotokkhon" loop block')
+  );
+});
+
 test("parser: nested block", () => {
   const statement = firstStatement(`{
   {

@@ -46,6 +46,10 @@ export function IfStatement(
   );
 }
 
+export function WhileStatement(condition, body, location = {}) {
+  return node("WhileStatement", { condition, body }, location);
+}
+
 export function BlockStatement(body, location = {}) {
   return node("BlockStatement", { body }, location);
 }
@@ -102,6 +106,10 @@ export function BinaryExpression(operator, left, right, location = {}) {
   return node("BinaryExpression", { operator, left, right }, location);
 }
 
+export function AssignmentExpression(operator, target, value, location = {}) {
+  return node("AssignmentExpression", { operator, target, value }, location);
+}
+
 export function CallExpression(callee, args, location = {}) {
   return node("CallExpression", { callee, arguments: args }, location);
 }
@@ -112,6 +120,7 @@ export default {
   ConstDeclaration,
   PrintStatement,
   IfStatement,
+  WhileStatement,
   BlockStatement,
   FunctionDeclaration,
   Parameter,
@@ -124,5 +133,6 @@ export default {
   NullLiteral,
   UnaryExpression,
   BinaryExpression,
+  AssignmentExpression,
   CallExpression,
 };

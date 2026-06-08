@@ -1,10 +1,11 @@
 # BN Script Language Specification v0.1
 
 > Public alpha note: this document describes the intended BN Script language design.
-> The v0.1.0 alpha implementation currently supports declarations, printing,
-> conditionals, function declarations, return statements, function calls, blocks,
-> primitive literals, identifiers, grouped expressions, unary expressions, and
-> binary expressions. Planned sections such as loops, modules, async/await,
+> The v0.1.0 alpha implementation currently supports declarations, assignment
+> expressions, printing, conditionals, `jotokkhon` while loops, function
+> declarations, return statements, function calls, blocks, primitive literals,
+> identifiers, grouped expressions, unary expressions, and binary expressions.
+> Planned sections such as counted loops, for-each loops, modules, async/await,
 > arrays, objects, file helpers, HTTP, and AI helpers are design targets, not
 > fully compiled features yet.
 
@@ -216,10 +217,27 @@ const API_URL = "https://api.example.com";
 
 ### 6.3 Assignment
 
+The current alpha supports identifier assignment targets only.
+
 ```
 dhori x = 10
 x = 20              // reassignment
 x = x + 5           // compound expression
+x += 1              // add and assign
+x -= 1              // subtract and assign
+x *= 2              // multiply and assign
+x /= 2              // divide and assign
+```
+
+Compiles to:
+```javascript
+let x = 10;
+x = 20;
+x = x + 5;
+x += 1;
+x -= 1;
+x *= 2;
+x /= 2;
 ```
 
 ### 6.4 Identifier Rules
@@ -323,6 +341,8 @@ jodi score >= 90 {
 
 ### 8.2 While Loop
 
+The current alpha supports `jotokkhon` while loops.
+
 ```
 dhori count = 0
 jotokkhon count < 10 {
@@ -332,6 +352,9 @@ jotokkhon count < 10 {
 ```
 
 ### 8.3 Counted Loop
+
+Counted `bar` loops are part of the language design but are not implemented in
+the current alpha compiler.
 
 The `bar` keyword provides a simple repeat-N-times loop:
 
@@ -357,6 +380,9 @@ for (let i = 0; i < 10; i++) {
 ```
 
 ### 8.4 For-Each Loop (over arrays)
+
+For-each loops are part of the language design but are not implemented in the
+current alpha compiler.
 
 ```
 dhori fruits = ["apple", "banana", "mango"]
@@ -685,6 +711,8 @@ These are available without imports:
 |--------------------|-----------------------------|
 | `dhori x = 5`     | `let x = 5;`               |
 | `sthir X = 5`     | `const X = 5;`             |
+| `x = x + 1`       | `x = x + 1;`              |
+| `x += 1`          | `x += 1;`                 |
 | `dekhi x`         | `console.log(x);`          |
 | `jodi x > 0 { }` | `if (x > 0) { }`          |
 | `nahole { }`      | `else { }`                 |
@@ -868,8 +896,8 @@ jodi na success {
 
 | Version | Features                                              |
 |---------|-------------------------------------------------------|
-| v0.1    | Variables, constants, print, if/else, functions, calls, basic expressions |
-| v0.2    | Assignments, loops, arrays, objects, member access |
+| v0.1    | Variables, constants, assignments, print, if/else, while loops, functions, calls, basic expressions |
+| v0.2    | Counted loops, for-each loops, arrays, objects, member access |
 | v0.3    | HTTP requests, file operations, async/await, error handling |
 | v0.4    | AI integration, modules (import/export), JSON operations |
 | v0.5    | Standard library expansion, package manager integration, REPL, debugging support |

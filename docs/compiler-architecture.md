@@ -2,8 +2,10 @@
 
 > Public alpha note: this architecture describes the full intended compiler
 > shape. The v0.1.0 alpha implements the core pipeline and a deliberately small
-> language subset. Some sections describe future parser, generator, and runtime
-> behavior that is not available yet.
+> language subset including declarations, assignments, printing, conditionals,
+> `jotokkhon` while loops, functions, calls, blocks, and primitive expressions.
+> Some sections describe future parser, generator, and runtime behavior that is
+> not available yet.
 
 > **Status:** Draft — Architecture Design Phase
 > **Implementation Language:** JavaScript (Node.js)
@@ -344,12 +346,12 @@ This allows the compiler to report multiple errors in a single run instead of st
 }
 ```
 
-#### Assignment
+#### Assignment Expression
 ```javascript
 // x = 20  or  x += 5
 {
-    type: "Assignment",
-    target: Expression,         // Left-hand side (identifier or member expression)
+    type: "AssignmentExpression",
+    target: Identifier,         // Current alpha supports identifier targets only
     operator: "=",              // "=", "+=", "-=", "*=", "/="
     value: Expression,          // Right-hand side
     line: 1, column: 1
@@ -745,6 +747,15 @@ Every generated `.js` file begins with:
 ```
 dhori x = 10          →  let x = 10;
 sthir PI = 3.14       →  const PI = 3.14;
+```
+
+#### Assignment Expressions
+```
+x = x + 1             ->  x = x + 1;
+x += 5                ->  x += 5;
+x -= 2                ->  x -= 2;
+x *= 3                ->  x *= 3;
+x /= 2                ->  x /= 2;
 ```
 
 #### Print

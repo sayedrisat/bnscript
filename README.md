@@ -21,8 +21,10 @@ It combines a real compiler architecture with a beginner-friendly syntax inspire
 ✅ JavaScript Generator
 ✅ Runtime System
 ✅ CLI Tool
+✅ Assignment Expressions
+✅ While Loops
 ✅ Function Support
-✅ 103+ Automated Tests
+✅ 125+ Automated Tests
 
 ---
 
@@ -132,6 +134,25 @@ jodi score >= 90 {
 }
 ```
 
+### Assignment
+
+```bn
+dhori count = 0
+count = count + 1
+count += 4
+```
+
+### While Loops
+
+```bn
+dhori i = 0
+
+jotokkhon i < 3 {
+  dekhi i
+  i = i + 1
+}
+```
+
 ### Functions
 
 ```bn
@@ -232,45 +253,27 @@ bn run file.bn
 
 ## 📚 Supported In Alpha
 
-### Declarations
-
-* `dhori`
-* `sthir`
-
-### Output
-
-* `dekhi`
-
-### Conditions
-
-* `jodi`
-* `nahole`
-
-### Functions
-
-* `kaj`
-* `ferot`
-* Parameters
-* Function Calls
-
-### Expressions
-
-* Identifiers
-* Number Literals
-* String Literals
-* Boolean Literals
-* Null Literals
-* Unary Operators
-* Binary Operators
-* Parenthesized Expressions
-
-### Values
-
-```bn
-sotti
-mittha
-khali
-```
+- `dhori` variable declarations
+- `sthir` constant declarations
+- `dekhi` print statements
+- `jodi` and `nahole` conditionals
+- `jotokkhon` while loops
+- Assignment expressions
+- Variable reassignment
+- Compound assignment: `+=`, `-=`, `*=`, `/=`
+- `kaj` function declarations
+- `ferot` return statements inside functions
+- Function parameters
+- Function calls
+- Block statements
+- Expression statements
+- Identifiers
+- Number, string, boolean, and null literals
+- Booleans: `sotti`, `mittha`
+- Null: `khali`
+- Unary operators: `na`, `-`
+- Binary operators: `+`, `-`, `*`, `/`, `%`, `**`, `==`, `!=`, `>`, `<`, `>=`, `<=`, `ebong`, `othoba`
+- Grouped expressions with parentheses
 
 ---
 
@@ -278,12 +281,13 @@ khali
 
 Not implemented yet:
 
-* Assignment Expressions
-* While Loops
-* For Loops
+* Counted `bar` Loops
+* For-Each Loops
 * Arrays
 * Objects
 * Imports / Exports
+* Member Access
+* Indexing
 * Async / Await
 * AI Runtime Helpers
 * Package Manager
@@ -299,24 +303,24 @@ This project is currently in Alpha and focused on compiler stability.
 
 ### v0.2
 
-* Assignment Expressions
-* Variable Reassignment
-* Compound Assignment Operators
+* Counted Loops
+* For-Each Loops
+* Member Access
 
 ### v0.3
-
-* While Loops
-* For Loops
-
-### v0.4
 
 * Arrays
 * Objects
 
-### v0.5
+### v0.4
 
 * Imports / Exports
 * Modules
+
+### v0.5
+
+* Async / Await
+* File/API Automation Helpers
 
 ### Future
 
@@ -340,7 +344,7 @@ Current test coverage includes:
 * CLI Tests
 * Integration Tests
 
-**103+ tests passing**
+**125+ tests passing**
 
 ---
 

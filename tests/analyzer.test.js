@@ -95,13 +95,12 @@ dhori name = "Risat"`),
 });
 
 test("analyzer: const reassignment", () => {
-  const assignment = {
-    type: "Assignment",
-    target: AST.Identifier("API_URL", loc(2)),
-    operator: "=",
-    value: AST.StringLiteral("https://two.example", loc(2, 11)),
-    ...loc(2),
-  };
+  const assignment = AST.AssignmentExpression(
+    "=",
+    AST.Identifier("API_URL", loc(2)),
+    AST.StringLiteral("https://two.example", loc(2, 11)),
+    loc(2)
+  );
   const ast = AST.Program(
     [
       AST.ConstDeclaration(
@@ -136,6 +135,96 @@ dekhi value`);
   assert.strictEqual(ast.body[1].body[0].semantic.declared, true);
   assert.strictEqual(innerIdentifier.semantic.scopeDepth, 0);
   assert.strictEqual(outerIdentifier.semantic.scopeDepth, 0);
+});
+
+test("analyzer: valid assignment to dhori", () => {
+  const ast = analyzeSource(`dhori count = 0
+count = count + 1`);
+
+  const assignment = ast.body[1].expression;
+
+  assert.strictEqual(assignment.type, "AssignmentExpression");
+  assert.strictEqual(assignment.semantic.resolved, true);
+  assert.strictEqual(assignment.semantic.targetMutable, true);
+  assert.strictEqual(assignment.target.semantic.symbolKind, "variable");
+});
+
+test("analyzer: assignment to undeclared variable", () => {
+  semanticError(
+    () => analyzeSource("count = 1"),
+    'Use before declaration: "count"'
+  );
+});
+
+test("analyzer: assignment to sthir", () => {
+  semanticError(
+    () =>
+      analyzeSource(`sthir limit = 10
+limit = 11`),
+    'Cannot reassign constant "limit"'
+  );
+});
+
+test("analyzer: assignment reads previous value", () => {
+  const ast = analyzeSource(`dhori count = 1
+count = count + 1`);
+
+  const previousValue = ast.body[1].expression.value.left;
+
+  assert.strictEqual(previousValue.type, "Identifier");
+  assert.strictEqual(previousValue.semantic.resolved, true);
+  assert.strictEqual(previousValue.semantic.symbolKind, "variable");
+});
+
+test("analyzer: valid while loop", () => {
+  const ast = analyzeSource(`dhori i = 0
+jotokkhon i < 3 {
+  dekhi i
+  i = i + 1
+}`);
+
+  const statement = ast.body[1];
+
+  assert.strictEqual(statement.type, "WhileStatement");
+  assert.strictEqual(statement.semantic.isLoop, true);
+  assert.strictEqual(statement.body.semantic.scopeType, "block");
+});
+
+test("analyzer: while loop resolves outer variable", () => {
+  const ast = analyzeSource(`dhori i = 0
+jotokkhon i < 3 {
+  dekhi i
+}`);
+
+  const conditionIdentifier = ast.body[1].condition.left;
+  const bodyIdentifier = ast.body[1].body.body[0].arguments[0];
+
+  assert.strictEqual(conditionIdentifier.semantic.resolved, true);
+  assert.strictEqual(conditionIdentifier.semantic.scopeDepth, 0);
+  assert.strictEqual(bodyIdentifier.semantic.resolved, true);
+  assert.strictEqual(bodyIdentifier.semantic.scopeDepth, 1);
+});
+
+test("analyzer: assignment inside while works", () => {
+  const ast = analyzeSource(`dhori i = 0
+jotokkhon i < 3 {
+  i = i + 1
+}`);
+
+  const assignment = ast.body[1].body.body[0].expression;
+
+  assert.strictEqual(assignment.type, "AssignmentExpression");
+  assert.strictEqual(assignment.semantic.resolved, true);
+});
+
+test("analyzer: undeclared condition variable", () => {
+  semanticError(
+    () =>
+      analyzeSource(`jotokkhon missing < 3 {
+  dekhi "never"
+}`),
+    'Use before declaration: "missing"'
+  );
 });
 
 test("analyzer: valid function declaration", () => {

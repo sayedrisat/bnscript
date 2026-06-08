@@ -62,7 +62,8 @@ export class SemanticAnalyzer {
       case "ExpressionStatement":
         return this.visit(node.expression);
       case "Assignment":
-        return this.visitAssignment(node);
+      case "AssignmentExpression":
+        return this.visitAssignmentExpression(node);
       case "Identifier":
         return this.resolveIdentifier(node);
       case "UnaryExpression":
@@ -80,10 +81,7 @@ export class SemanticAnalyzer {
       case "ContinueStatement":
         return this.visitContinueStatement(node);
       case "WhileStatement":
-        return this.visitLoop(node, () => {
-          this.visit(node.condition);
-          this.visit(node.body);
-        });
+        return this.visitWhileStatement(node);
       case "ForLoop":
         return this.visitForLoop(node);
       case "ForEachLoop":
@@ -173,7 +171,11 @@ export class SemanticAnalyzer {
     this.visit(node.elseBlock);
   }
 
-  visitAssignment(node) {
+  visitAssignmentExpression(node) {
+    node.semantic.kind = "assignment";
+    node.semantic.operator = node.operator;
+    node.semantic.scopeType = this.currentScope.type;
+
     if (node.target?.type === "Identifier") {
       const resolution = this.resolveIdentifier(node.target, {
         assignmentTarget: true,
@@ -186,11 +188,39 @@ export class SemanticAnalyzer {
           `Use "dhori" instead of "sthir" if "${node.target.name}" needs to change.`
         );
       }
+
+      if (resolution) {
+        node.semantic.resolved = true;
+        node.semantic.targetKind = resolution.symbol.kind;
+        node.semantic.targetMutable = resolution.symbol.mutable;
+        node.semantic.declarationLine = resolution.symbol.line;
+      } else {
+        node.semantic.resolved = false;
+      }
     } else {
       this.visit(node.target);
+      node.semantic.resolved = false;
+      this.addError(
+        node,
+        "Invalid assignment target.",
+        "Only identifiers can be assigned to in this alpha compiler."
+      );
     }
 
     this.visit(node.value);
+  }
+
+  visitWhileStatement(node) {
+    this.visit(node.condition);
+
+    this.loopDepth += 1;
+    try {
+      this.visit(node.body);
+    } finally {
+      this.loopDepth -= 1;
+    }
+
+    node.semantic.isLoop = true;
   }
 
   visitReturnStatement(node) {

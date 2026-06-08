@@ -18,3 +18,5 @@ node src/cli.js run examples/hello.bn
 | `if.bn` | Conditional control flow with `jodi` and `nahole` |
 | `logic.bn` | Arithmetic, comparison, and logical expressions |
 | `functions.bn` | Function declarations, returns, parameters, and calls |
+| `assignments.bn` | Variable reassignment and compound assignment |
+| `while.bn` | While loops with `jotokkhon` |

@@ -1,0 +1,6 @@
+dhori i = 0
+
+jotokkhon i < 3 {
+  dekhi i
+  i = i + 1
+}

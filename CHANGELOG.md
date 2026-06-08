@@ -1,5 +1,57 @@
 # Changelog
 
+## Day 5 - 2026-06-08 (Assignments Stage 8 and While Stage 9)
+
+### Completed: Assignment Expressions and While Loops
+- Added parser support for `AssignmentExpression` with `=`, `+=`, `-=`, `*=`, and `/=`.
+- Added parser support for `jotokkhon` while loops.
+- Added AST factories for `AssignmentExpression` and `WhileStatement`.
+- Added semantic analysis for assignment targets, mutable variable reassignment, constant reassignment errors, undeclared assignment targets, and while-loop body analysis.
+- Added JavaScript generation for assignment expressions and `while` statements.
+- Added assignments and while examples plus integration fixtures.
+- Updated public documentation and local alpha release notes for Stage 8 and Stage 9.
+
+### Tests Added
+- Parser coverage for simple assignment, compound assignment, assignment precedence, invalid assignment targets, while loop parsing, while loop bodies, and missing while blocks.
+- Analyzer coverage for assignment to `dhori`, assignment to undeclared variables, assignment to `sthir`, reading previous values, valid while loops, outer variable resolution, assignment inside while, and undeclared condition variables.
+- Generator coverage for simple assignments, compound assignments, complete assignment programs, while output, and complete while counter programs.
+- Integration coverage for `tests/integration/assignments.bn` and `tests/integration/while.bn`.
+
+### Files Changed
+- `src/ast.js`
+- `src/parser.js`
+- `src/analyzer.js`
+- `src/generator.js`
+- `tests/parser.test.js`
+- `tests/analyzer.test.js`
+- `tests/generator.test.js`
+- `tests/stage8-9.integration.test.js`
+- `tests/integration/assignments.bn`
+- `tests/integration/while.bn`
+- `examples/assignments.bn`
+- `examples/while.bn`
+- `examples/README.md`
+- `README.md`
+- `docs/getting-started.md`
+- `docs/language-spec.md`
+- `docs/compiler-architecture.md`
+- `RELEASE_NOTES_v0.1.0_ALPHA.md`
+- `CHANGELOG.md`
+
+### Known Issues
+- Counted `bar` loops, for-each loops, arrays, objects, imports/exports, async/await, member access, indexing, default parameters, function expressions, and package publishing remain unimplemented.
+- Assignment targets are limited to identifiers in this alpha compiler.
+
+### Test Result
+- `npm.cmd test` passed 125 tests.
+- `node src/cli.js run examples/assignments.bn` printed `5`.
+- `node src/cli.js run examples/while.bn` printed `0`, `1`, `2`.
+
+### Recommended Next Task
+- Stage 8/9 Assignments and While Review
+
+---
+
 ## Day 4 - 2026-06-05 (Functions Stage 7)
 
 ### Completed: Function Support
