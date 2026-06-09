@@ -2,11 +2,12 @@
 
 > Public alpha note: this document describes the intended BN Script language design.
 > The v0.1.0 alpha implementation currently supports declarations, assignment
-> expressions, printing, conditionals, `jotokkhon` while loops, function
-> declarations, return statements, function calls, blocks, primitive literals,
-> array literals, object literals, member access, index access, identifiers,
-> grouped expressions, unary expressions, and binary expressions.
-> Planned sections such as counted loops, for-each loops, modules, async/await,
+> expressions, printing, conditionals, `jotokkhon` while loops, range `bar`
+> loops, for-each `bar` loops, function declarations, return statements,
+> function calls, blocks, primitive literals, array literals, object literals,
+> member access, index access, identifiers, grouped expressions, unary
+> expressions, and binary expressions.
+> Planned sections such as simple repeat loops, modules, async/await,
 > file helpers, HTTP, and AI helpers are design targets, not fully compiled
 > features yet.
 
@@ -113,7 +114,7 @@ BN Script uses Bangla-transliterated keywords that map to clear programming conc
 | `dekhi`     | print / log            | `console.log()`             |
 | `jodi`      | if                     | `if`                        |
 | `nahole`    | else                   | `else`                      |
-| `bar`       | loop (times)           | `for`                       |
+| `bar`       | loop                   | `for` / `for...of`          |
 | `jotokkhon` | while                  | `while`                     |
 | `kaj`       | function               | `function`                  |
 | `ferot`     | return                 | `return`                    |
@@ -121,7 +122,7 @@ BN Script uses Bangla-transliterated keywords that map to clear programming conc
 | `mittha`    | false                  | `false`                     |
 | `khali`     | null                   | `null`                      |
 | `nao`       | import                 | `import`                    |
-| `theke`     | from (in imports)      | `from`                      |
+| `theke`     | range separator / from | `for` range / `from`        |
 | `dao`       | export                 | `export`                    |
 | `bekkhon`   | break                  | `break`                     |
 | `cholo`     | continue               | `continue`                  |
@@ -359,20 +360,9 @@ jotokkhon count < 10 {
 }
 ```
 
-### 8.3 Counted Loop
+### 8.3 Range For Loop
 
-Counted `bar` loops are part of the language design but are not implemented in
-the current alpha compiler.
-
-The `bar` keyword provides a simple repeat-N-times loop:
-
-```
-bar 5 {
-    dekhi "Hello!"
-}
-```
-
-With an iterator variable:
+The current alpha supports range `bar` loops with an iterator variable:
 
 ```
 bar i = 0 theke 10 {
@@ -387,10 +377,14 @@ for (let i = 0; i < 10; i++) {
 }
 ```
 
+The end expression is exclusive, matching the generated JavaScript comparison
+`i < end`. Simple repeat loops such as `bar 5 { ... }` remain future work.
+
 ### 8.4 For-Each Loop (over arrays)
 
-For-each loops are part of the language design but are not implemented in the
-current alpha compiler.
+The current alpha supports for-each loops over iterable expressions. The
+iterable can be an identifier, member access, index access, or function call
+result.
 
 ```
 dhori fruits = ["apple", "banana", "mango"]
@@ -728,7 +722,8 @@ These are available without imports:
 | `dekhi x`         | `console.log(x);`          |
 | `jodi x > 0 { }` | `if (x > 0) { }`          |
 | `nahole { }`      | `else { }`                 |
-| `bar 5 { }`       | `for (let i=0;i<5;i++) {}` |
+| `bar i = 0 theke 5 { }` | `for (let i = 0; i < 5; i++) { }` |
+| `bar item ekti a { }` | `for (const item of a) { }` |
 | `jotokkhon c { }` | `while (c) { }`           |
 | `kaj f(x) { }`    | `function f(x) { }`       |
 | `ferot x`          | `return x;`               |
@@ -771,7 +766,7 @@ ConstDeclaration= "sthir" IDENTIFIER "=" Expression
 PrintStatement  = "dekhi" ExpressionList
 IfStatement     = "jodi" Expression Block ("nahole" "jodi" Expression Block)* ("nahole" Block)?
 WhileStatement  = "jotokkhon" Expression Block
-ForLoop         = "bar" (Expression | IDENTIFIER "=" Expression "theke" Expression) Block
+ForLoop         = "bar" IDENTIFIER "=" Expression "theke" Expression Block
 ForEachLoop     = "bar" IDENTIFIER "ekti" Expression Block
 FunctionDecl    = "async"? "kaj" IDENTIFIER "(" ParamList? ")" Block
 ReturnStatement = "ferot" Expression?
@@ -908,10 +903,10 @@ jodi na success {
 
 | Version | Features                                              |
 |---------|-------------------------------------------------------|
-| v0.1    | Variables, constants, assignments, print, if/else, while loops, functions, calls, arrays, objects, member/index access, basic expressions |
-| v0.2    | Counted loops and for-each loops |
+| v0.1    | Variables, constants, assignments, print, if/else, while loops, range loops, for-each loops, functions, calls, arrays, objects, member/index access, basic expressions |
+| v0.2    | Modules (import/export), richer diagnostics, simple repeat loops |
 | v0.3    | HTTP requests, file operations, async/await, error handling |
-| v0.4    | AI integration, modules (import/export), JSON operations |
+| v0.4    | AI integration and JSON operations |
 | v0.5    | Standard library expansion, package manager integration, REPL, debugging support |
 | v1.0    | Stable release, full documentation, editor plugins    |
 

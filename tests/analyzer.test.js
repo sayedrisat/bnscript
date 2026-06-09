@@ -227,6 +227,83 @@ test("analyzer: undeclared condition variable", () => {
   );
 });
 
+test("analyzer: range loop scope", () => {
+  const ast = analyzeSource(`bar i = 0 theke 3 {
+  dekhi i
+}`);
+
+  const loop = ast.body[0];
+  const iteratorUse = loop.body.body[0].arguments[0];
+
+  assert.strictEqual(loop.type, "ForLoop");
+  assert.strictEqual(loop.semantic.isLoop, true);
+  assert.strictEqual(loop.semantic.variant, "range");
+  assert.strictEqual(iteratorUse.semantic.resolved, true);
+  assert.strictEqual(iteratorUse.semantic.symbolKind, "variable");
+  assert.strictEqual(iteratorUse.semantic.scopeDepth, 1);
+});
+
+test("analyzer: nested range loop iterators resolve", () => {
+  const ast = analyzeSource(`bar i = 0 theke 2 {
+  bar j = 0 theke 2 {
+    dekhi i
+    dekhi j
+  }
+}`);
+
+  const innerLoop = ast.body[0].body.body[0];
+  const outerIteratorUse = innerLoop.body.body[0].arguments[0];
+  const innerIteratorUse = innerLoop.body.body[1].arguments[0];
+
+  assert.strictEqual(innerLoop.type, "ForLoop");
+  assert.strictEqual(outerIteratorUse.semantic.resolved, true);
+  assert.strictEqual(innerIteratorUse.semantic.resolved, true);
+  assert.ok(outerIteratorUse.semantic.scopeDepth > innerIteratorUse.semantic.scopeDepth);
+});
+
+test("analyzer: foreach iterable resolution", () => {
+  const ast = analyzeSource(`dhori names = ["Risat"]
+bar item ekti names {
+  dekhi item
+}`);
+
+  const loop = ast.body[1];
+  const iteratorUse = loop.body.body[0].arguments[0];
+
+  assert.strictEqual(loop.type, "ForEachLoop");
+  assert.strictEqual(loop.semantic.isLoop, true);
+  assert.strictEqual(loop.iterable.semantic.resolved, true);
+  assert.strictEqual(loop.iterable.semantic.symbolKind, "variable");
+  assert.strictEqual(iteratorUse.semantic.resolved, true);
+  assert.strictEqual(iteratorUse.semantic.symbolKind, "variable");
+});
+
+test("analyzer: foreach member iterable resolution", () => {
+  const ast = analyzeSource(`dhori user = {
+  cities: ["Dhaka"]
+}
+bar city ekti user.cities {
+  dekhi city
+}`);
+
+  const iterable = ast.body[1].iterable;
+
+  assert.strictEqual(iterable.type, "MemberExpression");
+  assert.strictEqual(iterable.object.semantic.resolved, true);
+});
+
+test("analyzer: iterator outside loop scope error", () => {
+  semanticError(
+    () =>
+      analyzeSource(`dhori names = ["Risat"]
+bar item ekti names {
+  dekhi item
+}
+dekhi item`),
+    'Use before declaration: "item"'
+  );
+});
+
 test("analyzer: array literal values resolve identifiers", () => {
   const ast = analyzeSource(`dhori first = 1
 dhori values = [first, 2]`);

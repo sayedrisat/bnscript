@@ -308,6 +308,8 @@ export class SemanticAnalyzer {
   }
 
   visitForLoop(node) {
+    node.semantic.variant = node.variant;
+
     this.visitLoop(node, () => {
       if (node.variant === "range") {
         this.withScope(createBlockScope(this.currentScope), () => {
@@ -452,8 +454,11 @@ export class SemanticAnalyzer {
 
   visitLoop(node, callback) {
     this.loopDepth += 1;
-    callback();
-    this.loopDepth -= 1;
+    try {
+      callback();
+    } finally {
+      this.loopDepth -= 1;
+    }
     node.semantic.isLoop = true;
   }
 

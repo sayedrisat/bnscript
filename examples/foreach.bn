@@ -1,0 +1,9 @@
+dhori names = [
+  "Risat",
+  "BN",
+  "Script"
+]
+
+bar item ekti names {
+  dekhi item
+}

@@ -50,6 +50,22 @@ export function WhileStatement(condition, body, location = {}) {
   return node("WhileStatement", { condition, body }, location);
 }
 
+export function ForLoop(iterator, start, end, body, location = {}) {
+  return {
+    type: "ForLoop",
+    variant: "range",
+    iterator,
+    ...locationFields(location),
+    start,
+    end,
+    body,
+  };
+}
+
+export function ForEachLoop(iterator, iterable, body, location = {}) {
+  return node("ForEachLoop", { iterator, iterable, body }, location);
+}
+
 export function BlockStatement(body, location = {}) {
   return node("BlockStatement", { body }, location);
 }
@@ -141,6 +157,8 @@ export default {
   PrintStatement,
   IfStatement,
   WhileStatement,
+  ForLoop,
+  ForEachLoop,
   BlockStatement,
   FunctionDeclaration,
   Parameter,

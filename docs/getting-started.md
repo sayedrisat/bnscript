@@ -1,6 +1,6 @@
 # Getting Started With BN Script
 
-BN Script is an automation-first language that compiles to JavaScript. The v0.1 alpha supports declarations, assignments, printing, conditionals, while loops, functions, arrays, objects, member/index access, blocks, primitive values, calls, and basic expressions.
+BN Script is an automation-first language that compiles to JavaScript. The v0.1 alpha supports declarations, assignments, printing, conditionals, while loops, range loops, for-each loops, functions, arrays, objects, member/index access, blocks, primitive values, calls, and basic expressions.
 
 ## Requirements
 
@@ -97,8 +97,16 @@ jotokkhon count < 3 {
   count += 1
 }
 
+bar i = 0 theke 3 {
+  dekhi i
+}
+
 dhori names = ["Risat", "BN"]
 dekhi names[0]
+
+bar name ekti names {
+  dekhi name
+}
 
 dhori user = {
   name: "Risat",
@@ -115,6 +123,8 @@ Supported today:
 - `dhori`, `sthir`, and `dekhi`
 - `jodi` / `nahole`
 - `jotokkhon` while loops
+- Range `bar` loops with `theke`
+- For-each `bar` loops with `ekti`
 - Assignment expressions, variable reassignment, and compound assignment
 - Array literals and index access
 - Object literals and member access
@@ -130,6 +140,6 @@ Supported today:
 
 ## Current Limits
 
-Counted `bar` loops, for-each loops, modules, async/await syntax, AI helpers, package publishing, editor tooling, LSP, and REPL support are planned but not implemented in this alpha.
+Simple repeat `bar 5 { ... }` loops, modules, async/await syntax, AI helpers, package publishing, editor tooling, LSP, and REPL support are planned but not implemented in this alpha.
 
 Function support currently covers named `kaj` declarations, positional parameters, `ferot`, and direct calls. Default parameters, function expressions, arrow functions, and methods are not implemented yet.

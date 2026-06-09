@@ -329,6 +329,79 @@ test("parser: missing while block", () => {
   );
 });
 
+test("parser: range loop", () => {
+  const statement = firstStatement(`bar i = 0 theke 5 {
+  dekhi i
+}`);
+
+  assert.strictEqual(statement.type, "ForLoop");
+  assert.strictEqual(statement.variant, "range");
+  assert.strictEqual(statement.iterator, "i");
+  assert.strictEqual(statement.start.type, "NumberLiteral");
+  assert.strictEqual(statement.start.value, 0);
+  assert.strictEqual(statement.end.type, "NumberLiteral");
+  assert.strictEqual(statement.end.value, 5);
+  assert.strictEqual(statement.body.type, "BlockStatement");
+  assert.strictEqual(statement.body.body[0].type, "PrintStatement");
+});
+
+test("parser: nested range loop", () => {
+  const statement = firstStatement(`bar i = 0 theke 2 {
+  bar j = 0 theke 2 {
+    dekhi i
+    dekhi j
+  }
+}`);
+
+  const innerLoop = statement.body.body[0];
+
+  assert.strictEqual(statement.type, "ForLoop");
+  assert.strictEqual(innerLoop.type, "ForLoop");
+  assert.strictEqual(innerLoop.iterator, "j");
+  assert.strictEqual(innerLoop.body.body.length, 2);
+});
+
+test("parser: foreach loop", () => {
+  const statement = firstStatement(`bar item ekti names {
+  dekhi item
+}`);
+
+  assert.strictEqual(statement.type, "ForEachLoop");
+  assert.strictEqual(statement.iterator, "item");
+  assert.strictEqual(statement.iterable.type, "Identifier");
+  assert.strictEqual(statement.iterable.name, "names");
+  assert.strictEqual(statement.body.type, "BlockStatement");
+});
+
+test("parser: foreach member access", () => {
+  const statement = firstStatement(`bar city ekti user.cities {
+  dekhi city
+}`);
+
+  assert.strictEqual(statement.type, "ForEachLoop");
+  assert.strictEqual(statement.iterable.type, "MemberExpression");
+  assert.strictEqual(statement.iterable.property, "cities");
+  assert.strictEqual(statement.iterable.object.name, "user");
+});
+
+test("parser: missing for loop blocks", () => {
+  assert.throws(
+    () => parseSource("bar i = 0 theke 5"),
+    (err) =>
+      err.name === "BNError" &&
+      err.category === "ParseError" &&
+      err.message.includes('Expected "{" to start "bar" range loop block')
+  );
+
+  assert.throws(
+    () => parseSource("bar item ekti names"),
+    (err) =>
+      err.name === "BNError" &&
+      err.category === "ParseError" &&
+      err.message.includes('Expected "{" to start "bar" foreach loop block')
+  );
+});
+
 test("parser: array literals", () => {
   const empty = firstStatement("dhori items = []").initializer;
   const single = firstStatement("dhori items = [1]").initializer;

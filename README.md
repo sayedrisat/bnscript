@@ -23,11 +23,13 @@ It combines a real compiler architecture with a beginner-friendly syntax inspire
 ✅ CLI Tool
 ✅ Assignment Expressions
 ✅ While Loops
+✅ Range For Loops
+✅ For-Each Loops
 ✅ Array Literals
 ✅ Object Literals
 ✅ Member and Index Access
 ✅ Function Support
-✅ 152 Automated Tests
+✅ 167 Automated Tests
 
 ---
 
@@ -153,6 +155,24 @@ dhori i = 0
 jotokkhon i < 3 {
   dekhi i
   i = i + 1
+}
+```
+
+### Range For Loops
+
+```bn
+bar i = 0 theke 5 {
+  dekhi i
+}
+```
+
+### For-Each Loops
+
+```bn
+dhori names = ["Risat", "BN", "Script"]
+
+bar item ekti names {
+  dekhi item
 }
 ```
 
@@ -284,6 +304,8 @@ bn run file.bn
 - `dekhi` print statements
 - `jodi` and `nahole` conditionals
 - `jotokkhon` while loops
+- Range `bar` loops with `theke`
+- For-each `bar` loops with `ekti`
 - Assignment expressions
 - Variable reassignment
 - Compound assignment: `+=`, `-=`, `*=`, `/=`
@@ -312,8 +334,7 @@ bn run file.bn
 
 Not implemented yet:
 
-* Counted `bar` Loops
-* For-Each Loops
+* Simple repeat `bar 5 { ... }` loops
 * Imports / Exports
 * Async / Await
 * AI Runtime Helpers
@@ -330,20 +351,15 @@ This project is currently in Alpha and focused on compiler stability.
 
 ### v0.2
 
-* Counted Loops
-* For-Each Loops
-
-### v0.3
-
 * Imports / Exports
 * Modules
 
-### v0.4
+### v0.3
 
 * Async / Await
 * File/API Automation Helpers
 
-### v0.5
+### v0.4
 
 * Runtime Helper Expansion
 * Source Maps
@@ -370,7 +386,7 @@ Current test coverage includes:
 * CLI Tests
 * Integration Tests
 
-**152 tests passing**
+**167 tests passing**
 
 ---
 

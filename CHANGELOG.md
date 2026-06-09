@@ -1,5 +1,54 @@
 # Changelog
 
+## Day 7 - 2026-06-09 (Range and For-Each Loops Stage 11/12)
+
+### Completed: Range and For-Each Loops
+- Added parser support for range loops using `bar i = start theke end { ... }`.
+- Added parser support for for-each loops using `bar item ekti iterable { ... }`.
+- Added AST factories for `ForLoop` and `ForEachLoop`.
+- Added semantic analysis for loop scopes, iterator declarations, range bounds, iterable expressions, and iterator visibility.
+- Added JavaScript generation for range `for` loops and `for...of` loops.
+- Added range and for-each examples plus integration fixtures.
+- Updated public documentation for Stage 11 and Stage 12 support.
+
+### Tests Added
+- Parser coverage for range loops, nested range loops, for-each loops, for-each member access, and missing loop blocks.
+- Analyzer coverage for loop scope, nested iterator resolution, iterable resolution, member iterable resolution, and iterator leakage errors.
+- Generator coverage for range loop output, for-each output, and nested loops.
+- Integration coverage for `tests/integration/for.bn` and `tests/integration/foreach.bn`.
+
+### Files Changed
+- `src/ast.js`
+- `src/parser.js`
+- `src/analyzer.js`
+- `src/generator.js`
+- `tests/parser.test.js`
+- `tests/analyzer.test.js`
+- `tests/generator.test.js`
+- `tests/stage11-12.integration.test.js`
+- `tests/integration/for.bn`
+- `tests/integration/foreach.bn`
+- `examples/for.bn`
+- `examples/foreach.bn`
+- `README.md`
+- `docs/getting-started.md`
+- `docs/language-spec.md`
+- `CHANGELOG.md`
+
+### Known Issues
+- Simple repeat `bar 5 { ... }` loops, imports/exports, async/await, AI helpers, package publishing, default parameters, function expressions, and advanced type/shape validation remain unimplemented.
+- `docs/compiler-architecture.md` was intentionally skipped in this run because its existing corrupted arrow text made exact patching unsafe.
+
+### Test Result
+- `npm.cmd test` passed 167 tests.
+- `node src/cli.js run examples/for.bn` printed `0`, `1`, `2`, `3`, `4`.
+- `node src/cli.js run examples/foreach.bn` printed `Risat`, `BN`, `Script`.
+
+### Recommended Next Task
+- Stage 11/12 Range and For-Each Loops Review
+
+---
+
 ## Day 6 - 2026-06-08 (Composite Data Stage 10)
 
 ### Completed: Arrays, Objects, Members, and Indexes

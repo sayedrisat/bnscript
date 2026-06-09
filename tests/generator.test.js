@@ -204,6 +204,53 @@ while (i < 3) {
   );
 });
 
+test("generator: range loop output", () => {
+  const output = compileSource(`bar i = 0 theke 5 {
+  dekhi i
+}`);
+
+  assert.strictEqual(
+    output,
+    expected(`for (let i = 0; i < 5; i++) {
+  console.log(i);
+}`)
+  );
+});
+
+test("generator: foreach output", () => {
+  const output = compileSource(`dhori names = ["Risat", "BN"]
+bar item ekti names {
+  dekhi item
+}`);
+
+  assert.strictEqual(
+    output,
+    expected(`let names = ["Risat","BN"];
+for (const item of names) {
+  console.log(item);
+}`)
+  );
+});
+
+test("generator: nested loops output", () => {
+  const output = compileSource(`bar i = 0 theke 2 {
+  bar j = 0 theke 2 {
+    dekhi i
+    dekhi j
+  }
+}`);
+
+  assert.strictEqual(
+    output,
+    expected(`for (let i = 0; i < 2; i++) {
+  for (let j = 0; j < 2; j++) {
+    console.log(i);
+    console.log(j);
+  }
+}`)
+  );
+});
+
 test("generator: array literal output", () => {
   const output = compileSource(`dhori names = ["Risat", "BN"]
 dekhi names[0]`);

@@ -42,7 +42,6 @@ const EXPRESSION_STARTS = new Set([
 ]);
 
 const UNSUPPORTED_STATEMENTS = new Map([
-  [TOKENS.BAR, '"bar" loops are not supported in this alpha compiler.'],
   [TOKENS.NAO, '"nao" imports are not supported in this alpha compiler.'],
   [TOKENS.DAO, '"dao" exports are not supported in this alpha compiler.'],
   [TOKENS.BEKKHON, '"bekkhon" break statements are not supported in this alpha compiler.'],
@@ -118,6 +117,8 @@ export class Parser {
         return this.parseIfStatement();
       case TOKENS.JOTOKKHON:
         return this.parseWhileStatement();
+      case TOKENS.BAR:
+        return this.parseForStatement();
       case TOKENS.KAJ:
         return this.parseFunctionDeclaration();
       case TOKENS.FEROT:
@@ -150,7 +151,7 @@ export class Parser {
           this.raise(
             token,
             UNSUPPORTED_STATEMENTS.get(token.type),
-            "Use declarations, print, if/else, functions, returns, blocks, calls, and expressions in this alpha."
+            "Use declarations, print, if/else, loops, functions, returns, blocks, calls, and expressions in this alpha."
           );
         }
 
@@ -161,7 +162,7 @@ export class Parser {
         this.raise(
           token,
           `Unexpected token "${this.describeToken(token)}".`,
-          "Start a statement with dhori, sthir, dekhi, jodi, kaj, ferot, a block, or an expression."
+          "Start a statement with dhori, sthir, dekhi, jodi, jotokkhon, bar, kaj, ferot, a block, or an expression."
         );
     }
   }
@@ -283,6 +284,68 @@ export class Parser {
 
     return AST.WhileStatement(
       condition,
+      body,
+      this.locationFrom(startToken, body)
+    );
+  }
+
+  parseForStatement() {
+    const startToken = this.consume(TOKENS.BAR);
+    const iteratorToken = this.consume(
+      TOKENS.IDENTIFIER,
+      'Expected iterator name after "bar".',
+      'Use: bar i = 0 theke 5 { dekhi i } or bar item ekti names { dekhi item }'
+    );
+
+    if (this.match(TOKENS.EQUAL)) {
+      return this.parseRangeForStatement(startToken, iteratorToken);
+    }
+
+    if (this.match(TOKENS.EKTI)) {
+      return this.parseForEachStatement(startToken, iteratorToken);
+    }
+
+    this.raise(
+      this.peek(),
+      'Expected "=" or "ekti" after "bar" iterator.',
+      'Use "bar i = 0 theke 5 { ... }" or "bar item ekti names { ... }".'
+    );
+  }
+
+  parseRangeForStatement(startToken, iteratorToken) {
+    this.skipNewlines();
+    const start = this.parseExpression('Expected start expression after "=".');
+    this.skipNewlines();
+    this.consume(
+      TOKENS.THEKE,
+      'Expected "theke" after range loop start expression.',
+      'Use: bar i = 0 theke 5 { dekhi i }'
+    );
+    this.skipNewlines();
+    const end = this.parseExpression('Expected end expression after "theke".');
+    const body = this.parseRequiredBlock('"bar" range loop');
+    const newlinesAfterBlock = this.skipNewlines();
+    this.ensureCompoundStatementBoundary(newlinesAfterBlock);
+
+    return AST.ForLoop(
+      iteratorToken.value,
+      start,
+      end,
+      body,
+      this.locationFrom(startToken, body)
+    );
+  }
+
+  parseForEachStatement(startToken, iteratorToken) {
+    this.skipNewlines();
+    const iterable = this.parseExpression('Expected iterable expression after "ekti".');
+    const body = this.parseRequiredBlock('"bar" foreach loop');
+    const newlinesAfterBlock = this.skipNewlines();
+    this.ensureCompoundStatementBoundary(newlinesAfterBlock);
+
+    return AST.ForEachLoop(
+      iteratorToken.value,
+      iterable,
       body,
       this.locationFrom(startToken, body)
     );

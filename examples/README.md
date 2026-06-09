@@ -20,5 +20,7 @@ node src/cli.js run examples/hello.bn
 | `functions.bn` | Function declarations, returns, parameters, and calls |
 | `assignments.bn` | Variable reassignment and compound assignment |
 | `while.bn` | While loops with `jotokkhon` |
+| `for.bn` | Range loops with `bar`, `theke`, and block bodies |
+| `foreach.bn` | For-each loops with `bar`, `ekti`, and arrays |
 | `arrays.bn` | Array literals, index access, and index assignment |
 | `objects.bn` | Object literals, member access, chained access, and member assignment |

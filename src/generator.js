@@ -95,6 +95,10 @@ export class Generator {
         return this.emitIfStatement(node);
       case "WhileStatement":
         return this.emitWhileStatement(node);
+      case "ForLoop":
+        return this.emitForLoop(node);
+      case "ForEachLoop":
+        return this.emitForEachLoop(node);
       case "BlockStatement":
       case "Block":
         return this.emitBlockStatement(node);
@@ -139,6 +143,27 @@ export class Generator {
 
   emitWhileStatement(node) {
     this.emitter.emitLine(`while (${this.generateExpression(node.condition)}) {`);
+    this.emitBlockBody(node.body);
+    this.emitter.emitLine("}");
+  }
+
+  emitForLoop(node) {
+    if (node.variant !== "range") {
+      return this.unsupported(node);
+    }
+
+    const start = this.generateExpression(node.start);
+    const end = this.generateExpression(node.end);
+    this.emitter.emitLine(
+      `for (let ${node.iterator} = ${start}; ${node.iterator} < ${end}; ${node.iterator}++) {`
+    );
+    this.emitBlockBody(node.body);
+    this.emitter.emitLine("}");
+  }
+
+  emitForEachLoop(node) {
+    const iterable = this.generateExpression(node.iterable);
+    this.emitter.emitLine(`for (const ${node.iterator} of ${iterable}) {`);
     this.emitBlockBody(node.body);
     this.emitter.emitLine("}");
   }
