@@ -3,10 +3,10 @@
 > Public alpha note: this document describes the intended BN Script language design.
 > The v0.1.0 alpha implementation currently supports declarations, assignment
 > expressions, printing, conditionals, `jotokkhon` while loops, range `bar`
-> loops, for-each `bar` loops, function declarations, return statements,
-> function calls, blocks, primitive literals, array literals, object literals,
-> member access, index access, identifiers, grouped expressions, unary
-> expressions, and binary expressions.
+> loops, for-each `bar` loops, break and continue statements, function
+> declarations, return statements, function calls, blocks, primitive literals,
+> array literals, object literals, member access, index access, identifiers,
+> grouped expressions, unary expressions, and binary expressions.
 > Planned sections such as simple repeat loops, modules, async/await,
 > file helpers, HTTP, and AI helpers are design targets, not fully compiled
 > features yet.
@@ -403,6 +403,10 @@ for (const item of fruits) {
 
 ### 8.5 Break and Continue
 
+The current alpha supports `bekkhon` and `cholo` inside `jotokkhon`, range
+`bar`, and for-each `bar` loops. Using either statement outside a loop is a
+semantic error.
+
 ```
 bar i = 0 theke 100 {
     jodi i == 50 {
@@ -412,6 +416,19 @@ bar i = 0 theke 100 {
         cholo     // skip to next iteration
     }
     dekhi i
+}
+```
+
+Compiles to:
+```javascript
+for (let i = 0; i < 100; i++) {
+    if (i === 50) {
+        break;
+    }
+    if (i % 2 === 0) {
+        continue;
+    }
+    console.log(i);
 }
 ```
 
@@ -727,6 +744,8 @@ These are available without imports:
 | `jotokkhon c { }` | `while (c) { }`           |
 | `kaj f(x) { }`    | `function f(x) { }`       |
 | `ferot x`          | `return x;`               |
+| `bekkhon`          | `break;`                 |
+| `cholo`            | `continue;`              |
 | `sotti / mittha`   | `true / false`            |
 | `khali`            | `null`                    |
 | `ebong`            | `&&`                      |
@@ -903,7 +922,7 @@ jodi na success {
 
 | Version | Features                                              |
 |---------|-------------------------------------------------------|
-| v0.1    | Variables, constants, assignments, print, if/else, while loops, range loops, for-each loops, functions, calls, arrays, objects, member/index access, basic expressions |
+| v0.1    | Variables, constants, assignments, print, if/else, while loops, range loops, for-each loops, break/continue, functions, calls, arrays, objects, member/index access, basic expressions |
 | v0.2    | Modules (import/export), richer diagnostics, simple repeat loops |
 | v0.3    | HTTP requests, file operations, async/await, error handling |
 | v0.4    | AI integration and JSON operations |

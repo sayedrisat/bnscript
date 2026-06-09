@@ -304,6 +304,28 @@ dekhi item`),
   );
 });
 
+test("analyzer: break inside loop valid", () => {
+  const ast = analyzeSource(`bar i = 0 theke 3 {
+  bekkhon
+}`);
+
+  const statement = ast.body[0].body.body[0];
+
+  assert.strictEqual(statement.type, "BreakStatement");
+  assert.strictEqual(statement.semantic.checked, true);
+});
+
+test("analyzer: continue inside loop valid", () => {
+  const ast = analyzeSource(`bar i = 0 theke 3 {
+  cholo
+}`);
+
+  const statement = ast.body[0].body.body[0];
+
+  assert.strictEqual(statement.type, "ContinueStatement");
+  assert.strictEqual(statement.semantic.checked, true);
+});
+
 test("analyzer: array literal values resolve identifiers", () => {
   const ast = analyzeSource(`dhori first = 1
 dhori values = [first, 2]`);

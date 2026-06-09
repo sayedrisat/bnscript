@@ -1,6 +1,6 @@
 # Getting Started With BN Script
 
-BN Script is an automation-first language that compiles to JavaScript. The v0.1 alpha supports declarations, assignments, printing, conditionals, while loops, range loops, for-each loops, functions, arrays, objects, member/index access, blocks, primitive values, calls, and basic expressions.
+BN Script is an automation-first language that compiles to JavaScript. The v0.1 alpha supports declarations, assignments, printing, conditionals, while loops, range loops, for-each loops, break/continue loop control, functions, arrays, objects, member/index access, blocks, primitive values, calls, and basic expressions.
 
 ## Requirements
 
@@ -98,6 +98,9 @@ jotokkhon count < 3 {
 }
 
 bar i = 0 theke 3 {
+  jodi i == 2 {
+    cholo
+  }
   dekhi i
 }
 
@@ -106,6 +109,7 @@ dekhi names[0]
 
 bar name ekti names {
   dekhi name
+  bekkhon
 }
 
 dhori user = {
@@ -125,6 +129,7 @@ Supported today:
 - `jotokkhon` while loops
 - Range `bar` loops with `theke`
 - For-each `bar` loops with `ekti`
+- `bekkhon` and `cholo` inside loops
 - Assignment expressions, variable reassignment, and compound assignment
 - Array literals and index access
 - Object literals and member access

@@ -106,6 +106,10 @@ export class Generator {
         return this.emitFunctionDeclaration(node);
       case "ReturnStatement":
         return this.emitReturnStatement(node);
+      case "BreakStatement":
+        return this.emitBreakStatement();
+      case "ContinueStatement":
+        return this.emitContinueStatement();
       default:
         return this.unsupported(node);
     }
@@ -198,6 +202,14 @@ export class Generator {
     }
 
     this.emitter.emitLine("return;");
+  }
+
+  emitBreakStatement() {
+    this.emitter.emitLine("break;");
+  }
+
+  emitContinueStatement() {
+    this.emitter.emitLine("continue;");
   }
 
   generateExpression(node) {

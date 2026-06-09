@@ -90,6 +90,14 @@ export function ReturnStatement(value = null, location = {}) {
   return node("ReturnStatement", { value }, location);
 }
 
+export function BreakStatement(location = {}) {
+  return node("BreakStatement", {}, location);
+}
+
+export function ContinueStatement(location = {}) {
+  return node("ContinueStatement", {}, location);
+}
+
 export function ExpressionStatement(expression, location = {}) {
   return node("ExpressionStatement", { expression }, location);
 }
@@ -163,6 +171,8 @@ export default {
   FunctionDeclaration,
   Parameter,
   ReturnStatement,
+  BreakStatement,
+  ContinueStatement,
   ExpressionStatement,
   Identifier,
   NumberLiteral,

@@ -402,6 +402,66 @@ test("parser: missing for loop blocks", () => {
   );
 });
 
+test("parser: break statement", () => {
+  const statement = firstStatement("bekkhon");
+
+  assert.strictEqual(statement.type, "BreakStatement");
+});
+
+test("parser: continue statement", () => {
+  const statement = firstStatement("cholo");
+
+  assert.strictEqual(statement.type, "ContinueStatement");
+});
+
+test("parser: break in while", () => {
+  const statement = firstStatement(`jotokkhon ready {
+  bekkhon
+}`);
+
+  assert.strictEqual(statement.body.body[0].type, "BreakStatement");
+});
+
+test("parser: continue in while", () => {
+  const statement = firstStatement(`jotokkhon ready {
+  cholo
+}`);
+
+  assert.strictEqual(statement.body.body[0].type, "ContinueStatement");
+});
+
+test("parser: break in range loop", () => {
+  const statement = firstStatement(`bar i = 0 theke 5 {
+  bekkhon
+}`);
+
+  assert.strictEqual(statement.body.body[0].type, "BreakStatement");
+});
+
+test("parser: continue in range loop", () => {
+  const statement = firstStatement(`bar i = 0 theke 5 {
+  cholo
+}`);
+
+  assert.strictEqual(statement.body.body[0].type, "ContinueStatement");
+});
+
+test("parser: break in foreach", () => {
+  const statement = firstStatement(`bar item ekti names {
+  bekkhon
+}`);
+
+  assert.strictEqual(statement.body.body[0].type, "BreakStatement");
+});
+
+test("parser: continue in foreach", () => {
+  const statement = firstStatement(`bar item ekti names {
+  cholo
+}`);
+
+  assert.strictEqual(statement.body.body[0].type, "ContinueStatement");
+});
+
 test("parser: array literals", () => {
   const empty = firstStatement("dhori items = []").initializer;
   const single = firstStatement("dhori items = [1]").initializer;

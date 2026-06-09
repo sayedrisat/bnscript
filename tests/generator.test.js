@@ -251,6 +251,81 @@ test("generator: nested loops output", () => {
   );
 });
 
+test("generator: break and continue in while output", () => {
+  const output = compileSource(`dhori i = 0
+jotokkhon i < 5 {
+  i = i + 1
+  jodi i == 2 {
+    cholo
+  }
+  jodi i == 4 {
+    bekkhon
+  }
+  dekhi i
+}`);
+
+  assert.strictEqual(
+    output,
+    expected(`let i = 0;
+while (i < 5) {
+  i = i + 1;
+  if (i === 2) {
+    continue;
+  }
+  if (i === 4) {
+    break;
+  }
+  console.log(i);
+}`)
+  );
+});
+
+test("generator: break and continue in range loop output", () => {
+  const output = compileSource(`bar i = 0 theke 5 {
+  jodi i == 2 {
+    cholo
+  }
+  jodi i == 4 {
+    bekkhon
+  }
+  dekhi i
+}`);
+
+  assert.strictEqual(
+    output,
+    expected(`for (let i = 0; i < 5; i++) {
+  if (i === 2) {
+    continue;
+  }
+  if (i === 4) {
+    break;
+  }
+  console.log(i);
+}`)
+  );
+});
+
+test("generator: break and continue in foreach output", () => {
+  const output = compileSource(`dhori names = ["Risat", "BN"]
+bar item ekti names {
+  jodi item == "BN" {
+    bekkhon
+  }
+  cholo
+}`);
+
+  assert.strictEqual(
+    output,
+    expected(`let names = ["Risat","BN"];
+for (const item of names) {
+  if (item === "BN") {
+    break;
+  }
+  continue;
+}`)
+  );
+});
+
 test("generator: array literal output", () => {
   const output = compileSource(`dhori names = ["Risat", "BN"]
 dekhi names[0]`);

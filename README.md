@@ -25,11 +25,12 @@ It combines a real compiler architecture with a beginner-friendly syntax inspire
 ✅ While Loops
 ✅ Range For Loops
 ✅ For-Each Loops
+✅ Break and Continue
 ✅ Array Literals
 ✅ Object Literals
 ✅ Member and Index Access
 ✅ Function Support
-✅ 167 Automated Tests
+✅ 182 Automated Tests
 
 ---
 
@@ -176,6 +177,22 @@ bar item ekti names {
 }
 ```
 
+### Loop Control
+
+```bn
+bar i = 0 theke 5 {
+  jodi i == 2 {
+    cholo
+  }
+
+  jodi i == 4 {
+    bekkhon
+  }
+
+  dekhi i
+}
+```
+
 ### Arrays
 
 ```bn
@@ -306,6 +323,8 @@ bn run file.bn
 - `jotokkhon` while loops
 - Range `bar` loops with `theke`
 - For-each `bar` loops with `ekti`
+- `bekkhon` break statements inside loops
+- `cholo` continue statements inside loops
 - Assignment expressions
 - Variable reassignment
 - Compound assignment: `+=`, `-=`, `*=`, `/=`
@@ -386,7 +405,7 @@ Current test coverage includes:
 * CLI Tests
 * Integration Tests
 
-**167 tests passing**
+**182 tests passing**
 
 ---
 

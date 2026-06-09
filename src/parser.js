@@ -44,8 +44,6 @@ const EXPRESSION_STARTS = new Set([
 const UNSUPPORTED_STATEMENTS = new Map([
   [TOKENS.NAO, '"nao" imports are not supported in this alpha compiler.'],
   [TOKENS.DAO, '"dao" exports are not supported in this alpha compiler.'],
-  [TOKENS.BEKKHON, '"bekkhon" break statements are not supported in this alpha compiler.'],
-  [TOKENS.CHOLO, '"cholo" continue statements are not supported in this alpha compiler.'],
   [TOKENS.DHORO, '"dhoro" try blocks are not supported in this alpha compiler.'],
   [TOKENS.ERROR, '"error" catch blocks are not supported in this alpha compiler.'],
   [TOKENS.SHESHE, '"sheshe" finally blocks are not supported in this alpha compiler.'],
@@ -123,6 +121,10 @@ export class Parser {
         return this.parseFunctionDeclaration();
       case TOKENS.FEROT:
         return this.parseReturnStatement();
+      case TOKENS.BEKKHON:
+        return this.parseBreakStatement();
+      case TOKENS.CHOLO:
+        return this.parseContinueStatement();
       case TOKENS.LEFT_BRACE:
         return this.finishStatement(this.parseBlockStatement());
       case TOKENS.RIGHT_BRACE:
@@ -425,6 +427,20 @@ export class Parser {
 
     return this.finishStatement(
       AST.ReturnStatement(value, this.locationFrom(startToken, endNode))
+    );
+  }
+
+  parseBreakStatement() {
+    const startToken = this.consume(TOKENS.BEKKHON);
+    return this.finishStatement(
+      AST.BreakStatement(this.locationFrom(startToken, startToken))
+    );
+  }
+
+  parseContinueStatement() {
+    const startToken = this.consume(TOKENS.CHOLO);
+    return this.finishStatement(
+      AST.ContinueStatement(this.locationFrom(startToken, startToken))
     );
   }
 

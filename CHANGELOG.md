@@ -1,5 +1,52 @@
 # Changelog
 
+## Day 8 - 2026-06-09 (Break and Continue Stage 13/14)
+
+### Completed: Break and Continue
+- Added parser support for `bekkhon` break statements.
+- Added parser support for `cholo` continue statements.
+- Added AST factories for `BreakStatement` and `ContinueStatement`.
+- Reused existing semantic analyzer loop-depth validation for break and continue placement.
+- Added JavaScript generation for `break;` and `continue;`.
+- Added break and continue examples plus integration fixtures.
+- Updated public documentation for Stage 13 and Stage 14 support.
+
+### Tests Added
+- Parser coverage for break and continue statements in while, range, and for-each loops.
+- Analyzer coverage for valid break and continue inside loops while preserving outside-loop errors.
+- Generator coverage for break and continue inside while, range, and for-each loops.
+- Integration coverage for `tests/integration/break.bn` and `tests/integration/continue.bn`.
+
+### Files Changed
+- `src/ast.js`
+- `src/parser.js`
+- `src/generator.js`
+- `tests/parser.test.js`
+- `tests/analyzer.test.js`
+- `tests/generator.test.js`
+- `tests/stage13-14.integration.test.js`
+- `tests/integration/break.bn`
+- `tests/integration/continue.bn`
+- `examples/break.bn`
+- `examples/continue.bn`
+- `README.md`
+- `docs/getting-started.md`
+- `docs/language-spec.md`
+- `CHANGELOG.md`
+
+### Known Issues
+- Simple repeat `bar 5 { ... }` loops, imports/exports, async/await, AI helpers, package publishing, default parameters, function expressions, and advanced type/shape validation remain unimplemented.
+
+### Test Result
+- `npm.cmd test` passed 182 tests.
+- `node src/cli.js run examples/break.bn` printed `0`, `1`, `2`, `3`, `4`.
+- `node src/cli.js run examples/continue.bn` printed `0`, `1`, `3`, `4`.
+
+### Recommended Next Task
+- Stage 13/14 Break and Continue Review
+
+---
+
 ## Day 7 - 2026-06-09 (Range and For-Each Loops Stage 11/12)
 
 ### Completed: Range and For-Each Loops
