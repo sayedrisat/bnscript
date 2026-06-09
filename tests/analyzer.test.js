@@ -137,6 +137,83 @@ dekhi value`);
   assert.strictEqual(outerIdentifier.semantic.scopeDepth, 0);
 });
 
+test("analyzer: imported identifier resolves", () => {
+  const ast = analyzeSource(`amdani { greet } theke "./utils.bn"
+dekhi greet`);
+
+  const declaration = ast.body[0];
+  const identifier = ast.body[1].arguments[0];
+
+  assert.strictEqual(declaration.type, "ImportDeclaration");
+  assert.strictEqual(declaration.imports[0].semantic.declared, true);
+  assert.strictEqual(identifier.semantic.resolved, true);
+  assert.strictEqual(identifier.semantic.symbolKind, "import");
+});
+
+test("analyzer: duplicate import error", () => {
+  semanticError(
+    () =>
+      analyzeSource(`amdani { greet } theke "./utils.bn"
+dhori greet = 1`),
+    'Duplicate declaration of "greet"'
+  );
+});
+
+test("analyzer: import source must be string literal", () => {
+  const ast = AST.Program(
+    [
+      AST.ImportDeclaration(
+        [AST.ImportSpecifier("greet", loc(1, 10))],
+        AST.Identifier("source", loc(1, 24)),
+        loc(1)
+      ),
+    ],
+    "test.bn",
+    loc(1)
+  );
+
+  semanticError(
+    () => analyze(ast, { filename: "test.bn" }),
+    "Import source must be a string literal"
+  );
+});
+
+test("analyzer: export function declaration valid", () => {
+  const ast = analyzeSource(`roptani kaj greet(name) {
+  dekhi name
+}`);
+
+  const statement = ast.body[0];
+
+  assert.strictEqual(statement.type, "ExportDeclaration");
+  assert.strictEqual(statement.semantic.kind, "export");
+  assert.strictEqual(statement.declaration.semantic.declared, true);
+  assert.strictEqual(statement.declaration.semantic.kind, "function");
+});
+
+test("analyzer: export variable declaration valid", () => {
+  const ast = analyzeSource('roptani dhori version = "0.1"');
+
+  const declaration = ast.body[0].declaration;
+
+  assert.strictEqual(declaration.semantic.declared, true);
+  assert.strictEqual(declaration.semantic.kind, "variable");
+  assert.strictEqual(declaration.semantic.mutable, true);
+});
+
+test("analyzer: invalid export declaration", () => {
+  const ast = AST.Program(
+    [AST.ExportDeclaration(AST.PrintStatement([AST.StringLiteral("x", loc(1, 16))], loc(1)), loc(1))],
+    "test.bn",
+    loc(1)
+  );
+
+  semanticError(
+    () => analyze(ast, { filename: "test.bn" }),
+    "Invalid export declaration"
+  );
+});
+
 test("analyzer: valid assignment to dhori", () => {
   const ast = analyzeSource(`dhori count = 0
 count = count + 1`);

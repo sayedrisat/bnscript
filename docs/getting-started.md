@@ -1,6 +1,6 @@
 # Getting Started With BN Script
 
-BN Script is an automation-first language that compiles to JavaScript. The v0.1 alpha supports declarations, assignments, printing, conditionals, while loops, range loops, for-each loops, break/continue loop control, functions, arrays, objects, member/index access, blocks, primitive values, calls, and basic expressions.
+BN Script is an automation-first language that compiles to JavaScript. The v0.1 alpha supports declarations, assignments, printing, conditionals, while loops, range loops, for-each loops, break/continue loop control, functions, named imports, exports, arrays, objects, member/index access, blocks, primitive values, calls, and basic expressions.
 
 ## Requirements
 
@@ -120,6 +120,12 @@ dhori user = {
 }
 
 dekhi user.profile.city
+
+amdani { greet } theke "./module-utils.bn"
+
+roptani kaj greetModule(name) {
+  dekhi name
+}
 ```
 
 Supported today:
@@ -137,6 +143,8 @@ Supported today:
 - `kaj` function declarations
 - `ferot` return statements inside functions
 - Function parameters and calls
+- Named imports with `amdani { name } theke "./file.bn"`
+- Exported functions, variables, and constants with `roptani`
 - Blocks with `{` and `}`
 - Numbers, strings, booleans, null, and identifiers
 - Unary `na` and `-`
@@ -145,6 +153,6 @@ Supported today:
 
 ## Current Limits
 
-Simple repeat `bar 5 { ... }` loops, modules, async/await syntax, AI helpers, package publishing, editor tooling, LSP, and REPL support are planned but not implemented in this alpha.
+Simple repeat `bar 5 { ... }` loops, default imports, namespace imports, re-exports, full module graph analysis, async/await syntax, AI helpers, package publishing, editor tooling, LSP, and REPL support are planned but not implemented in this alpha.
 
 Function support currently covers named `kaj` declarations, positional parameters, `ferot`, and direct calls. Default parameters, function expressions, arrow functions, and methods are not implemented yet.

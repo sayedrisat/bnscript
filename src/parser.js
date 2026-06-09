@@ -105,6 +105,10 @@ export class Parser {
     const token = this.peek();
 
     switch (token.type) {
+      case TOKENS.AMDANI:
+        return this.parseImportDeclaration();
+      case TOKENS.ROPTANI:
+        return this.parseExportDeclaration();
       case TOKENS.DHORI:
         return this.parseVarDeclaration();
       case TOKENS.STHIR:
@@ -164,9 +168,111 @@ export class Parser {
         this.raise(
           token,
           `Unexpected token "${this.describeToken(token)}".`,
-          "Start a statement with dhori, sthir, dekhi, jodi, jotokkhon, bar, kaj, ferot, a block, or an expression."
+          "Start a statement with amdani, roptani, dhori, sthir, dekhi, jodi, jotokkhon, bar, kaj, ferot, a block, or an expression."
         );
     }
+  }
+
+  parseImportDeclaration() {
+    const startToken = this.consume(TOKENS.AMDANI);
+
+    this.consume(
+      TOKENS.LEFT_BRACE,
+      'Expected "{" after "amdani".',
+      'Use: amdani { greet } theke "./utils.bn"'
+    );
+
+    const imports = [];
+    this.skipNewlines();
+
+    if (this.check(TOKENS.RIGHT_BRACE)) {
+      this.raise(
+        this.peek(),
+        "Expected imported name.",
+        'Use one or more imported names, like: amdani { greet } theke "./utils.bn"'
+      );
+    }
+
+    do {
+      this.skipNewlines();
+      const nameToken = this.consume(
+        TOKENS.IDENTIFIER,
+        "Expected imported name.",
+        "Use comma-separated imported names inside the braces."
+      );
+      imports.push(
+        AST.ImportSpecifier(
+          nameToken.value,
+          this.locationFrom(nameToken, nameToken)
+        )
+      );
+      this.skipNewlines();
+    } while (this.match(TOKENS.COMMA) && !this.check(TOKENS.RIGHT_BRACE));
+
+    this.consume(
+      TOKENS.RIGHT_BRACE,
+      'Expected "}" after imported names.',
+      'Close the import list before "theke".'
+    );
+
+    this.consume(
+      TOKENS.THEKE,
+      'Expected "theke" after import list.',
+      'Use: amdani { greet } theke "./utils.bn"'
+    );
+
+    const sourceToken = this.consume(
+      TOKENS.STRING,
+      "Expected import source string after \"theke\".",
+      'Use a string path ending in ".bn", like: "./utils.bn"'
+    );
+    const source = AST.StringLiteral(
+      sourceToken.value,
+      this.locationFrom(sourceToken, sourceToken)
+    );
+
+    return this.finishStatement(
+      AST.ImportDeclaration(
+        imports,
+        source,
+        this.locationFrom(startToken, source)
+      )
+    );
+  }
+
+  parseExportDeclaration() {
+    const startToken = this.consume(TOKENS.ROPTANI);
+    this.skipNewlines();
+
+    if (this.check(TOKENS.KAJ)) {
+      const declaration = this.parseFunctionDeclaration();
+      return AST.ExportDeclaration(
+        declaration,
+        this.locationFrom(startToken, declaration)
+      );
+    }
+
+    if (this.check(TOKENS.DHORI)) {
+      const declaration = this.parseVarDeclaration();
+      return AST.ExportDeclaration(
+        declaration,
+        this.locationFrom(startToken, declaration)
+      );
+    }
+
+    if (this.check(TOKENS.STHIR)) {
+      const declaration = this.parseConstDeclaration();
+      return AST.ExportDeclaration(
+        declaration,
+        this.locationFrom(startToken, declaration)
+      );
+    }
+
+    this.raise(
+      this.peek(),
+      'Expected "kaj", "dhori", or "sthir" after "roptani".',
+      'Use: roptani kaj greet() { ... }, roptani dhori x = 1, or roptani sthir y = 2.'
+    );
   }
 
   parseVarDeclaration() {

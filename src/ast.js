@@ -28,6 +28,21 @@ export function ConstDeclaration(name, initializer, location = {}) {
   return node("ConstDeclaration", { name, initializer }, location);
 }
 
+export function ImportSpecifier(name, location = {}) {
+  return {
+    name,
+    ...locationFields(location),
+  };
+}
+
+export function ImportDeclaration(imports, source, location = {}) {
+  return node("ImportDeclaration", { imports, source }, location);
+}
+
+export function ExportDeclaration(declaration, location = {}) {
+  return node("ExportDeclaration", { declaration }, location);
+}
+
 export function PrintStatement(args, location = {}) {
   return node("PrintStatement", { arguments: args }, location);
 }
@@ -162,6 +177,9 @@ export default {
   Program,
   VarDeclaration,
   ConstDeclaration,
+  ImportSpecifier,
+  ImportDeclaration,
+  ExportDeclaration,
   PrintStatement,
   IfStatement,
   WhileStatement,

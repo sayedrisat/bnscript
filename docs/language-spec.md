@@ -84,7 +84,7 @@ dekhi name
 
 ```
 // 1. Imports (if any)
-nao { floor, ceil } theke "math"
+amdani { floor, ceil } theke "./math.bn"
 
 // 2. Configuration / constants
 dhori API_KEY = env("OPENAI_KEY")
@@ -121,9 +121,9 @@ BN Script uses Bangla-transliterated keywords that map to clear programming conc
 | `sotti`     | true                   | `true`                      |
 | `mittha`    | false                  | `false`                     |
 | `khali`     | null                   | `null`                      |
-| `nao`       | import                 | `import`                    |
+| `amdani`    | import                 | `import`                    |
 | `theke`     | range separator / from | `for` range / `from`        |
-| `dao`       | export                 | `export`                    |
+| `roptani`   | export                 | `export`                    |
 | `bekkhon`   | break                  | `break`                     |
 | `cholo`     | continue               | `continue`                  |
 | `dhoro`     | try                    | `try`                       |
@@ -139,7 +139,7 @@ Note: `anro`, `faile`, `ai`, `env`, `wait`, and `json` are **not** keywords. The
 ### 4.3 Reserved for Future Use
 
 ```
-type, interface, class, new, shob, map, filter, protibar
+type, interface, class, new, shob, map, filter, protibar, nao, dao
 ```
 
 These words are reserved and will cause a compiler error if used as identifiers. This ensures forward compatibility.
@@ -670,23 +670,26 @@ The compiler injects source location metadata into automation operations so runt
 
 ```
 // Import from another BN Script file
-nao { greet, farewell } theke "./utils.bn"
+amdani { greet, farewell } theke "./utils.bn"
 
-// Import everything
-nao helpers theke "./helpers.bn"
-helpers.greet("Risat")
+greet("Risat")
 ```
+
+Stage 15 supports named imports only. Default imports, namespace imports, re-exports, and full module graph analysis are planned for later stages.
 
 ### 13.2 Exporting
 
 ```
 // Named export
-dao kaj greet(name) {
-    ferot "Hello, ${name}!"
+roptani kaj greet(name) {
+    ferot "Hello " + name
 }
 
 // Export variable
-dao dhori VERSION = "1.0.0"
+roptani dhori version = "0.1"
+
+// Export constant
+roptani sthir APP = "BN"
 ```
 
 ### 13.3 Import Compilation
@@ -730,6 +733,10 @@ These are available without imports:
 |--------------------|-----------------------------|
 | `dhori x = 5`     | `let x = 5;`               |
 | `sthir X = 5`     | `const X = 5;`             |
+| `amdani { x } theke "./m.bn"` | `import { x } from "./m.js";` |
+| `roptani dhori x = 1` | `export let x = 1;` |
+| `roptani sthir X = 1` | `export const X = 1;` |
+| `roptani kaj f() { }` | `export function f() { }` |
 | `x = x + 1`       | `x = x + 1;`              |
 | `x += 1`          | `x += 1;`                 |
 | `dhori a = [1,2]` | `let a = [1,2];`          |
@@ -792,8 +799,8 @@ ReturnStatement = "ferot" Expression?
 BreakStatement  = "bekkhon"
 ContinueStatement = "cholo"
 TryCatch        = "dhoro" Block "error" IDENTIFIER? Block ("sheshe" Block)?
-ImportStatement = "nao" (IDENTIFIER | "{" IdentifierList "}") "theke" STRING
-ExportStatement = "dao" (VarDeclaration | ConstDeclaration | FunctionDecl)
+ImportStatement = "amdani" "{" IdentifierList "}" "theke" STRING
+ExportStatement = "roptani" (VarDeclaration | ConstDeclaration | FunctionDecl)
 
 Expression      = AssignExpr
 AssignExpr      = LogicalOr (AssignOp AssignExpr)?
@@ -922,9 +929,9 @@ jodi na success {
 
 | Version | Features                                              |
 |---------|-------------------------------------------------------|
-| v0.1    | Variables, constants, assignments, print, if/else, while loops, range loops, for-each loops, break/continue, functions, calls, arrays, objects, member/index access, basic expressions |
-| v0.2    | Modules (import/export), richer diagnostics, simple repeat loops |
-| v0.3    | HTTP requests, file operations, async/await, error handling |
+| v0.1    | Variables, constants, assignments, print, if/else, while loops, range loops, for-each loops, break/continue, functions, calls, arrays, objects, member/index access, imports/exports, basic expressions |
+| v0.2    | Async/await, richer diagnostics, simple repeat loops |
+| v0.3    | HTTP requests, file operations, module graph analysis, error handling |
 | v0.4    | AI integration and JSON operations |
 | v0.5    | Standard library expansion, package manager integration, REPL, debugging support |
 | v1.0    | Stable release, full documentation, editor plugins    |

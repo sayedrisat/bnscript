@@ -1,5 +1,59 @@
 # Changelog
 
+## Day 9 - 2026-06-09 (Imports and Exports Stage 15)
+
+### Completed: Imports and Exports
+- Added lexer keywords for `amdani` imports and `roptani` exports.
+- Added parser support for named imports from BN Script files.
+- Added parser support for exported function, variable, and constant declarations.
+- Added AST nodes for `ImportSpecifier`, `ImportDeclaration`, and `ExportDeclaration`.
+- Added semantic analysis for imported identifiers, import source literals, and export-wrapped declarations.
+- Added JavaScript ESM generation for named imports and exported declarations.
+- Converted `.bn` import paths to `.js` in generated JavaScript.
+- Moved the architecture audit dashboard from `reviews/` to `docs/`.
+
+### Tests Added
+- Parser coverage for single and multiple imports, exported functions, exported variables, exported constants, and invalid module syntax.
+- Analyzer coverage for imported identifier resolution, duplicate imports, source literal validation, valid exports, and invalid export wrapping.
+- Generator coverage for named import output, `.bn` to `.js` path conversion, exported functions, exported variables, and exported constants.
+- Integration coverage for `tests/integration/module-main.bn` and `tests/integration/module-utils.bn`.
+
+### Files Changed
+- `src/tokens.js`
+- `src/ast.js`
+- `src/parser.js`
+- `src/analyzer.js`
+- `src/generator.js`
+- `tests/parser.test.js`
+- `tests/analyzer.test.js`
+- `tests/generator.test.js`
+- `tests/stage15.integration.test.js`
+- `tests/integration/module-main.bn`
+- `tests/integration/module-utils.bn`
+- `examples/module-main.bn`
+- `examples/module-utils.bn`
+- `examples/README.md`
+- `docs/ARCHITECTURE_AUDIT.md`
+- `docs/getting-started.md`
+- `docs/language-spec.md`
+- `CHANGELOG.md`
+
+### Known Issues
+- Stage 15 does not perform full module graph analysis, cross-file semantic validation, circular dependency diagnostics, default imports, namespace imports, or re-exports.
+- Async/await, try/catch/finally, AI helpers, package publishing, default parameters, function expressions, and advanced type/shape validation remain unimplemented.
+- `README.md` still contains pre-existing mojibake and was skipped in this run to avoid fragile patching.
+
+### Test Result
+- `npm.cmd test` passed 202 tests.
+- `node src/cli.js check examples/module-main.bn` passed.
+- `node src/cli.js build examples/module-main.bn` generated an ESM import using `./module-utils.js`.
+- `node src/cli.js build examples/module-utils.bn` generated an exported JavaScript function.
+
+### Recommended Next Task
+- Stage 16 Async / Await
+
+---
+
 ## Day 8 - 2026-06-09 (Break and Continue Stage 13/14)
 
 ### Completed: Break and Continue

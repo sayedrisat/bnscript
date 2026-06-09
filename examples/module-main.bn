@@ -1,0 +1,3 @@
+amdani { greet } theke "./module-utils.bn"
+
+greet("Risat")

@@ -1,0 +1,3 @@
+amdani { greet, version } theke "./module-utils.bn"
+
+greet(version)

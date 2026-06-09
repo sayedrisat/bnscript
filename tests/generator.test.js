@@ -36,6 +36,57 @@ const age = 25;`)
   );
 });
 
+test("generator: import single output", () => {
+  const output = compileSource('amdani { greet } theke "./utils.bn"');
+
+  assert.strictEqual(
+    output,
+    expected('import { greet } from "./utils.js";')
+  );
+});
+
+test("generator: import multiple output", () => {
+  const output = compileSource(
+    'amdani { greet, version } theke "./utils.bn"'
+  );
+
+  assert.strictEqual(
+    output,
+    expected('import { greet, version } from "./utils.js";')
+  );
+});
+
+test("generator: export function output", () => {
+  const output = compileSource(`roptani kaj greet(name) {
+  dekhi name
+}`);
+
+  assert.strictEqual(
+    output,
+    expected(`export function greet(name) {
+  console.log(name);
+}`)
+  );
+});
+
+test("generator: export variable output", () => {
+  const output = compileSource('roptani dhori version = "0.1"');
+
+  assert.strictEqual(
+    output,
+    expected('export let version = "0.1";')
+  );
+});
+
+test("generator: export const output", () => {
+  const output = compileSource('roptani sthir APP = "BN"');
+
+  assert.strictEqual(
+    output,
+    expected('export const APP = "BN";')
+  );
+});
+
 test("generator: print generation", () => {
   const output = compileSource(`dhori name = "Risat"
 dekhi name, "hello"`);

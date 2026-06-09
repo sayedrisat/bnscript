@@ -1,0 +1,7 @@
+roptani kaj greet(name) {
+  dekhi name
+}
+
+roptani dhori version = "0.1"
+
+roptani sthir APP = "BN"

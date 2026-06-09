@@ -83,6 +83,10 @@ export class Generator {
 
   emitStatement(node) {
     switch (node?.type) {
+      case "ImportDeclaration":
+        return this.emitImportDeclaration(node);
+      case "ExportDeclaration":
+        return this.emitExportDeclaration(node);
       case "VarDeclaration":
         return this.emitDeclaration("let", node);
       case "ConstDeclaration":
@@ -119,6 +123,41 @@ export class Generator {
     this.emitter.emitLine(
       `${keyword} ${node.name} = ${this.generateExpression(node.initializer)};`
     );
+  }
+
+  emitImportDeclaration(node) {
+    const imports = (node.imports || []).map((specifier) => specifier.name);
+    const source = this.formatModuleSource(node.source?.value || "");
+    this.emitter.emitLine(
+      `import { ${imports.join(", ")} } from ${JSON.stringify(source)};`
+    );
+  }
+
+  emitExportDeclaration(node) {
+    const declaration = node.declaration;
+
+    switch (declaration?.type) {
+      case "FunctionDeclaration":
+        return this.emitFunctionDeclaration(declaration, "export ");
+      case "ConstDeclaration":
+        return this.emitter.emitLine(
+          `export const ${declaration.name} = ${this.generateExpression(declaration.initializer)};`
+        );
+      case "VarDeclaration":
+        return this.emitter.emitLine(
+          `export let ${declaration.name} = ${this.generateExpression(declaration.initializer)};`
+        );
+      default:
+        return this.unsupported(node);
+    }
+  }
+
+  formatModuleSource(source) {
+    if (source.endsWith(".bn")) {
+      return `${source.slice(0, -3)}.js`;
+    }
+
+    return source;
   }
 
   emitPrintStatement(node) {
@@ -186,11 +225,11 @@ export class Generator {
     this.emitter.dedent();
   }
 
-  emitFunctionDeclaration(node) {
+  emitFunctionDeclaration(node, prefix = "") {
     const params = (node.params || []).map((param) =>
       typeof param === "string" ? param : param.name
     );
-    this.emitter.emitLine(`function ${node.name}(${params.join(", ")}) {`);
+    this.emitter.emitLine(`${prefix}function ${node.name}(${params.join(", ")}) {`);
     this.emitBlockBody(node.body);
     this.emitter.emitLine("}");
   }

@@ -239,6 +239,76 @@ test("parser: nested function body", () => {
   assert.strictEqual(statement.body.body[1].value.type, "CallExpression");
 });
 
+test("parser: import single", () => {
+  const statement = firstStatement('amdani { greet } theke "./utils.bn"');
+
+  assert.strictEqual(statement.type, "ImportDeclaration");
+  assert.deepStrictEqual(
+    statement.imports.map((specifier) => specifier.name),
+    ["greet"]
+  );
+  assert.strictEqual(statement.source.type, "StringLiteral");
+  assert.strictEqual(statement.source.value, "./utils.bn");
+});
+
+test("parser: import multiple", () => {
+  const statement = firstStatement(
+    'amdani { greet, version } theke "./utils.bn"'
+  );
+
+  assert.strictEqual(statement.type, "ImportDeclaration");
+  assert.deepStrictEqual(
+    statement.imports.map((specifier) => specifier.name),
+    ["greet", "version"]
+  );
+});
+
+test("parser: export function", () => {
+  const statement = firstStatement(`roptani kaj greet(name) {
+  dekhi name
+}`);
+
+  assert.strictEqual(statement.type, "ExportDeclaration");
+  assert.strictEqual(statement.declaration.type, "FunctionDeclaration");
+  assert.strictEqual(statement.declaration.name, "greet");
+});
+
+test("parser: export variable", () => {
+  const statement = firstStatement('roptani dhori version = "0.1"');
+
+  assert.strictEqual(statement.type, "ExportDeclaration");
+  assert.strictEqual(statement.declaration.type, "VarDeclaration");
+  assert.strictEqual(statement.declaration.name, "version");
+});
+
+test("parser: export const", () => {
+  const statement = firstStatement('roptani sthir APP = "BN"');
+
+  assert.strictEqual(statement.type, "ExportDeclaration");
+  assert.strictEqual(statement.declaration.type, "ConstDeclaration");
+  assert.strictEqual(statement.declaration.name, "APP");
+});
+
+test("parser: invalid import syntax", () => {
+  assert.throws(
+    () => parseSource('amdani greet theke "./utils.bn"'),
+    (err) =>
+      err.name === "BNError" &&
+      err.category === "ParseError" &&
+      err.message.includes('Expected "{" after "amdani"')
+  );
+});
+
+test("parser: invalid export syntax", () => {
+  assert.throws(
+    () => parseSource('roptani dekhi "x"'),
+    (err) =>
+      err.name === "BNError" &&
+      err.category === "ParseError" &&
+      err.message.includes('Expected "kaj", "dhori", or "sthir" after "roptani"')
+  );
+});
+
 test("parser: simple assignment", () => {
   const expression = firstStatement("count = count + 1").expression;
 

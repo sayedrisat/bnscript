@@ -40,6 +40,10 @@ export class SemanticAnalyzer {
     switch (node.type) {
       case "Program":
         return this.visitProgram(node);
+      case "ImportDeclaration":
+        return this.visitImportDeclaration(node);
+      case "ExportDeclaration":
+        return this.visitExportDeclaration(node);
       case "VarDeclaration":
         return this.visitDeclaration(node, {
           kind: "variable",
@@ -113,6 +117,78 @@ export class SemanticAnalyzer {
         break;
       }
     }
+  }
+
+  visitImportDeclaration(node) {
+    node.semantic.kind = "import";
+    node.semantic.scopeType = this.currentScope.type;
+
+    if (node.source?.type !== "StringLiteral") {
+      this.addError(
+        node.source || node,
+        "Import source must be a string literal.",
+        'Use a string path after "theke", like: "./utils.bn".'
+      );
+    }
+
+    for (const specifier of node.imports || []) {
+      this.markChecked(specifier);
+      const result = this.currentScope.declare(specifier.name, {
+        kind: "import",
+        mutable: false,
+        declaration: specifier,
+        line: specifier.line || node.line,
+        column: specifier.column || node.column,
+      });
+
+      specifier.semantic = {
+        ...(specifier.semantic || {}),
+        declared: result.ok,
+        kind: "import",
+        mutable: false,
+      };
+
+      if (!result.ok) {
+        this.addError(
+          specifier,
+          `Duplicate declaration of "${specifier.name}" in the same scope.`,
+          `Rename this import or remove the earlier declaration on line ${result.existing.line}.`
+        );
+      }
+    }
+  }
+
+  visitExportDeclaration(node) {
+    this.markChecked(node);
+    node.semantic.kind = "export";
+    node.semantic.scopeType = this.currentScope.type;
+
+    if (!node.declaration) {
+      this.addError(
+        node,
+        "Invalid export declaration.",
+        'Export a function, variable, or constant with "roptani kaj", "roptani dhori", or "roptani sthir".'
+      );
+      return;
+    }
+
+    this.markChecked(node.declaration);
+
+    if (
+      node.declaration.type !== "FunctionDeclaration" &&
+      node.declaration.type !== "VarDeclaration" &&
+      node.declaration.type !== "ConstDeclaration"
+    ) {
+      this.addError(
+        node.declaration,
+        "Invalid export declaration.",
+        'Export a function, variable, or constant with "roptani kaj", "roptani dhori", or "roptani sthir".'
+      );
+      return;
+    }
+
+    this.visit(node.declaration);
+    node.semantic.declarationType = node.declaration.type;
   }
 
   visitDeclaration(node, { kind, mutable, keyword }) {
