@@ -85,10 +85,16 @@ export function BlockStatement(body, location = {}) {
   return node("BlockStatement", { body }, location);
 }
 
-export function FunctionDeclaration(name, params, body, location = {}) {
+export function FunctionDeclaration(
+  name,
+  params,
+  body,
+  location = {},
+  options = {}
+) {
   return node(
     "FunctionDeclaration",
-    { name, params, body, isAsync: false, isExported: false },
+    { name, params, body, isAsync: options.isAsync === true, isExported: false },
     location
   );
 }
@@ -139,6 +145,10 @@ export function NullLiteral(location = {}) {
 
 export function UnaryExpression(operator, operand, location = {}) {
   return node("UnaryExpression", { operator, operand }, location);
+}
+
+export function AwaitExpression(argument, location = {}) {
+  return node("AwaitExpression", { argument }, location);
 }
 
 export function BinaryExpression(operator, left, right, location = {}) {
@@ -198,6 +208,7 @@ export default {
   BooleanLiteral,
   NullLiteral,
   UnaryExpression,
+  AwaitExpression,
   BinaryExpression,
   AssignmentExpression,
   CallExpression,

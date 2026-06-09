@@ -18,6 +18,7 @@ node src/cli.js run examples/hello.bn
 | `if.bn` | Conditional control flow with `jodi` and `nahole` |
 | `logic.bn` | Arithmetic, comparison, and logical expressions |
 | `functions.bn` | Function declarations, returns, parameters, and calls |
+| `async.bn` | Async functions and await expressions |
 | `module-utils.bn` | Exported function declarations |
 | `module-main.bn` | Named imports from another BN Script file |
 | `assignments.bn` | Variable reassignment and compound assignment |

@@ -94,6 +94,7 @@ export const KEYWORDS = {
   error: TOKENS.ERROR,
   sheshe: TOKENS.SHESHE,
   abr: TOKENS.ABR,
+  await: TOKENS.ABR,
   async: TOKENS.ASYNC,
   ebong: TOKENS.EBONG,
   othoba: TOKENS.OTHOBA,

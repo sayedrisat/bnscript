@@ -229,7 +229,10 @@ export class Generator {
     const params = (node.params || []).map((param) =>
       typeof param === "string" ? param : param.name
     );
-    this.emitter.emitLine(`${prefix}function ${node.name}(${params.join(", ")}) {`);
+    const asyncPrefix = node.isAsync === true ? "async " : "";
+    this.emitter.emitLine(
+      `${prefix}${asyncPrefix}function ${node.name}(${params.join(", ")}) {`
+    );
     this.emitBlockBody(node.body);
     this.emitter.emitLine("}");
   }
@@ -265,6 +268,8 @@ export class Generator {
         return "null";
       case "UnaryExpression":
         return this.generateUnaryExpression(node);
+      case "AwaitExpression":
+        return this.generateAwaitExpression(node);
       case "BinaryExpression":
         return this.generateBinaryExpression(node);
       case "Assignment":
@@ -360,6 +365,22 @@ export class Generator {
 
     const operand = this.formatUnaryOperand(node.operand);
     return `${operator}${operand}`;
+  }
+
+  generateAwaitExpression(node) {
+    return `await ${this.formatAwaitArgument(node.argument)}`;
+  }
+
+  formatAwaitArgument(node) {
+    if (node?.type === "BinaryExpression") {
+      return `(${this.generateExpression(node)})`;
+    }
+
+    if (node?.type === "AssignmentExpression" || node?.type === "Assignment") {
+      return `(${this.generateExpression(node)})`;
+    }
+
+    return this.generateExpression(node);
   }
 
   formatUnaryOperand(node) {

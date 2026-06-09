@@ -534,6 +534,38 @@ dekhi greet("Risat")`);
   assert.strictEqual(call.callee.semantic.symbolKind, "function");
 });
 
+test("analyzer: await inside async function", () => {
+  const ast = analyzeSource(`kaj fetchData() {
+  ferot 123
+}
+
+async kaj load() {
+  dhori data = await fetchData()
+  ferot data
+}`);
+
+  const load = ast.body[1];
+  const declaration = load.body.body[0];
+  const awaitExpression = declaration.initializer;
+
+  assert.strictEqual(load.semantic.isAsync, true);
+  assert.strictEqual(awaitExpression.type, "AwaitExpression");
+  assert.strictEqual(awaitExpression.semantic.kind, "await");
+  assert.strictEqual(awaitExpression.argument.callee.semantic.resolved, true);
+});
+
+test("analyzer: await outside async function error", () => {
+  semanticError(
+    () =>
+      analyzeSource(`kaj fetchData() {
+  ferot 123
+}
+
+dhori data = await fetchData()`),
+    'Cannot use "await" outside an async function'
+  );
+});
+
 test("analyzer: parameter resolves inside function", () => {
   const ast = analyzeSource(`kaj identity(value) {
   ferot value

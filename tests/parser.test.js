@@ -206,6 +206,17 @@ test("parser: function with multiple params", () => {
   );
 });
 
+test("parser: async function declaration", () => {
+  const statement = firstStatement(`async kaj fetchData() {
+  ferot 123
+}`);
+
+  assert.strictEqual(statement.type, "FunctionDeclaration");
+  assert.strictEqual(statement.name, "fetchData");
+  assert.strictEqual(statement.isAsync, true);
+  assert.strictEqual(statement.body.body[0].type, "ReturnStatement");
+});
+
 test("parser: return statement", () => {
   const statement = firstStatement("ferot 42");
 
@@ -222,6 +233,24 @@ test("parser: function call", () => {
   assert.strictEqual(expression.callee.name, "greet");
   assert.strictEqual(expression.arguments.length, 1);
   assert.strictEqual(expression.arguments[0].value, "Risat");
+});
+
+test("parser: await expression", () => {
+  const statement = firstStatement("dhori result = await fetchData()");
+
+  assert.strictEqual(statement.initializer.type, "AwaitExpression");
+  assert.strictEqual(statement.initializer.argument.type, "CallExpression");
+  assert.strictEqual(statement.initializer.argument.callee.name, "fetchData");
+});
+
+test("parser: nested await expression", () => {
+  const statement = firstStatement("dhori user = await getUser(id)");
+  const expression = statement.initializer;
+
+  assert.strictEqual(expression.type, "AwaitExpression");
+  assert.strictEqual(expression.argument.type, "CallExpression");
+  assert.strictEqual(expression.argument.callee.name, "getUser");
+  assert.strictEqual(expression.argument.arguments[0].name, "id");
 });
 
 test("parser: nested function body", () => {
@@ -305,7 +334,7 @@ test("parser: invalid export syntax", () => {
     (err) =>
       err.name === "BNError" &&
       err.category === "ParseError" &&
-      err.message.includes('Expected "kaj", "dhori", or "sthir" after "roptani"')
+      err.message.includes('Expected "kaj", "async", "dhori", or "sthir" after "roptani"')
   );
 });
 

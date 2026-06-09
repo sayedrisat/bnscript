@@ -467,6 +467,19 @@ test("generator: function declaration output", () => {
   );
 });
 
+test("generator: async function output", () => {
+  const output = compileSource(`async kaj fetchData() {
+  ferot 123
+}`);
+
+  assert.strictEqual(
+    output,
+    expected(`async function fetchData() {
+  return 123;
+}`)
+  );
+});
+
 test("generator: return output", () => {
   const output = compileSource(`kaj identity(value) {
   ferot value
@@ -480,10 +493,30 @@ test("generator: return output", () => {
   );
 });
 
+test("generator: await output", () => {
+  const output = compileSource(`kaj fetchData() {
+  ferot 123
+}
+
+async kaj load() {
+  dhori result = await fetchData()
+}`);
+
+  assert.strictEqual(
+    output,
+    expected(`function fetchData() {
+  return 123;
+}
+async function load() {
+  let result = await fetchData();
+}`)
+  );
+});
+
 test("generator: function call output", () => {
   const output = compileSource(`kaj greet(name) {
   ferot name
-}
+} 
 dekhi greet("Risat")`);
 
   assert.strictEqual(
@@ -492,6 +525,26 @@ dekhi greet("Risat")`);
   return name;
 }
 console.log(greet("Risat"));`)
+  );
+});
+
+test("generator: async and await output", () => {
+  const output = compileSource(`async kaj fetchData() {
+  ferot "BN Script"
+}
+
+async kaj main() {
+  ferot await fetchData()
+}`);
+
+  assert.strictEqual(
+    output,
+    expected(`async function fetchData() {
+  return "BN Script";
+}
+async function main() {
+  return await fetchData();
+}`)
   );
 });
 

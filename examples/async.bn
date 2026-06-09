@@ -1,0 +1,10 @@
+async kaj fetchData() {
+  ferot "BN Script"
+}
+
+async kaj main() {
+  dhori result = await fetchData()
+  dekhi result
+}
+
+main()

@@ -17,6 +17,8 @@ export class SemanticAnalyzer {
     this.errors = [];
     this.loopDepth = 0;
     this.functionDepth = 0;
+    this.asyncFunctionDepth = 0;
+    this.functionAsyncStack = [];
   }
 
   analyze() {
@@ -72,6 +74,8 @@ export class SemanticAnalyzer {
         return this.resolveIdentifier(node);
       case "UnaryExpression":
         return this.visit(node.operand);
+      case "AwaitExpression":
+        return this.visitAwaitExpression(node);
       case "BinaryExpression":
       case "LogicalExpression":
         this.visit(node.left);
@@ -339,6 +343,24 @@ export class SemanticAnalyzer {
     }
   }
 
+  visitAwaitExpression(node) {
+    node.semantic.kind = "await";
+    node.semantic.scopeType = this.currentScope.type;
+
+    const currentFunctionIsAsync =
+      this.functionAsyncStack[this.functionAsyncStack.length - 1] === true;
+
+    if (!currentFunctionIsAsync) {
+      this.addError(
+        node,
+        'Cannot use "await" outside an async function.',
+        'Move this expression inside an "async kaj" function body.'
+      );
+    }
+
+    this.visit(node.argument);
+  }
+
   visitMemberExpression(node) {
     this.markChecked(node);
     this.visit(node.object);
@@ -425,6 +447,7 @@ export class SemanticAnalyzer {
     node.semantic.mutable = false;
     node.semantic.scopeType = this.currentScope.type;
     node.semantic.declared = result.ok;
+    node.semantic.isAsync = node.isAsync === true;
 
     if (!result.ok) {
       this.addError(
@@ -436,28 +459,40 @@ export class SemanticAnalyzer {
     }
 
     this.functionDepth += 1;
-    this.withScope(createFunctionScope(this.currentScope), () => {
-      for (const param of node.params || []) {
-        const name = typeof param === "string" ? param : param.name;
-        const result = this.currentScope.declare(name, {
-          kind: "parameter",
-          mutable: true,
-          declaration: param,
-          line: param.line || node.line,
-          column: param.column || node.column,
-        });
+    this.functionAsyncStack.push(node.isAsync === true);
+    if (node.isAsync === true) {
+      this.asyncFunctionDepth += 1;
+    }
 
-        if (!result.ok) {
-          this.addError(
-            param,
-            `Duplicate parameter "${name}" in function "${node.name}".`,
-            `Rename this parameter or remove the earlier parameter on line ${result.existing.line}.`
-          );
+    try {
+      this.withScope(createFunctionScope(this.currentScope), () => {
+        for (const param of node.params || []) {
+          const name = typeof param === "string" ? param : param.name;
+          const result = this.currentScope.declare(name, {
+            kind: "parameter",
+            mutable: true,
+            declaration: param,
+            line: param.line || node.line,
+            column: param.column || node.column,
+          });
+
+          if (!result.ok) {
+            this.addError(
+              param,
+              `Duplicate parameter "${name}" in function "${node.name}".`,
+              `Rename this parameter or remove the earlier parameter on line ${result.existing.line}.`
+            );
+          }
         }
+        this.visitFunctionBody(node.body);
+      });
+    } finally {
+      if (node.isAsync === true) {
+        this.asyncFunctionDepth -= 1;
       }
-      this.visitFunctionBody(node.body);
-    });
-    this.functionDepth -= 1;
+      this.functionAsyncStack.pop();
+      this.functionDepth -= 1;
+    }
   }
 
   visitFunctionBody(node) {

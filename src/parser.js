@@ -36,6 +36,7 @@ const EXPRESSION_STARTS = new Set([
   TOKENS.KHALI,
   TOKENS.NA,
   TOKENS.MINUS,
+  TOKENS.ABR,
   TOKENS.LEFT_PAREN,
   TOKENS.LEFT_BRACKET,
   TOKENS.LEFT_BRACE,
@@ -47,8 +48,6 @@ const UNSUPPORTED_STATEMENTS = new Map([
   [TOKENS.DHORO, '"dhoro" try blocks are not supported in this alpha compiler.'],
   [TOKENS.ERROR, '"error" catch blocks are not supported in this alpha compiler.'],
   [TOKENS.SHESHE, '"sheshe" finally blocks are not supported in this alpha compiler.'],
-  [TOKENS.ABR, '"abr" await expressions are not supported in this alpha compiler.'],
-  [TOKENS.ASYNC, '"async" functions are not supported in this alpha compiler.'],
 ]);
 
 export class Parser {
@@ -123,6 +122,8 @@ export class Parser {
         return this.parseForStatement();
       case TOKENS.KAJ:
         return this.parseFunctionDeclaration();
+      case TOKENS.ASYNC:
+        return this.parseFunctionDeclaration();
       case TOKENS.FEROT:
         return this.parseReturnStatement();
       case TOKENS.BEKKHON:
@@ -157,7 +158,7 @@ export class Parser {
           this.raise(
             token,
             UNSUPPORTED_STATEMENTS.get(token.type),
-            "Use declarations, print, if/else, loops, functions, returns, blocks, calls, and expressions in this alpha."
+          "Use declarations, print, if/else, loops, functions, returns, imports, exports, blocks, calls, and expressions in this alpha."
           );
         }
 
@@ -168,7 +169,7 @@ export class Parser {
         this.raise(
           token,
           `Unexpected token "${this.describeToken(token)}".`,
-          "Start a statement with amdani, roptani, dhori, sthir, dekhi, jodi, jotokkhon, bar, kaj, ferot, a block, or an expression."
+          "Start a statement with amdani, roptani, dhori, sthir, dekhi, jodi, jotokkhon, bar, async kaj, kaj, ferot, a block, or an expression."
         );
     }
   }
@@ -244,7 +245,7 @@ export class Parser {
     const startToken = this.consume(TOKENS.ROPTANI);
     this.skipNewlines();
 
-    if (this.check(TOKENS.KAJ)) {
+    if (this.check(TOKENS.KAJ) || this.check(TOKENS.ASYNC)) {
       const declaration = this.parseFunctionDeclaration();
       return AST.ExportDeclaration(
         declaration,
@@ -270,8 +271,8 @@ export class Parser {
 
     this.raise(
       this.peek(),
-      'Expected "kaj", "dhori", or "sthir" after "roptani".',
-      'Use: roptani kaj greet() { ... }, roptani dhori x = 1, or roptani sthir y = 2.'
+      'Expected "kaj", "async", "dhori", or "sthir" after "roptani".',
+      'Use: roptani kaj greet() { ... }, roptani async kaj load() { ... }, roptani dhori x = 1, or roptani sthir y = 2.'
     );
   }
 
@@ -460,7 +461,21 @@ export class Parser {
   }
 
   parseFunctionDeclaration() {
-    const startToken = this.consume(TOKENS.KAJ);
+    let startToken = this.peek();
+    let isAsync = false;
+
+    if (this.match(TOKENS.ASYNC)) {
+      startToken = this.previous();
+      isAsync = true;
+      this.consume(
+        TOKENS.KAJ,
+        'Expected "kaj" after "async".',
+        'Use: async kaj load() { ... }'
+      );
+    } else {
+      startToken = this.consume(TOKENS.KAJ);
+    }
+
     const nameToken = this.consume(
       TOKENS.IDENTIFIER,
       'Expected function name after "kaj".',
@@ -517,7 +532,8 @@ export class Parser {
       nameToken.value,
       params,
       body,
-      this.locationFrom(startToken, body || closeToken)
+      this.locationFrom(startToken, body || closeToken),
+      { isAsync }
     );
   }
 
@@ -663,6 +679,16 @@ export class Parser {
   }
 
   parseUnaryExpression() {
+    if (this.match(TOKENS.ABR)) {
+      const awaitToken = this.previous();
+      this.skipNewlines();
+      const argument = this.parseUnaryExpression();
+      return AST.AwaitExpression(
+        argument,
+        this.locationFrom(awaitToken, argument)
+      );
+    }
+
     if (this.match(TOKENS.NA, TOKENS.MINUS)) {
       const operatorToken = this.previous();
       this.skipNewlines();
@@ -832,14 +858,6 @@ export class Parser {
     }
 
     const token = this.peek();
-    if (token.type === TOKENS.ABR) {
-      this.raise(
-        token,
-        '"abr" await expressions are not supported in this alpha compiler.',
-        "This alpha only accepts primitive, identifier, call, unary, binary, and grouped expressions."
-      );
-    }
-
     this.raise(
       token,
       `Expected expression, but found "${this.describeToken(token)}".`,
