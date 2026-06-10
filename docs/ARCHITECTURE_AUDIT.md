@@ -12,7 +12,7 @@ Repository URL: `https://github.com/sayedrisat/bnscript`
 
 Latest Stage: `Stage 19 - REPL`
 
-Current Commit: `Pending Stage 19 release commit`
+Current Commit: `c82aadb886fb5c7d57128ca68e91dec39b9fb932`
 
 Current Test Count: `238` passing tests
 
