@@ -1,5 +1,33 @@
 # Changelog
 
+## Day 10 - 2026-06-10 (VS Code Extension Package Stage 23)
+
+### Completed: VS Code Extension Package
+- Converted the `vscode/` folder into a local installable VS Code extension package.
+- Updated `vscode/package.json` with extension metadata, repository, license, icon, language contribution, grammar contribution, and language configuration path.
+- Added a local extension README with features, manual install steps, development install steps, grammar coverage, screenshots placeholder, and known limitations.
+- Added `vscode/assets/icon.svg` as a local placeholder icon.
+- Added `vscode/samples/demo.bn` covering variables, functions, imports/exports, async/await, runtime helpers, try/catch/finally, and loops.
+
+### Tests Added
+- Extension manifest metadata validation.
+- Language, grammar, configuration, and icon path validation.
+- Current keyword coverage validation.
+- Sample demo compilation coverage.
+
+### Known Issues
+- The extension is not published to the VS Code Marketplace.
+- It provides syntax highlighting and language configuration only.
+- No language server, diagnostics, formatter, snippets, debugger, or completion provider is included yet.
+
+### Test Result
+- `npm.cmd test` passed 260 tests.
+
+### Recommended Next Task
+- Stage 24 Module Graph Analysis
+
+---
+
 ## Day 10 - 2026-06-10 (Audit Cleanup Sprint Stage 22)
 
 ### Completed: Architecture Audit Cleanup

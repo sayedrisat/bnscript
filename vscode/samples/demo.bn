@@ -1,0 +1,29 @@
+// BN Script VS Code extension demo
+
+amdani { greet } theke "./module-utils.bn"
+
+roptani sthir APP = "BN Script"
+
+dhori names = ["Risat", "BN"]
+
+kaj label(name) {
+  ferot "Hello ${name}"
+}
+
+async kaj loadMessage(name) {
+  await wait(1)
+  ferot label(name)
+}
+
+bar name ekti names {
+  dekhi label(name)
+}
+
+dhoro {
+  dhori response = await httpGet("https://example.com")
+  dekhi response
+} error err {
+  dekhi err
+} sheshe {
+  dekhi greet(APP)
+}

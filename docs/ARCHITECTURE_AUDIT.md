@@ -10,11 +10,11 @@ Current Version: `0.1.0-alpha.0`
 
 Repository URL: `https://github.com/sayedrisat/bnscript`
 
-Latest Stage: `Stage 22 - Audit Cleanup Sprint`
+Latest Stage: `Stage 23 - VS Code Extension Package`
 
-Current Commit: `626d316101b73b7d860cb83d30d29b6f21881437`
+Current Commit: `Pending Stage 23 release commit`
 
-Current Test Count: `256` passing tests
+Current Test Count: `260` passing tests
 
 Current Compiler Stages Completed:
 
@@ -45,6 +45,7 @@ Current Compiler Stages Completed:
 * Try/catch/finally with `dhoro`, `error`, and `sheshe`
 * Interactive REPL
 * VS Code syntax highlighting assets
+* Local VS Code extension package
 * Shared AST traversal utilities
 * String interpolation output
 
@@ -107,10 +108,12 @@ Compiler Utilities:
 
 Tooling:
 
-* VS Code syntax highlighting assets live under `vscode/`.
+* Local VS Code extension package assets live under `vscode/`.
 * `vscode/package.json` contributes the `bnscript` language id and `.bn` file association.
 * `vscode/bnscript.tmLanguage.json` provides TextMate grammar highlighting.
 * `vscode/language-configuration.json` provides comments, brackets, and auto-closing pairs.
+* `vscode/assets/icon.svg` provides a local placeholder extension icon.
+* `vscode/samples/demo.bn` provides a syntax showcase inside the extension package.
 
 ## Features Implemented
 
@@ -135,7 +138,7 @@ Current implemented language features:
 * Runtime helper calls with `env`, `fileRead`, `fileWrite`, `wait`, and `httpGet`
 * Try/catch/finally statements with `dhoro`, `error`, and `sheshe`
 * Interactive REPL sessions with persistent variables
-* VS Code syntax highlighting for `.bn` files
+* Local VS Code extension package for `.bn` syntax highlighting
 * String interpolation output for strings containing `${...}`
 * Assignment expressions
 * Compound assignment
@@ -151,16 +154,14 @@ Current implemented language features:
 
 Latest completed stage:
 
-* Stage 22: Audit Cleanup Sprint
+* Stage 23: VS Code Extension Package
 
 ## AST Changes
 
 Latest completed stage:
 
-* Refactored `ForLoop` to use the shared AST `node()` helper.
-* Preserved range loop expression fields as `start` and `end`.
-* Preserved source-position offsets on range loops as `locationStart` and `locationEnd`.
-* Added reusable AST traversal utility in `src/ast-walker.js`.
+* No AST changes.
+* Stage 23 packaged editor tooling only.
 
 Current AST model:
 
@@ -174,8 +175,8 @@ Current AST model:
 
 Latest completed stage:
 
-* No grammar changes.
-* Reused the existing lexer/parser `StringLiteral.hasInterpolation` flag.
+* No parser changes.
+* Stage 23 uses the existing TextMate grammar outside the compiler parser.
 
 Current parser grammar support:
 
@@ -200,8 +201,8 @@ Current parser grammar support:
 
 Latest completed stage:
 
-* Runtime helper built-ins now come from the canonical helper list in `src/runtime/helpers.js`.
-* String interpolation contents are not deeply analyzed yet.
+* No analyzer changes.
+* Extension package validation is covered by lightweight metadata and sample compilation tests.
 
 Current analyzer checks:
 
@@ -225,10 +226,8 @@ Current analyzer checks:
 
 Latest completed stage:
 
-* Runtime helper usage detection now uses the shared AST walker.
-* `StringLiteral` nodes with `hasInterpolation` now emit JavaScript template literals.
-* Ordinary strings still emit JSON string literals.
-* Interpolated string backticks are escaped before output.
+* No generator changes.
+* Stage 23 does not affect JavaScript output.
 
 Current generator output support:
 
@@ -414,7 +413,7 @@ Active AST nodes:
 
 New example files added in the latest completed stage:
 
-* `interpolation.bn`
+* `vscode/samples/demo.bn`
 
 Runnable `.bn` examples in `examples/`:
 
@@ -445,13 +444,12 @@ Runnable `.bn` examples in `examples/`:
 
 New tests added in the latest completed stage:
 
-* ForLoop AST factory cleanup coverage.
-* AST walker traversal coverage.
-* Runtime helper centralization and detection coverage.
-* Top-level await detection through the shared walker.
-* String interpolation output coverage.
+* VS Code extension manifest metadata validation.
+* Extension language, grammar, configuration, and icon path validation.
+* Current grammar keyword coverage validation.
+* Extension sample compilation coverage.
 
-Current total passing tests: `256`
+Current total passing tests: `260`
 
 Primary test files:
 
@@ -475,6 +473,7 @@ Primary test files:
   * `tests/stage20.integration.test.js`
   * `tests/stage21.syntax.test.js`
   * `tests/stage22.audit.test.js`
+  * `tests/stage23.extension.test.js`
 
 Integration fixtures in `tests/integration/`:
 
@@ -500,7 +499,7 @@ Integration fixtures in `tests/integration/`:
 
 ## Current Test Count
 
-Current total passing tests: `256`
+Current total passing tests: `260`
 
 ## Known Limitations
 
@@ -524,16 +523,17 @@ Major missing or incomplete features:
 * Advanced object/array shape validation
 * AI runtime helpers
 * Package publishing
-* Full VS Code extension beyond syntax highlighting
+* VS Code language server features
+* VS Code formatter, snippets, debugger, and completions
 * Language Server Protocol (LSP)
 * Source maps
 
 ## Recommended Next Stage
 
-Stage 23:
+Stage 24:
 
 * Module Graph Analysis
 
-Stage 24:
+Stage 25:
 
 * Advanced Runtime Helpers and AI Integration
