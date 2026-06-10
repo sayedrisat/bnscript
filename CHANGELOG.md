@@ -1,5 +1,34 @@
 # Changelog
 
+## Day 10 - 2026-06-10 (VSIX Packaging Stage 24)
+
+### Completed: VSIX Packaging
+- Added root `build:vsix` script for creating an installable VS Code extension package.
+- Added `@vscode/vsce` as a development dependency.
+- Added VSIX output ignore rules for generated packages.
+- Switched the extension manifest icon to a package-safe PNG asset while keeping the SVG placeholder asset in the repo.
+- Documented source development, VSIX building, and manual VSIX installation.
+
+### Tests Added
+- Root `build:vsix` script validation.
+- `@vscode/vsce` dev dependency validation.
+- Extension manifest metadata validation for VSIX packaging.
+- Grammar, language configuration, icon, and README path validation.
+
+### Known Issues
+- The VSIX is generated locally only and is not committed.
+- The extension is not published to the VS Code Marketplace.
+- No language server, diagnostics, formatter, snippets, debugger, or completion provider is included yet.
+
+### Test Result
+- `npm.cmd test` passed 263 tests.
+- `npm run build:vsix` generated `dist/bnscript-0.1.0-alpha.0.vsix`.
+
+### Recommended Next Task
+- Stage 25 Module Graph Analysis
+
+---
+
 ## Day 10 - 2026-06-10 (VS Code Extension Package Stage 23)
 
 ### Completed: VS Code Extension Package

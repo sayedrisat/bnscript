@@ -25,7 +25,7 @@ is installed in VS Code and the theme coverage is reviewed.
 
 This package is not published to the VS Code Marketplace.
 
-For local use:
+For source development:
 
 1. Open VS Code.
 2. Open the `bnscript/vscode` folder as an extension development folder.
@@ -42,6 +42,34 @@ workspace `settings.json`:
   }
 }
 ```
+
+## Building VSIX
+
+From the repository root:
+
+```sh
+npm install
+npm run build:vsix
+```
+
+This creates:
+
+```txt
+dist/bnscript-0.1.0-alpha.0.vsix
+```
+
+The build uses `@vscode/vsce` to run `vsce package`. It does not publish to the
+VS Code Marketplace.
+
+## Installing VSIX Manually
+
+After building the `.vsix` file:
+
+1. Open VS Code.
+2. Open the Extensions view.
+3. Choose `...` from the Extensions view toolbar.
+4. Select `Install from VSIX...`.
+5. Choose `dist/bnscript-0.1.0-alpha.0.vsix`.
 
 ## Development Install
 

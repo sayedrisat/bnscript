@@ -62,11 +62,11 @@ test("extension: language, grammar, config, and icon paths exist", async () => {
   assert.strictEqual(language.configuration, "./language-configuration.json");
   assert.strictEqual(grammar.language, "bnscript");
   assert.strictEqual(grammar.path, "./bnscript.tmLanguage.json");
-  assert.strictEqual(pkg.icon, "assets/icon.svg");
+  assert.strictEqual(pkg.icon, "assets/icon.png");
 
   await exists("vscode/language-configuration.json");
   await exists("vscode/bnscript.tmLanguage.json");
-  await exists("vscode/assets/icon.svg");
+  await exists("vscode/assets/icon.png");
 });
 
 test("extension: grammar includes current BN Script keywords", async () => {

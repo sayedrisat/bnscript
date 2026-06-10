@@ -35,6 +35,10 @@
     "CHANGELOG.md"
   ],
   "scripts": {
-    "test": "node --test"
+    "test": "node --test",
+    "build:vsix": "node -e \"require('node:fs').mkdirSync('dist',{recursive:true})\" && cd vscode && npx vsce package --out ../dist/bnscript-0.1.0-alpha.0.vsix"
+  },
+  "devDependencies": {
+    "@vscode/vsce": "^3.9.2"
   }
 }

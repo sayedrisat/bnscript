@@ -28,6 +28,8 @@ architecture_review.md
 # Generated example outputs
 examples/*.js
 tests/integration/*.js
+dist/
+*.vsix
 
 # Environment and secrets
 .env

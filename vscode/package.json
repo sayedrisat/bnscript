@@ -15,7 +15,17 @@
     "url": "https://github.com/sayedrisat/bnscript.git"
   },
   "license": "MIT",
-  "icon": "assets/icon.svg",
+  "icon": "assets/icon.png",
+  "files": [
+    "README.md",
+    "LICENSE",
+    "package.json",
+    "bnscript.tmLanguage.json",
+    "language-configuration.json",
+    "assets/icon.png",
+    "assets/icon.svg",
+    "samples/demo.bn"
+  ],
   "contributes": {
     "languages": [
       {

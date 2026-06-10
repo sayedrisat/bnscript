@@ -10,11 +10,11 @@ Current Version: `0.1.0-alpha.0`
 
 Repository URL: `https://github.com/sayedrisat/bnscript`
 
-Latest Stage: `Stage 23 - VS Code Extension Package`
+Latest Stage: `Stage 24 - VSIX Packaging`
 
-Current Commit: `c073cf78aedd5daa9119d65e2e48162abdc44ea5`
+Current Commit: `Pending Stage 24 release commit`
 
-Current Test Count: `260` passing tests
+Current Test Count: `263` passing tests
 
 Current Compiler Stages Completed:
 
@@ -46,6 +46,7 @@ Current Compiler Stages Completed:
 * Interactive REPL
 * VS Code syntax highlighting assets
 * Local VS Code extension package
+* VSIX packaging support
 * Shared AST traversal utilities
 * String interpolation output
 
@@ -112,8 +113,11 @@ Tooling:
 * `vscode/package.json` contributes the `bnscript` language id and `.bn` file association.
 * `vscode/bnscript.tmLanguage.json` provides TextMate grammar highlighting.
 * `vscode/language-configuration.json` provides comments, brackets, and auto-closing pairs.
-* `vscode/assets/icon.svg` provides a local placeholder extension icon.
+* `vscode/assets/icon.png` provides the package-safe extension icon.
+* `vscode/assets/icon.svg` remains a source placeholder icon.
 * `vscode/samples/demo.bn` provides a syntax showcase inside the extension package.
+* `npm run build:vsix` packages the local extension with `@vscode/vsce`.
+* Generated VSIX files are written under ignored `dist/`.
 
 ## Features Implemented
 
@@ -154,14 +158,14 @@ Current implemented language features:
 
 Latest completed stage:
 
-* Stage 23: VS Code Extension Package
+* Stage 24: VSIX Packaging
 
 ## AST Changes
 
 Latest completed stage:
 
 * No AST changes.
-* Stage 23 packaged editor tooling only.
+* Stage 24 added editor packaging workflow only.
 
 Current AST model:
 
@@ -176,7 +180,7 @@ Current AST model:
 Latest completed stage:
 
 * No parser changes.
-* Stage 23 uses the existing TextMate grammar outside the compiler parser.
+* Stage 24 uses the existing TextMate grammar outside the compiler parser.
 
 Current parser grammar support:
 
@@ -202,7 +206,7 @@ Current parser grammar support:
 Latest completed stage:
 
 * No analyzer changes.
-* Extension package validation is covered by lightweight metadata and sample compilation tests.
+* VSIX package validation is covered by lightweight metadata and file existence tests.
 
 Current analyzer checks:
 
@@ -227,7 +231,7 @@ Current analyzer checks:
 Latest completed stage:
 
 * No generator changes.
-* Stage 23 does not affect JavaScript output.
+* Stage 24 does not affect JavaScript output.
 
 Current generator output support:
 
@@ -413,7 +417,7 @@ Active AST nodes:
 
 New example files added in the latest completed stage:
 
-* `vscode/samples/demo.bn`
+* None
 
 Runnable `.bn` examples in `examples/`:
 
@@ -444,12 +448,12 @@ Runnable `.bn` examples in `examples/`:
 
 New tests added in the latest completed stage:
 
-* VS Code extension manifest metadata validation.
-* Extension language, grammar, configuration, and icon path validation.
-* Current grammar keyword coverage validation.
-* Extension sample compilation coverage.
+* Root VSIX build script validation.
+* `@vscode/vsce` dev dependency validation.
+* Extension manifest metadata validation for packageability.
+* Grammar, language configuration, icon, and README path validation.
 
-Current total passing tests: `260`
+Current total passing tests: `263`
 
 Primary test files:
 
@@ -474,6 +478,7 @@ Primary test files:
   * `tests/stage21.syntax.test.js`
   * `tests/stage22.audit.test.js`
   * `tests/stage23.extension.test.js`
+  * `tests/stage24.vsix.test.js`
 
 Integration fixtures in `tests/integration/`:
 
@@ -499,7 +504,7 @@ Integration fixtures in `tests/integration/`:
 
 ## Current Test Count
 
-Current total passing tests: `260`
+Current total passing tests: `263`
 
 ## Known Limitations
 
@@ -523,6 +528,7 @@ Major missing or incomplete features:
 * Advanced object/array shape validation
 * AI runtime helpers
 * Package publishing
+* VS Code Marketplace publishing
 * VS Code language server features
 * VS Code formatter, snippets, debugger, and completions
 * Language Server Protocol (LSP)
@@ -530,10 +536,10 @@ Major missing or incomplete features:
 
 ## Recommended Next Stage
 
-Stage 24:
+Stage 25:
 
 * Module Graph Analysis
 
-Stage 25:
+Stage 26:
 
 * Advanced Runtime Helpers and AI Integration

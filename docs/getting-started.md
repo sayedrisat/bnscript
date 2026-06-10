@@ -115,6 +115,15 @@ code vscode
 Then press `F5` in VS Code to launch an Extension Development Host and open a
 `.bn` file there.
 
+To build an installable VSIX package:
+
+```sh
+npm run build:vsix
+```
+
+The generated package is written to `dist/bnscript-0.1.0-alpha.0.vsix`.
+Install it from VS Code with `Extensions -> ... -> Install from VSIX...`.
+
 If VS Code does not automatically associate `.bn` files with BN Script, add this
 to your user or workspace `settings.json`:
 
