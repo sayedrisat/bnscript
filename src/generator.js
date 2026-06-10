@@ -1,4 +1,6 @@
 import { createError } from "./errors.js";
+import { walkAST } from "./ast-walker.js";
+import { RUNTIME_HELPERS } from "./runtime/helpers.js";
 
 const BINARY_OPERATORS = new Map([
   ["othoba", { js: "||", precedence: 1, associativity: "left" }],
@@ -23,13 +25,6 @@ const UNARY_OPERATORS = new Map([
 ]);
 
 const UNARY_PRECEDENCE = 8;
-const RUNTIME_HELPERS = new Set([
-  "env",
-  "fileRead",
-  "fileWrite",
-  "wait",
-  "httpGet",
-]);
 const DEFAULT_RUNTIME_IMPORT = "./src/runtime/index.js";
 
 class Emitter {
@@ -184,109 +179,18 @@ export class Generator {
   }
 
   usesRuntimeHelpers(node) {
-    switch (node?.type) {
-      case "Program":
-      case "BlockStatement":
-      case "Block":
-        return (node.body || []).some((statement) =>
-          this.usesRuntimeHelpers(statement)
-        );
-      case "ImportDeclaration":
-      case "BreakStatement":
-      case "ContinueStatement":
-      case "NumberLiteral":
-      case "StringLiteral":
-      case "BooleanLiteral":
-      case "NullLiteral":
-      case "Identifier":
+    let found = false;
+
+    walkAST(node, (current) => {
+      if (this.isRuntimeHelperCall(current)) {
+        found = true;
         return false;
-      case "ExportDeclaration":
-        return this.usesRuntimeHelpers(node.declaration);
-      case "VarDeclaration":
-      case "ConstDeclaration":
-        return this.usesRuntimeHelpers(node.initializer);
-      case "PrintStatement":
-        return (node.arguments || []).some((argument) =>
-          this.usesRuntimeHelpers(argument)
-        );
-      case "ExpressionStatement":
-        return this.usesRuntimeHelpers(node.expression);
-      case "IfStatement":
-        return (
-          this.usesRuntimeHelpers(node.condition) ||
-          this.usesRuntimeHelpers(node.consequent) ||
-          (node.alternates || []).some(
-            (alternate) =>
-              this.usesRuntimeHelpers(alternate.condition) ||
-              this.usesRuntimeHelpers(alternate.consequent)
-          ) ||
-          this.usesRuntimeHelpers(node.elseBlock)
-        );
-      case "TryStatement":
-        return (
-          this.usesRuntimeHelpers(node.tryBlock) ||
-          this.usesRuntimeHelpers(node.catchBlock) ||
-          this.usesRuntimeHelpers(node.finallyBlock)
-        );
-      case "WhileStatement":
-        return (
-          this.usesRuntimeHelpers(node.condition) ||
-          this.usesRuntimeHelpers(node.body)
-        );
-      case "ForLoop":
-        return (
-          this.usesRuntimeHelpers(node.start) ||
-          this.usesRuntimeHelpers(node.end) ||
-          this.usesRuntimeHelpers(node.body)
-        );
-      case "ForEachLoop":
-        return (
-          this.usesRuntimeHelpers(node.iterable) ||
-          this.usesRuntimeHelpers(node.body)
-        );
-      case "FunctionDeclaration":
-        return this.usesRuntimeHelpers(node.body);
-      case "ReturnStatement":
-        return this.usesRuntimeHelpers(node.value);
-      case "UnaryExpression":
-        return this.usesRuntimeHelpers(node.operand);
-      case "AwaitExpression":
-        return this.usesRuntimeHelpers(node.argument);
-      case "BinaryExpression":
-        return (
-          this.usesRuntimeHelpers(node.left) ||
-          this.usesRuntimeHelpers(node.right)
-        );
-      case "AssignmentExpression":
-      case "Assignment":
-        return (
-          this.usesRuntimeHelpers(node.target) ||
-          this.usesRuntimeHelpers(node.value)
-        );
-      case "CallExpression":
-        return (
-          this.isRuntimeHelperCall(node) ||
-          this.usesRuntimeHelpers(node.callee) ||
-          (node.arguments || []).some((argument) =>
-            this.usesRuntimeHelpers(argument)
-          )
-        );
-      case "MemberExpression":
-        return (
-          this.usesRuntimeHelpers(node.object) ||
-          (node.computed && this.usesRuntimeHelpers(node.property))
-        );
-      case "ArrayLiteral":
-        return (node.elements || []).some((element) =>
-          this.usesRuntimeHelpers(element)
-        );
-      case "ObjectLiteral":
-        return (node.properties || []).some((property) =>
-          this.usesRuntimeHelpers(property.value)
-        );
-      default:
-        return false;
-    }
+      }
+
+      return !found;
+    });
+
+    return found;
   }
 
   isRuntimeHelperCall(node) {
@@ -415,7 +319,7 @@ export class Generator {
       case "NumberLiteral":
         return node.raw || String(node.value);
       case "StringLiteral":
-        return JSON.stringify(node.value);
+        return this.generateStringLiteral(node);
       case "BooleanLiteral":
         return node.value ? "true" : "false";
       case "NullLiteral":
@@ -444,6 +348,18 @@ export class Generator {
 
   generateAssignmentExpression(node) {
     return `${this.generateExpression(node.target)} ${node.operator} ${this.generateExpression(node.value)}`;
+  }
+
+  generateStringLiteral(node) {
+    if (node.hasInterpolation === true) {
+      return `\`${this.escapeTemplateLiteral(node.value)}\``;
+    }
+
+    return JSON.stringify(node.value);
+  }
+
+  escapeTemplateLiteral(value) {
+    return String(value).replace(/\\/g, "\\\\").replace(/`/g, "\\`");
   }
 
   generateArrayLiteral(node) {

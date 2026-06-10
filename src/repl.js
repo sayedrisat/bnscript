@@ -2,6 +2,7 @@ import { createInterface } from "node:readline/promises";
 import { stdin, stdout, stderr } from "node:process";
 import { Script, createContext } from "node:vm";
 import { inspect } from "node:util";
+import { walkAST } from "./ast-walker.js";
 import { compile } from "./compiler.js";
 import * as runtime from "./runtime/index.js";
 
@@ -78,113 +79,23 @@ function newExecutableChunk(previous, next) {
   throw new Error("REPL execution state diverged from compiled session state.");
 }
 
-function containsTopLevelAwait(node) {
-  if (!node) {
-    return false;
-  }
+export function containsTopLevelAwait(node) {
+  let found = false;
 
-  switch (node.type) {
-    case "FunctionDeclaration":
+  walkAST(node, (current) => {
+    if (current.type === "FunctionDeclaration") {
       return false;
-    case "AwaitExpression":
-      return true;
-    case "Program":
-    case "BlockStatement":
-    case "Block":
-      return (node.body || []).some((statement) =>
-        containsTopLevelAwait(statement)
-      );
-    case "ImportDeclaration":
-    case "BreakStatement":
-    case "ContinueStatement":
-    case "NumberLiteral":
-    case "StringLiteral":
-    case "BooleanLiteral":
-    case "NullLiteral":
-    case "Identifier":
+    }
+
+    if (current.type === "AwaitExpression") {
+      found = true;
       return false;
-    case "ExportDeclaration":
-      return containsTopLevelAwait(node.declaration);
-    case "VarDeclaration":
-    case "ConstDeclaration":
-      return containsTopLevelAwait(node.initializer);
-    case "PrintStatement":
-      return (node.arguments || []).some((argument) =>
-        containsTopLevelAwait(argument)
-      );
-    case "ExpressionStatement":
-      return containsTopLevelAwait(node.expression);
-    case "IfStatement":
-      return (
-        containsTopLevelAwait(node.condition) ||
-        containsTopLevelAwait(node.consequent) ||
-        (node.alternates || []).some(
-          (alternate) =>
-            containsTopLevelAwait(alternate.condition) ||
-            containsTopLevelAwait(alternate.consequent)
-        ) ||
-        containsTopLevelAwait(node.elseBlock)
-      );
-    case "TryStatement":
-      return (
-        containsTopLevelAwait(node.tryBlock) ||
-        containsTopLevelAwait(node.catchBlock) ||
-        containsTopLevelAwait(node.finallyBlock)
-      );
-    case "WhileStatement":
-      return (
-        containsTopLevelAwait(node.condition) ||
-        containsTopLevelAwait(node.body)
-      );
-    case "ForLoop":
-      return (
-        containsTopLevelAwait(node.start) ||
-        containsTopLevelAwait(node.end) ||
-        containsTopLevelAwait(node.body)
-      );
-    case "ForEachLoop":
-      return (
-        containsTopLevelAwait(node.iterable) ||
-        containsTopLevelAwait(node.body)
-      );
-    case "ReturnStatement":
-      return containsTopLevelAwait(node.value);
-    case "UnaryExpression":
-      return containsTopLevelAwait(node.operand);
-    case "BinaryExpression":
-      return (
-        containsTopLevelAwait(node.left) ||
-        containsTopLevelAwait(node.right)
-      );
-    case "AssignmentExpression":
-    case "Assignment":
-      return (
-        containsTopLevelAwait(node.target) ||
-        containsTopLevelAwait(node.value)
-      );
-    case "CallExpression":
-      return (
-        containsTopLevelAwait(node.callee) ||
-        (node.arguments || []).some((argument) =>
-          containsTopLevelAwait(argument)
-        )
-      );
-    case "MemberExpression":
-      return (
-        containsTopLevelAwait(node.object) ||
-        (node.computed && containsTopLevelAwait(node.property))
-      );
-    case "ArrayLiteral":
-      return (node.elements || []).some((element) =>
-        containsTopLevelAwait(element)
-      );
-    case "ObjectLiteral":
-      return (node.properties || []).some((property) =>
-        containsTopLevelAwait(property.value)
-      );
-    default:
-      return false;
-  }
+    }
+
+    return !found;
+  });
+
+  return found;
 }
 
 function prepareTopLevelAwaitChunk(chunk) {

@@ -1,5 +1,35 @@
 # Changelog
 
+## Day 10 - 2026-06-10 (Audit Cleanup Sprint Stage 22)
+
+### Completed: Architecture Audit Cleanup
+- Refactored the `ForLoop` AST factory to use the shared node helper while preserving range `start` and `end` expression fields.
+- Centralized runtime helper names in `src/runtime/helpers.js`.
+- Added `src/ast-walker.js` as a shared safe AST traversal utility.
+- Refactored runtime helper detection in the generator to use the shared AST walker.
+- Refactored REPL top-level await detection to use the shared AST walker while skipping function bodies.
+- Added shallow string interpolation output for string literals marked with `hasInterpolation`.
+- Added `examples/interpolation.bn`.
+
+### Tests Added
+- AST factory coverage for range loop expression fields and location metadata.
+- AST walker traversal coverage.
+- Runtime helper centralization and detection coverage.
+- Top-level await walker detection coverage.
+- String interpolation output coverage.
+
+### Known Issues
+- Interpolation content is passed through into JavaScript template literals and is not parsed or semantically analyzed as BN Script yet.
+- Full module graph analysis, cross-file validation, AI helpers, full VS Code extension support, LSP, source maps, and package publishing remain future work.
+
+### Test Result
+- `npm.cmd test` passed 256 tests.
+
+### Recommended Next Task
+- Stage 23 Module Graph Analysis
+
+---
+
 ## Day 10 - 2026-06-10 (VS Code Syntax Highlighting Stage 21)
 
 ### Completed: VS Code Syntax Highlighting
@@ -25,7 +55,7 @@
 - `npm.cmd test` passed 248 tests.
 
 ### Recommended Next Task
-- Stage 22 Module Graph Analysis
+- Stage 22 Audit Cleanup Sprint
 
 ---
 

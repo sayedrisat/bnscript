@@ -4,15 +4,9 @@ import {
   createFunctionScope,
   createGlobalScope,
 } from "./scope.js";
+import { RUNTIME_HELPERS } from "./runtime/helpers.js";
 
 const MAX_ERRORS = 20;
-const RUNTIME_HELPERS = new Set([
-  "env",
-  "fileRead",
-  "fileWrite",
-  "wait",
-  "httpGet",
-]);
 
 export class SemanticAnalyzer {
   constructor(ast, { filename, source = "" } = {}) {

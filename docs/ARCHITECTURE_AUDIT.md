@@ -10,11 +10,11 @@ Current Version: `0.1.0-alpha.0`
 
 Repository URL: `https://github.com/sayedrisat/bnscript`
 
-Latest Stage: `Stage 21 - VS Code Syntax Highlighting`
+Latest Stage: `Stage 22 - Audit Cleanup Sprint`
 
-Current Commit: `eedfa1bc665d6bfa2f8b4841687bdf6d79b3da10`
+Current Commit: `Pending Stage 22 release commit`
 
-Current Test Count: `248` passing tests
+Current Test Count: `256` passing tests
 
 Current Compiler Stages Completed:
 
@@ -45,6 +45,8 @@ Current Compiler Stages Completed:
 * Try/catch/finally with `dhoro`, `error`, and `sheshe`
 * Interactive REPL
 * VS Code syntax highlighting assets
+* Shared AST traversal utilities
+* String interpolation output
 
 ## Compiler Architecture
 
@@ -65,6 +67,7 @@ AST:
 * Implemented in `src/ast.js`.
 * Uses factory functions for active statement and expression nodes.
 * Preserves source location metadata on nodes.
+* Range `ForLoop` uses the shared node helper while preserving expression `start` and `end` fields.
 
 Semantic Analyzer:
 
@@ -95,6 +98,12 @@ Runtime:
 
 * Implemented under `src/runtime/`.
 * Provides current runtime helper foundation for env, file, fetch, wait, runtime errors, and runtime exports.
+* Canonical runtime helper names are defined in `src/runtime/helpers.js`.
+
+Compiler Utilities:
+
+* `src/ast-walker.js` provides reusable safe AST traversal for compiler utilities.
+* The generator and REPL reuse the shared AST walker for helper and top-level await detection.
 
 Tooling:
 
@@ -127,6 +136,7 @@ Current implemented language features:
 * Try/catch/finally statements with `dhoro`, `error`, and `sheshe`
 * Interactive REPL sessions with persistent variables
 * VS Code syntax highlighting for `.bn` files
+* String interpolation output for strings containing `${...}`
 * Assignment expressions
 * Compound assignment
 * Array literals
@@ -141,14 +151,16 @@ Current implemented language features:
 
 Latest completed stage:
 
-* Stage 21: VS Code Syntax Highlighting
+* Stage 22: Audit Cleanup Sprint
 
 ## AST Changes
 
 Latest completed stage:
 
-* No AST changes.
-* Stage 21 added editor tooling assets only.
+* Refactored `ForLoop` to use the shared AST `node()` helper.
+* Preserved range loop expression fields as `start` and `end`.
+* Preserved source-position offsets on range loops as `locationStart` and `locationEnd`.
+* Added reusable AST traversal utility in `src/ast-walker.js`.
 
 Current AST model:
 
@@ -162,8 +174,8 @@ Current AST model:
 
 Latest completed stage:
 
-* No parser changes.
-* Stage 21 uses a TextMate grammar outside the compiler parser.
+* No grammar changes.
+* Reused the existing lexer/parser `StringLiteral.hasInterpolation` flag.
 
 Current parser grammar support:
 
@@ -188,8 +200,8 @@ Current parser grammar support:
 
 Latest completed stage:
 
-* No analyzer changes.
-* Syntax highlighting validation is covered by lightweight JSON and sample compilation tests.
+* Runtime helper built-ins now come from the canonical helper list in `src/runtime/helpers.js`.
+* String interpolation contents are not deeply analyzed yet.
 
 Current analyzer checks:
 
@@ -213,8 +225,10 @@ Current analyzer checks:
 
 Latest completed stage:
 
-* No generator changes.
-* Stage 21 does not affect JavaScript output.
+* Runtime helper usage detection now uses the shared AST walker.
+* `StringLiteral` nodes with `hasInterpolation` now emit JavaScript template literals.
+* Ordinary strings still emit JSON string literals.
+* Interpolated string backticks are escaped before output.
 
 Current generator output support:
 
@@ -234,6 +248,7 @@ Current generator output support:
 * `await` -> `await`
 * `amdani` -> ESM `import`
 * `roptani` -> ESM `export`
+* interpolated BN strings -> JavaScript template literals
 * BN Script expressions -> readable JavaScript expressions
 
 ## Supported Statements
@@ -399,7 +414,7 @@ Active AST nodes:
 
 New example files added in the latest completed stage:
 
-* `syntax-highlighting.bn`
+* `interpolation.bn`
 
 Runnable `.bn` examples in `examples/`:
 
@@ -413,6 +428,7 @@ Runnable `.bn` examples in `examples/`:
 * `functions.bn`
 * `hello.bn`
 * `if.bn`
+* `interpolation.bn`
 * `logic.bn`
 * `module-main.bn`
 * `module-utils.bn`
@@ -429,12 +445,13 @@ Runnable `.bn` examples in `examples/`:
 
 New tests added in the latest completed stage:
 
-* VS Code package metadata validation.
-* TextMate grammar keyword and scope coverage validation.
-* Language configuration JSON validation.
-* Compilation coverage for `examples/syntax-highlighting.bn`.
+* ForLoop AST factory cleanup coverage.
+* AST walker traversal coverage.
+* Runtime helper centralization and detection coverage.
+* Top-level await detection through the shared walker.
+* String interpolation output coverage.
 
-Current total passing tests: `248`
+Current total passing tests: `256`
 
 Primary test files:
 
@@ -457,6 +474,7 @@ Primary test files:
   * `tests/stage18.integration.test.js`
   * `tests/stage20.integration.test.js`
   * `tests/stage21.syntax.test.js`
+  * `tests/stage22.audit.test.js`
 
 Integration fixtures in `tests/integration/`:
 
@@ -482,7 +500,7 @@ Integration fixtures in `tests/integration/`:
 
 ## Current Test Count
 
-Current total passing tests: `248`
+Current total passing tests: `256`
 
 ## Known Limitations
 
@@ -495,6 +513,7 @@ Major missing or incomplete features:
 * Cross-file semantic validation
 * Circular dependency diagnostics
 * Promise API design
+* Interpolation contents are passed through to JS template literals without BN Script expression parsing
 * Simple repeat `bar 5 { ... }` loops
 * Multi-line REPL block editing
 * Import/export execution inside the REPL
@@ -511,10 +530,10 @@ Major missing or incomplete features:
 
 ## Recommended Next Stage
 
-Stage 22:
+Stage 23:
 
 * Module Graph Analysis
 
-Stage 23:
+Stage 24:
 
 * Advanced Runtime Helpers and AI Integration

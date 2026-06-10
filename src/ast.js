@@ -80,15 +80,19 @@ export function TryStatement(
 }
 
 export function ForLoop(iterator, start, end, body, location = {}) {
-  return {
-    type: "ForLoop",
-    variant: "range",
-    iterator,
-    ...locationFields(location),
-    start,
-    end,
-    body,
-  };
+  const loop = node("ForLoop", { variant: "range", iterator, body }, location);
+
+  if (loop.start !== undefined) {
+    loop.locationStart = loop.start;
+  }
+
+  if (loop.end !== undefined) {
+    loop.locationEnd = loop.end;
+  }
+
+  loop.start = start;
+  loop.end = end;
+  return loop;
 }
 
 export function ForEachLoop(iterator, iterable, body, location = {}) {
