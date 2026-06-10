@@ -1,0 +1,35 @@
+{
+  "name": "bnscript-syntax",
+  "displayName": "BN Script Syntax Highlighting",
+  "description": "Syntax highlighting support for BN Script .bn files.",
+  "version": "0.1.0-alpha.0",
+  "publisher": "bnscript",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "bnscript",
+        "aliases": [
+          "BN Script",
+          "bnscript"
+        ],
+        "extensions": [
+          ".bn"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "bnscript",
+        "scopeName": "source.bnscript",
+        "path": "./bnscript.tmLanguage.json"
+      }
+    ]
+  }
+}

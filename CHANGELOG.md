@@ -1,5 +1,34 @@
 # Changelog
 
+## Day 10 - 2026-06-10 (VS Code Syntax Highlighting Stage 21)
+
+### Completed: VS Code Syntax Highlighting
+- Added lightweight VS Code language metadata under `vscode/`.
+- Added `bnscript.tmLanguage.json` TextMate grammar for `.bn` files.
+- Added file association metadata for the `bnscript` language id and `.bn` extension.
+- Added language configuration for comments, brackets, and auto-closing pairs.
+- Highlighted BN Script keywords, strings, numbers, comments, operators, function names, imported identifiers, exported identifiers, and runtime helpers.
+- Added `examples/syntax-highlighting.bn` as a grammar showcase.
+- Documented the VS Code `files.associations` settings snippet.
+
+### Tests Added
+- Validation coverage for VS Code language metadata.
+- Validation coverage for grammar keyword and scope coverage.
+- Validation coverage for language configuration JSON.
+- Compilation coverage for `examples/syntax-highlighting.bn`.
+
+### Known Issues
+- This is syntax highlighting only, not a full VS Code extension.
+- No language server, diagnostics, formatter, snippets, debugger, or publish workflow is included yet.
+
+### Test Result
+- `npm.cmd test` passed 248 tests.
+
+### Recommended Next Task
+- Stage 22 Module Graph Analysis
+
+---
+
 ## Day 10 - 2026-06-10 (Top-Level Await Stage 20)
 
 ### Completed: Top-Level Await

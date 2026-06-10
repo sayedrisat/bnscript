@@ -10,11 +10,11 @@ Current Version: `0.1.0-alpha.0`
 
 Repository URL: `https://github.com/sayedrisat/bnscript`
 
-Latest Stage: `Stage 20 - Top-Level Await`
+Latest Stage: `Stage 21 - VS Code Syntax Highlighting`
 
-Current Commit: `18fc9b1369185859e34d774486ed4a426aa50717`
+Current Commit: `Pending Stage 21 release commit`
 
-Current Test Count: `244` passing tests
+Current Test Count: `248` passing tests
 
 Current Compiler Stages Completed:
 
@@ -44,6 +44,7 @@ Current Compiler Stages Completed:
 * Automation runtime helper calls
 * Try/catch/finally with `dhoro`, `error`, and `sheshe`
 * Interactive REPL
+* VS Code syntax highlighting assets
 
 ## Compiler Architecture
 
@@ -95,6 +96,13 @@ Runtime:
 * Implemented under `src/runtime/`.
 * Provides current runtime helper foundation for env, file, fetch, wait, runtime errors, and runtime exports.
 
+Tooling:
+
+* VS Code syntax highlighting assets live under `vscode/`.
+* `vscode/package.json` contributes the `bnscript` language id and `.bn` file association.
+* `vscode/bnscript.tmLanguage.json` provides TextMate grammar highlighting.
+* `vscode/language-configuration.json` provides comments, brackets, and auto-closing pairs.
+
 ## Features Implemented
 
 Current implemented language features:
@@ -118,6 +126,7 @@ Current implemented language features:
 * Runtime helper calls with `env`, `fileRead`, `fileWrite`, `wait`, and `httpGet`
 * Try/catch/finally statements with `dhoro`, `error`, and `sheshe`
 * Interactive REPL sessions with persistent variables
+* VS Code syntax highlighting for `.bn` files
 * Assignment expressions
 * Compound assignment
 * Array literals
@@ -132,14 +141,14 @@ Current implemented language features:
 
 Latest completed stage:
 
-* Stage 20: Top-Level Await
+* Stage 21: VS Code Syntax Highlighting
 
 ## AST Changes
 
 Latest completed stage:
 
-* No new AST node types.
-* Reused `AwaitExpression` for both async function await and top-level await.
+* No AST changes.
+* Stage 21 added editor tooling assets only.
 
 Current AST model:
 
@@ -153,8 +162,8 @@ Current AST model:
 
 Latest completed stage:
 
-* Continued parsing `AwaitExpression` through the existing unary-expression path.
-* Added declaration initializer continuation after `=` so multiline top-level await declarations parse cleanly.
+* No parser changes.
+* Stage 21 uses a TextMate grammar outside the compiler parser.
 
 Current parser grammar support:
 
@@ -179,9 +188,8 @@ Current parser grammar support:
 
 Latest completed stage:
 
-* `await` is valid in top-level program scope.
-* `await` remains valid inside `async kaj` functions.
-* `await` remains invalid inside non-async `kaj` functions.
+* No analyzer changes.
+* Syntax highlighting validation is covered by lightweight JSON and sample compilation tests.
 
 Current analyzer checks:
 
@@ -205,9 +213,8 @@ Current analyzer checks:
 
 Latest completed stage:
 
-* No new JavaScript syntax generation rules.
-* Top-level BN Script `await` continues to emit native JavaScript top-level `await`.
-* Runtime helper calls still emit `runtime.*` imports when needed.
+* No generator changes.
+* Stage 21 does not affect JavaScript output.
 
 Current generator output support:
 
@@ -392,7 +399,7 @@ Active AST nodes:
 
 New example files added in the latest completed stage:
 
-* `top-level-await.bn`
+* `syntax-highlighting.bn`
 
 Runnable `.bn` examples in `examples/`:
 
@@ -412,6 +419,7 @@ Runnable `.bn` examples in `examples/`:
 * `objects.bn`
 * `repl.txt`
 * `runtime.bn`
+* `syntax-highlighting.bn`
 * `top-level-await.bn`
 * `try.bn`
 * `variables.bn`
@@ -421,13 +429,12 @@ Runnable `.bn` examples in `examples/`:
 
 New tests added in the latest completed stage:
 
-* Parser coverage for multiline top-level await initializers.
-* Analyzer coverage for valid top-level await and invalid non-async function await.
-* Generator coverage for top-level await output with runtime helpers.
-* REPL coverage for top-level await execution and awaited declaration persistence.
-* Integration coverage for `tests/integration/top-level-await.bn`.
+* VS Code package metadata validation.
+* TextMate grammar keyword and scope coverage validation.
+* Language configuration JSON validation.
+* Compilation coverage for `examples/syntax-highlighting.bn`.
 
-Current total passing tests: `244`
+Current total passing tests: `248`
 
 Primary test files:
 
@@ -449,6 +456,7 @@ Primary test files:
   * `tests/stage17.integration.test.js`
   * `tests/stage18.integration.test.js`
   * `tests/stage20.integration.test.js`
+  * `tests/stage21.syntax.test.js`
 
 Integration fixtures in `tests/integration/`:
 
@@ -474,7 +482,7 @@ Integration fixtures in `tests/integration/`:
 
 ## Current Test Count
 
-Current total passing tests: `244`
+Current total passing tests: `248`
 
 ## Known Limitations
 
@@ -497,16 +505,16 @@ Major missing or incomplete features:
 * Advanced object/array shape validation
 * AI runtime helpers
 * Package publishing
+* Full VS Code extension beyond syntax highlighting
 * Language Server Protocol (LSP)
-* VS Code extension
 * Source maps
 
 ## Recommended Next Stage
 
-Stage 21:
+Stage 22:
 
 * Module Graph Analysis
 
-Stage 22:
+Stage 23:
 
 * Advanced Runtime Helpers and AI Integration

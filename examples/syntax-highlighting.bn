@@ -1,0 +1,31 @@
+// BN Script syntax highlighting showcase
+
+amdani { greet } theke "./module-utils.bn"
+
+roptani sthir APP = "BN Script"
+
+roptani async kaj loadGreeting(name) {
+  await wait(1)
+  ferot "Hello " + name
+}
+
+dhori names = ["Risat", "BN"]
+
+bar name ekti names {
+  dekhi name
+}
+
+jodi APP == "BN Script" ebong sotti {
+  dekhi greet("Risat")
+} nahole {
+  dekhi khali
+}
+
+dhoro {
+  dhori response = await httpGet("https://example.com")
+  dekhi response
+} error err {
+  dekhi err
+} sheshe {
+  dekhi "done"
+}

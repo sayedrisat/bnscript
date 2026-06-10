@@ -100,6 +100,24 @@ Type .exit to quit
 REPL variables persist for the lifetime of the session. Use `.help` inside the
 REPL to list commands.
 
+## VS Code Syntax Highlighting
+
+Lightweight VS Code syntax highlighting assets live in `vscode/`.
+
+If VS Code does not automatically associate `.bn` files with BN Script, add this
+to your user or workspace `settings.json`:
+
+```json
+{
+  "files.associations": {
+    "*.bn": "bnscript"
+  }
+}
+```
+
+This is syntax highlighting only. A full VS Code extension with language server
+features remains future work.
+
 ## Alpha Syntax
 
 ```bn
@@ -192,6 +210,7 @@ Supported today:
 - Runtime helpers: `env`, `fileRead`, `fileWrite`, `wait`, and `httpGet`
 - Try/catch/finally with `dhoro`, `error`, and `sheshe`
 - Interactive REPL via `node src/cli.js repl`
+- VS Code syntax highlighting assets for `.bn` files
 - Blocks with `{` and `}`
 - Numbers, strings, booleans, null, and identifiers
 - Unary `na` and `-`
@@ -200,6 +219,6 @@ Supported today:
 
 ## Current Limits
 
-Simple repeat `bar 5 { ... }` loops, default imports, namespace imports, re-exports, full module graph analysis, AI helpers, package publishing, editor tooling, and LSP support are planned but not implemented in this alpha.
+Simple repeat `bar 5 { ... }` loops, default imports, namespace imports, re-exports, full module graph analysis, AI helpers, package publishing, full editor tooling, and LSP support are planned but not implemented in this alpha.
 
 Function support currently covers named `kaj` declarations, positional parameters, `ferot`, and direct calls. Default parameters, function expressions, arrow functions, and methods are not implemented yet.

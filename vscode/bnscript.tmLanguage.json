@@ -1,0 +1,227 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "BN Script",
+  "scopeName": "source.bnscript",
+  "fileTypes": ["bn"],
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#strings" },
+    { "include": "#numbers" },
+    { "include": "#imports" },
+    { "include": "#exports" },
+    { "include": "#functions" },
+    { "include": "#declarations" },
+    { "include": "#keywords" },
+    { "include": "#runtime-helpers" },
+    { "include": "#operators" },
+    { "include": "#punctuation" }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.double-slash.bnscript",
+          "match": "//.*$"
+        },
+        {
+          "name": "comment.block.bnscript",
+          "begin": "/\\*",
+          "end": "\\*/"
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.bnscript",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            {
+              "name": "constant.character.escape.bnscript",
+              "match": "\\\\(?:[nrt\"'\\\\]|u[0-9A-Fa-f]{4})"
+            },
+            {
+              "name": "meta.interpolation.bnscript",
+              "begin": "\\$\\{",
+              "end": "\\}",
+              "patterns": [
+                { "include": "#keywords" },
+                { "include": "#runtime-helpers" },
+                { "include": "#numbers" },
+                { "include": "#operators" }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "string.quoted.single.bnscript",
+          "begin": "'",
+          "end": "'",
+          "patterns": [
+            {
+              "name": "constant.character.escape.bnscript",
+              "match": "\\\\(?:[nrt\"'\\\\]|u[0-9A-Fa-f]{4})"
+            }
+          ]
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.bnscript",
+          "match": "\\b\\d(?:[\\d_]*\\d)?(?:\\.\\d(?:[\\d_]*\\d)?)?\\b"
+        }
+      ]
+    },
+    "imports": {
+      "patterns": [
+        {
+          "name": "meta.import.list.bnscript",
+          "begin": "\\b(amdani)\\s*(\\{)",
+          "beginCaptures": {
+            "1": { "name": "keyword.control.import.bnscript" },
+            "2": { "name": "punctuation.definition.imports.begin.bnscript" }
+          },
+          "end": "(\\})\\s*(theke)\\s*(\"(?:[^\"\\\\]|\\\\.)*\"|'(?:[^'\\\\]|\\\\.)*')",
+          "endCaptures": {
+            "1": { "name": "punctuation.definition.imports.end.bnscript" },
+            "2": { "name": "keyword.control.from.bnscript" },
+            "3": { "name": "string.quoted.bnscript" }
+          },
+          "patterns": [
+            {
+              "name": "variable.other.import.bnscript",
+              "match": "\\b[A-Za-z_][A-Za-z0-9_]*\\b"
+            },
+            {
+              "name": "punctuation.separator.comma.bnscript",
+              "match": ","
+            }
+          ]
+        }
+      ]
+    },
+    "exports": {
+      "patterns": [
+        {
+          "name": "meta.export.function.bnscript",
+          "match": "\\b(roptani)\\s+(async\\s+)?(kaj)\\s+([A-Za-z_][A-Za-z0-9_]*)",
+          "captures": {
+            "1": { "name": "keyword.control.export.bnscript" },
+            "2": { "name": "storage.modifier.async.bnscript" },
+            "3": { "name": "storage.type.function.bnscript" },
+            "4": { "name": "entity.name.function.bnscript" }
+          }
+        },
+        {
+          "name": "meta.export.variable.bnscript",
+          "match": "\\b(roptani)\\s+(dhori|sthir)\\s+([A-Za-z_][A-Za-z0-9_]*)",
+          "captures": {
+            "1": { "name": "keyword.control.export.bnscript" },
+            "2": { "name": "storage.type.variable.bnscript" },
+            "3": { "name": "variable.other.export.bnscript" }
+          }
+        }
+      ]
+    },
+    "functions": {
+      "patterns": [
+        {
+          "name": "meta.function.bnscript",
+          "match": "\\b(async\\s+)?(kaj)\\s+([A-Za-z_][A-Za-z0-9_]*)",
+          "captures": {
+            "1": { "name": "storage.modifier.async.bnscript" },
+            "2": { "name": "storage.type.function.bnscript" },
+            "3": { "name": "entity.name.function.bnscript" }
+          }
+        },
+        {
+          "name": "entity.name.function.call.bnscript",
+          "match": "\\b[A-Za-z_][A-Za-z0-9_]*(?=\\s*\\()"
+        }
+      ]
+    },
+    "declarations": {
+      "patterns": [
+        {
+          "name": "meta.declaration.variable.bnscript",
+          "match": "\\b(dhori|sthir)\\s+([A-Za-z_][A-Za-z0-9_]*)",
+          "captures": {
+            "1": { "name": "storage.type.variable.bnscript" },
+            "2": { "name": "variable.other.definition.bnscript" }
+          }
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.bnscript",
+          "match": "\\b(?:dekhi|jodi|nahole|jotokkhon|bar|theke|ekti|amdani|roptani|kaj|ferot|bekkhon|cholo|dhoro|error|sheshe)\\b"
+        },
+        {
+          "name": "storage.modifier.async.bnscript",
+          "match": "\\basync\\b"
+        },
+        {
+          "name": "keyword.operator.word.bnscript",
+          "match": "\\b(?:await|ebong|othoba|na)\\b"
+        },
+        {
+          "name": "constant.language.boolean.bnscript",
+          "match": "\\b(?:sotti|mittha)\\b"
+        },
+        {
+          "name": "constant.language.null.bnscript",
+          "match": "\\bkhali\\b"
+        }
+      ]
+    },
+    "runtime-helpers": {
+      "patterns": [
+        {
+          "name": "support.function.runtime.bnscript",
+          "match": "\\b(?:env|fileRead|fileWrite|wait|httpGet)\\b"
+        }
+      ]
+    },
+    "operators": {
+      "patterns": [
+        {
+          "name": "keyword.operator.assignment.bnscript",
+          "match": "\\+=|-=|\\*=|/=|="
+        },
+        {
+          "name": "keyword.operator.comparison.bnscript",
+          "match": "==|!=|>=|<=|>|<"
+        },
+        {
+          "name": "keyword.operator.arithmetic.bnscript",
+          "match": "\\*\\*|[+\\-*/%]"
+        }
+      ]
+    },
+    "punctuation": {
+      "patterns": [
+        {
+          "name": "punctuation.separator.comma.bnscript",
+          "match": ","
+        },
+        {
+          "name": "punctuation.accessor.dot.bnscript",
+          "match": "\\."
+        },
+        {
+          "name": "punctuation.section.braces.bnscript",
+          "match": "[{}\\[\\]()]"
+        },
+        {
+          "name": "punctuation.separator.key-value.bnscript",
+          "match": ":"
+        }
+      ]
+    }
+  }
+}
