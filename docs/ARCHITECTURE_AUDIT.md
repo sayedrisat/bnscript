@@ -10,11 +10,11 @@ Current Version: `0.1.0-alpha.0`
 
 Repository URL: `https://github.com/sayedrisat/bnscript`
 
-Latest Stage: `Stage 18 - Try/Catch/Finally`
+Latest Stage: `Stage 19 - REPL`
 
-Current Commit: `455dbbbad9e1b03f99532914a0853608498e2de6`
+Current Commit: `Pending Stage 19 release commit`
 
-Current Test Count: `229` passing tests
+Current Test Count: `238` passing tests
 
 Current Compiler Stages Completed:
 
@@ -42,6 +42,7 @@ Current Compiler Stages Completed:
 * Await expressions with `await`
 * Automation runtime helper calls
 * Try/catch/finally with `dhoro`, `error`, and `sheshe`
+* Interactive REPL
 
 ## Compiler Architecture
 
@@ -77,7 +78,15 @@ Generator:
 CLI:
 
 * Implemented in `src/cli.js`.
-* Supports `check`, `build`, and `run`.
+* Supports `check`, `build`, `run`, and `repl`.
+
+REPL:
+
+* Implemented in `src/repl.js`.
+* Reuses the compiler pipeline for each submitted entry.
+* Validates accumulated session source so prior declarations remain visible to later entries.
+* Executes only the newly generated JavaScript chunk inside a shared Node.js VM context.
+* Supports `.help`, `.exit`, `.clear`, and `.version`.
 
 Runtime:
 
@@ -106,6 +115,7 @@ Current implemented language features:
 * Await expressions inside async functions
 * Runtime helper calls with `env`, `fileRead`, `fileWrite`, `wait`, and `httpGet`
 * Try/catch/finally statements with `dhoro`, `error`, and `sheshe`
+* Interactive REPL sessions with persistent variables
 * Assignment expressions
 * Compound assignment
 * Array literals
@@ -120,13 +130,14 @@ Current implemented language features:
 
 Latest completed stage:
 
-* Stage 18: Try/Catch/Finally
+* Stage 19: REPL
 
 ## AST Changes
 
 Latest completed stage:
 
-* Added `TryStatement`.
+* No AST node changes.
+* REPL entries reuse the existing `Program` and statement/expression AST nodes.
 
 Current AST model:
 
@@ -140,10 +151,8 @@ Current AST model:
 
 Latest completed stage:
 
-* Added try/catch parsing for `dhoro { ... } error err { ... }`.
-* Added try/finally parsing for `dhoro { ... } sheshe { ... }`.
-* Added try/catch/finally parsing for `dhoro { ... } error err { ... } sheshe { ... }`.
-* `dhoro` statements require at least one `error` or `sheshe` block.
+* No parser grammar changes.
+* REPL input is parsed with the same parser used by file compilation.
 
 Current parser grammar support:
 
@@ -168,9 +177,9 @@ Current parser grammar support:
 
 Latest completed stage:
 
-* Added try statement analysis.
-* Catch variables are declared in a catch-only block scope.
-* Catch variables resolve inside their catch block and do not leak afterward.
+* No new semantic node rules.
+* REPL validation analyzes the accumulated successful session source for persistent declarations.
+* Compiler and runtime errors are reported without exiting the REPL session.
 
 Current analyzer checks:
 
@@ -194,9 +203,8 @@ Current analyzer checks:
 
 Latest completed stage:
 
-* Added JavaScript output for `try`.
-* Added JavaScript output for `catch (err)`.
-* Added JavaScript output for `finally`.
+* No new JavaScript syntax generation rules.
+* REPL execution strips generated headers and runtime imports, then evaluates the newly generated JavaScript chunk in a shared VM context.
 
 Current generator output support:
 
@@ -381,7 +389,7 @@ Active AST nodes:
 
 New example files added in the latest completed stage:
 
-* `try.bn`
+* `repl.txt`
 
 Runnable `.bn` examples in `examples/`:
 
@@ -399,6 +407,7 @@ Runnable `.bn` examples in `examples/`:
 * `module-main.bn`
 * `module-utils.bn`
 * `objects.bn`
+* `repl.txt`
 * `runtime.bn`
 * `try.bn`
 * `variables.bn`
@@ -408,12 +417,12 @@ Runnable `.bn` examples in `examples/`:
 
 New tests added in the latest completed stage:
 
-* Parser coverage for try/catch, try/finally, try/catch/finally, and invalid try without catch/finally.
-* Analyzer coverage for catch variable resolution and catch variable non-leakage.
-* Generator coverage for try/catch, try/finally, and try/catch/finally output.
-* Integration coverage for `tests/integration/try.bn`.
+* CLI coverage for launching the REPL command and exiting cleanly.
+* REPL coverage for `.help`, `.exit`, `.clear`, and `.version`.
+* REPL coverage for print statements and persistent variables.
+* REPL coverage for compile error recovery and runtime error recovery.
 
-Current total passing tests: `229`
+Current total passing tests: `238`
 
 Primary test files:
 
@@ -423,6 +432,7 @@ Primary test files:
 * Lexer tests: `tests/lexer.test.js`
 * Runtime tests: `tests/runtime.test.js`
 * CLI tests: `tests/cli.test.js`
+* REPL tests: `tests/repl.test.js`
 * Integration tests:
   * `tests/functions.integration.test.js`
   * `tests/stage8-9.integration.test.js`
@@ -457,7 +467,7 @@ Integration fixtures in `tests/integration/`:
 
 ## Current Test Count
 
-Current total passing tests: `229`
+Current total passing tests: `238`
 
 ## Known Limitations
 
@@ -472,6 +482,8 @@ Major missing or incomplete features:
 * Top-level await execution model
 * Promise API design
 * Simple repeat `bar 5 { ... }` loops
+* Multi-line REPL block editing
+* Import/export execution inside the REPL
 * Function default parameters
 * Function expressions
 * Arrow functions
@@ -479,16 +491,11 @@ Major missing or incomplete features:
 * Advanced object/array shape validation
 * AI runtime helpers
 * Package publishing
-* REPL
 * Language Server Protocol (LSP)
 * VS Code extension
 * Source maps
 
 ## Recommended Next Stage
-
-Stage 19:
-
-* REPL
 
 Stage 20:
 

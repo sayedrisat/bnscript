@@ -3,6 +3,7 @@ import assert from "node:assert";
 import { access, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { PassThrough } from "node:stream";
 import { compile } from "../src/compiler.js";
 import { main } from "../src/cli.js";
 
@@ -20,6 +21,15 @@ function memoryIO() {
     stdout: memoryStream(),
     stderr: memoryStream(),
   };
+}
+
+function captureStream() {
+  const stream = new PassThrough();
+  stream.text = "";
+  stream.on("data", (chunk) => {
+    stream.text += String(chunk);
+  });
+  return stream;
 }
 
 async function withTempDir(t) {
@@ -101,6 +111,23 @@ test("cli: run success", async (t) => {
 
   assert.strictEqual(exitCode, 0);
   assert.deepStrictEqual(messages, ["run works"]);
+  assert.strictEqual(io.stderr.text, "");
+});
+
+test("cli: repl exits cleanly", async () => {
+  const input = new PassThrough();
+  const io = {
+    input,
+    stdout: captureStream(),
+    stderr: captureStream(),
+  };
+  input.end(".exit\n");
+
+  const exitCode = await main(["repl"], io);
+
+  assert.strictEqual(exitCode, 0);
+  assert.ok(io.stdout.text.includes("BN Script REPL v0.1.0-alpha.0"));
+  assert.ok(io.stdout.text.includes("Type .help for commands"));
   assert.strictEqual(io.stderr.text, "");
 });
 

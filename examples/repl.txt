@@ -1,0 +1,11 @@
+BN Script REPL v0.1.0-alpha.0
+Type .help for commands
+Type .exit to quit
+
+> dhori x = 10
+> dhori y = 20
+> dekhi x + y
+30
+> .version
+0.1.0-alpha.0
+> .exit

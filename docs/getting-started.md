@@ -61,6 +61,7 @@ During this alpha, the supported repository workflow is:
 
 ```sh
 node src/cli.js <check|build|run> file.bn
+node src/cli.js repl
 ```
 
 The package also exposes the intended binary name:
@@ -69,9 +70,35 @@ The package also exposes the intended binary name:
 bn check file.bn
 bn build file.bn
 bn run file.bn
+bn repl
 ```
 
 Use `npm link` only when you want to test that local binary behavior.
+
+## Interactive REPL
+
+Start an interactive BN Script session:
+
+```sh
+node src/cli.js repl
+```
+
+Example session:
+
+```txt
+BN Script REPL v0.1.0-alpha.0
+Type .help for commands
+Type .exit to quit
+
+> dhori x = 10
+> dhori y = 20
+> dekhi x + y
+30
+> .exit
+```
+
+REPL variables persist for the lifetime of the session. Use `.help` inside the
+REPL to list commands.
 
 ## Alpha Syntax
 
@@ -162,6 +189,7 @@ Supported today:
 - Exported functions, variables, and constants with `roptani`
 - Runtime helpers: `env`, `fileRead`, `fileWrite`, `wait`, and `httpGet`
 - Try/catch/finally with `dhoro`, `error`, and `sheshe`
+- Interactive REPL via `node src/cli.js repl`
 - Blocks with `{` and `}`
 - Numbers, strings, booleans, null, and identifiers
 - Unary `na` and `-`
@@ -170,6 +198,6 @@ Supported today:
 
 ## Current Limits
 
-Simple repeat `bar 5 { ... }` loops, default imports, namespace imports, re-exports, full module graph analysis, top-level await, AI helpers, package publishing, editor tooling, LSP, and REPL support are planned but not implemented in this alpha.
+Simple repeat `bar 5 { ... }` loops, default imports, namespace imports, re-exports, full module graph analysis, top-level await, AI helpers, package publishing, editor tooling, and LSP support are planned but not implemented in this alpha.
 
 Function support currently covers named `kaj` declarations, positional parameters, `ferot`, and direct calls. Default parameters, function expressions, arrow functions, and methods are not implemented yet.

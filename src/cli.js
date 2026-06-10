@@ -5,14 +5,16 @@ import { tmpdir } from "node:os";
 import { basename, dirname, extname, join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { compile } from "./compiler.js";
+import { runRepl } from "./repl.js";
 
-const COMMANDS = new Set(["check", "build", "run"]);
+const COMMANDS = new Set(["check", "build", "run", "repl"]);
 
 function usage() {
   return `Usage:
   bn check file.bn
   bn build file.bn
   bn run file.bn
+  bn repl
 `;
 }
 
@@ -104,17 +106,32 @@ async function runCommand(filePath, io) {
 }
 
 export async function main(argv = process.argv.slice(2), io = {
+  input: process.stdin,
   stdout: process.stdout,
   stderr: process.stderr,
 }) {
   const [command, filePath] = argv;
 
-  if (!COMMANDS.has(command) || !filePath) {
+  if (!COMMANDS.has(command)) {
     write(io.stderr, usage());
     return 1;
   }
 
   try {
+    if (command === "repl") {
+      if (filePath) {
+        write(io.stderr, usage());
+        return 1;
+      }
+
+      return await runRepl(io);
+    }
+
+    if (!filePath) {
+      write(io.stderr, usage());
+      return 1;
+    }
+
     if (command === "check") {
       return await checkCommand(filePath, io);
     }
@@ -131,5 +148,12 @@ export async function main(argv = process.argv.slice(2), io = {
 }
 
 if (import.meta.url === pathToFileURL(process.argv[1] || "").href) {
-  process.exitCode = await main();
+  main()
+    .then((code) => {
+      process.exitCode = code;
+    })
+    .catch((error) => {
+      console.error(error);
+      process.exitCode = 1;
+    });
 }

@@ -20,6 +20,7 @@ node src/cli.js run examples/hello.bn
 | `functions.bn` | Function declarations, returns, parameters, and calls |
 | `async.bn` | Async functions and await expressions |
 | `runtime.bn` | Runtime helpers for env, files, wait, and HTTP GET |
+| `repl.txt` | Interactive REPL transcript with persistent variables |
 | `module-utils.bn` | Exported function declarations |
 | `module-main.bn` | Named imports from another BN Script file |
 | `assignments.bn` | Variable reassignment and compound assignment |

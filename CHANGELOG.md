@@ -1,5 +1,36 @@
 # Changelog
 
+## Day 10 - 2026-06-10 (REPL Stage 19)
+
+### Completed: Interactive REPL
+- Added `node src/cli.js repl` and `bn repl` command support.
+- Added an interactive REPL banner, prompt, and session command handling.
+- Added `.help`, `.exit`, `.clear`, and `.version` REPL commands.
+- Reused the existing compiler pipeline for REPL input.
+- Preserved successful variable declarations across a REPL session.
+- Reported compiler and runtime errors without exiting the REPL.
+- Added `examples/repl.txt` with a public REPL transcript.
+
+### Tests Added
+- CLI coverage for launching the REPL and exiting cleanly.
+- REPL coverage for `.help`, `.exit`, `.clear`, and `.version`.
+- REPL coverage for print statements and persistent variables.
+- REPL coverage for compile error recovery and runtime error recovery.
+
+### Known Issues
+- Multi-line REPL block editing is not implemented yet.
+- Import/export execution inside the REPL is not supported yet.
+- Full module graph analysis, top-level await, AI helpers, package publishing, editor tooling, LSP, and source maps remain future work.
+
+### Test Result
+- `npm.cmd test` passed 238 tests.
+- Manual REPL check with `dhori x = 10` then `dekhi x` printed `10`.
+
+### Recommended Next Task
+- Stage 20 Module Graph Analysis
+
+---
+
 ## Day 10 - 2026-06-10 (Try/Catch/Finally Stage 18)
 
 ### Completed: Try/Catch/Finally
