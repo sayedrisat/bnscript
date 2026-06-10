@@ -12,7 +12,7 @@ Repository URL: `https://github.com/sayedrisat/bnscript`
 
 Latest Stage: `Stage 24 - VSIX Packaging`
 
-Current Commit: `Pending Stage 24 release commit`
+Current Commit: `d745a3ebfeff78eed49a0d0bf3f83a2d9d793360`
 
 Current Test Count: `263` passing tests
 
