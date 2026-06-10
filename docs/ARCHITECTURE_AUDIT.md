@@ -12,7 +12,7 @@ Repository URL: `https://github.com/sayedrisat/bnscript`
 
 Latest Stage: `Stage 23 - VS Code Extension Package`
 
-Current Commit: `Pending Stage 23 release commit`
+Current Commit: `c073cf78aedd5daa9119d65e2e48162abdc44ea5`
 
 Current Test Count: `260` passing tests
 
