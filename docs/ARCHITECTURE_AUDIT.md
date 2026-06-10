@@ -12,7 +12,7 @@ Repository URL: `https://github.com/sayedrisat/bnscript`
 
 Latest Stage: `Stage 21 - VS Code Syntax Highlighting`
 
-Current Commit: `Pending Stage 21 release commit`
+Current Commit: `eedfa1bc665d6bfa2f8b4841687bdf6d79b3da10`
 
 Current Test Count: `248` passing tests
 
