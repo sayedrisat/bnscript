@@ -21,7 +21,10 @@ export function compile(source, options = {}) {
     const tokens = tokenize(source, filename);
     ast = parse(tokens, { filename, source });
     analyze(ast, { filename, source });
-    js = generate(ast, { filename });
+    js = generate(ast, {
+      filename,
+      runtimeImport: options.runtimeImport,
+    });
   } catch (error) {
     diagnostics = collectDiagnostics(error);
   }

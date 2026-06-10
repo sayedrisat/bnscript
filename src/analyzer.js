@@ -6,6 +6,13 @@ import {
 } from "./scope.js";
 
 const MAX_ERRORS = 20;
+const RUNTIME_HELPERS = new Set([
+  "env",
+  "fileRead",
+  "fileWrite",
+  "wait",
+  "httpGet",
+]);
 
 export class SemanticAnalyzer {
   constructor(ast, { filename, source = "" } = {}) {
@@ -19,6 +26,7 @@ export class SemanticAnalyzer {
     this.functionDepth = 0;
     this.asyncFunctionDepth = 0;
     this.functionAsyncStack = [];
+    this.declareRuntimeHelpers();
   }
 
   analyze() {
@@ -120,6 +128,18 @@ export class SemanticAnalyzer {
       if (this.errors.length >= MAX_ERRORS) {
         break;
       }
+    }
+  }
+
+  declareRuntimeHelpers() {
+    for (const name of RUNTIME_HELPERS) {
+      this.globalScope.declare(name, {
+        kind: "builtin",
+        mutable: false,
+        declaration: null,
+        line: 0,
+        column: 0,
+      });
     }
   }
 

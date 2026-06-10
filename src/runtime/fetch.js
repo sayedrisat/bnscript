@@ -28,7 +28,7 @@ function headerValue(headers, name) {
   return key ? headers[key] : undefined;
 }
 
-export async function __bn_fetch(url, options = {}) {
+async function fetchResponse(url, options = {}) {
   if (typeof fetch !== "function") {
     throw new BNRuntimeError("Native fetch is not available in this Node.js runtime.", {
       operation: "fetch",
@@ -82,12 +82,7 @@ export async function __bn_fetch(url, options = {}) {
       );
     }
 
-    const contentType = response.headers?.get("content-type") || "";
-    if (contentType.includes("application/json") || contentType.includes("+json")) {
-      return await response.json();
-    }
-
-    return await response.text();
+    return response;
   } catch (error) {
     if (error instanceof BNRuntimeError) {
       throw error;
@@ -115,4 +110,24 @@ export async function __bn_fetch(url, options = {}) {
   } finally {
     clearTimeout(timeoutId);
   }
+}
+
+export async function __bn_fetch(url, options = {}) {
+  const response = await fetchResponse(url, options);
+  const contentType = response.headers?.get("content-type") || "";
+
+  if (contentType.includes("application/json") || contentType.includes("+json")) {
+    return await response.json();
+  }
+
+  return await response.text();
+}
+
+export async function __bn_httpGet(url, options = {}) {
+  const response = await fetchResponse(url, {
+    ...options,
+    method: "GET",
+  });
+
+  return await response.text();
 }

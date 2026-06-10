@@ -150,6 +150,30 @@ dekhi greet`);
   assert.strictEqual(identifier.semantic.symbolKind, "import");
 });
 
+test("analyzer: runtime helper identifiers resolve as built-ins", () => {
+  const ast = analyzeSource(`dhori user = env("USER")
+
+async kaj main() {
+  dhori content = await fileRead("data.txt")
+  await fileWrite("out.txt", content)
+  await wait(1)
+  dhori data = await httpGet("https://example.com")
+  ferot data
+}`);
+
+  const envCall = ast.body[0].initializer;
+  const mainBody = ast.body[1].body.body;
+  const fileReadCall = mainBody[0].initializer.argument;
+  const fileWriteCall = mainBody[1].expression.argument;
+  const waitCall = mainBody[2].expression.argument;
+  const httpGetCall = mainBody[3].initializer.argument;
+
+  for (const call of [envCall, fileReadCall, fileWriteCall, waitCall, httpGetCall]) {
+    assert.strictEqual(call.callee.semantic.resolved, true);
+    assert.strictEqual(call.callee.semantic.symbolKind, "builtin");
+  }
+});
+
 test("analyzer: duplicate import error", () => {
   semanticError(
     () =>

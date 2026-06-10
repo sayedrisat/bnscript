@@ -78,7 +78,10 @@ async function buildCommand(filePath, io) {
 
 async function runCommand(filePath, io) {
   const source = await readSource(filePath);
-  const result = compile(source, { filename: filePath });
+  const result = compile(source, {
+    filename: filePath,
+    runtimeImport: new URL("./runtime/index.js", import.meta.url).href,
+  });
 
   if (result.diagnostics.length > 0) {
     writeDiagnostics(result.diagnostics, io.stderr);

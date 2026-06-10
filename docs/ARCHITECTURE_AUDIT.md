@@ -10,11 +10,11 @@ Current Version: `0.1.0-alpha.0`
 
 Repository URL: `https://github.com/sayedrisat/bnscript`
 
-Latest Stage: `Stage 15 - Imports / Exports`
+Latest Stage: `Stage 16 - Async / Await`
 
-Current Commit: `Pending Stage 15 release commit`
+Current Commit: `978a58fd76d2942861fdd4327a63c7204a364f02`
 
-Current Test Count: `202` passing tests
+Current Test Count: `211` passing tests
 
 Current Compiler Stages Completed:
 
@@ -38,6 +38,8 @@ Current Compiler Stages Completed:
 * `cholo` continue statements
 * Named imports with `amdani`
 * Export declarations with `roptani`
+* Async function declarations with `async kaj`
+* Await expressions with `await`
 
 ## Compiler Architecture
 
@@ -98,6 +100,8 @@ Current implemented language features:
 * Function calls
 * Named imports with `amdani { name } theke "./file.bn"`
 * Exported functions, variables, and constants with `roptani`
+* Async function declarations with `async kaj`
+* Await expressions inside async functions
 * Assignment expressions
 * Compound assignment
 * Array literals
@@ -112,30 +116,30 @@ Current implemented language features:
 
 Latest completed stage:
 
-* Stage 15: Imports / Exports
+* Stage 16: Async / Await
 
 ## AST Changes
 
 Latest completed stage:
 
-* Added `ImportSpecifier`.
-* Added `ImportDeclaration`.
-* Added `ExportDeclaration`.
+* Extended `FunctionDeclaration` with `isAsync: true` for `async kaj`.
+* Added `AwaitExpression`.
 
 Current AST model:
 
 * Plain-object AST nodes produced by factory functions in `src/ast.js`.
 * Source location metadata is preserved on active nodes.
 * Range `ForLoop` nodes use expression fields named `start` and `end`.
+* Async functions use the existing `FunctionDeclaration` node instead of a separate `AsyncFunctionDeclaration` node.
 
 ## Parser Changes
 
 Latest completed stage:
 
-* Added named import parsing for `amdani { name } theke "./file.bn"`.
-* Added exported function parsing for `roptani kaj name(...) { ... }`.
-* Added exported variable parsing for `roptani dhori name = value`.
-* Added exported constant parsing for `roptani sthir name = value`.
+* Added async function parsing for `async kaj name(...) { ... }`.
+* Added await expression parsing for `await expression`.
+* Await parses at unary-expression precedence, so calls and grouping work naturally.
+* Export parsing accepts async function declarations through `roptani async kaj name(...) { ... }`.
 
 Current parser grammar support:
 
@@ -149,20 +153,20 @@ Current parser grammar support:
 * Import declarations
 * Export declarations
 * Function declarations
+* Async function declarations
 * Return statements
 * Blocks
 * Expression statements
-* Assignment, binary, unary, call, member, index, array, object, literal, identifier, and grouped expressions
+* Assignment, await, binary, unary, call, member, index, array, object, literal, identifier, and grouped expressions
 
 ## Analyzer Changes
 
 Latest completed stage:
 
-* Added import declaration validation.
-* Imported identifiers are declared in the current scope.
-* Import sources must be string literals.
-* Export declarations wrap normal declaration nodes and reuse the standard declaration visitor path.
-* Export semantic metadata records the wrapped declaration type.
+* Added await placement validation.
+* `await` is valid only inside the current async function context.
+* Async function context is tracked separately from normal function depth.
+* Async function declarations record `semantic.isAsync`.
 
 Current analyzer checks:
 
@@ -173,6 +177,7 @@ Current analyzer checks:
 * Function scopes and parameter scopes
 * Duplicate parameter errors
 * Return placement errors
+* Await placement errors
 * Loop scopes and iterator scopes
 * Break/continue placement errors
 * Imported identifier declarations
@@ -184,11 +189,8 @@ Current analyzer checks:
 
 Latest completed stage:
 
-* Added JavaScript ESM output for named imports.
-* Added `.bn` to `.js` import path conversion.
-* Added JavaScript output for exported functions.
-* Added JavaScript output for exported variables as `export let`.
-* Added JavaScript output for exported constants as `export const`.
+* Added JavaScript output for async functions as `async function`.
+* Added JavaScript output for `AwaitExpression` as `await`.
 
 Current generator output support:
 
@@ -202,7 +204,9 @@ Current generator output support:
 * `bekkhon` -> `break`
 * `cholo` -> `continue`
 * `kaj` -> `function`
+* `async kaj` -> `async function`
 * `ferot` -> `return`
+* `await` -> `await`
 * `amdani` -> ESM `import`
 * `roptani` -> ESM `export`
 * BN Script expressions -> readable JavaScript expressions
@@ -234,6 +238,7 @@ Current generator output support:
 * BooleanLiteral
 * NullLiteral
 * UnaryExpression
+* AwaitExpression
 * BinaryExpression
 * AssignmentExpression
 * CallExpression
@@ -256,6 +261,8 @@ Fully supported keywords and keyword-like operators:
 * `ekti`
 * `amdani`
 * `roptani`
+* `async`
+* `await`
 * `kaj`
 * `ferot`
 * `bekkhon`
@@ -267,6 +274,10 @@ Fully supported keywords and keyword-like operators:
 * `othoba`
 * `na`
 
+Lexed compatibility spelling:
+
+* `abr` as an older await spelling; `await` is preferred for Stage 16.
+
 Lexed and reserved, but not fully supported by the parser/generator yet:
 
 * `nao`
@@ -274,8 +285,6 @@ Lexed and reserved, but not fully supported by the parser/generator yet:
 * `dhoro`
 * `error`
 * `sheshe`
-* `abr`
-* `async`
 
 ## Operators
 
@@ -350,6 +359,7 @@ Active AST nodes:
 * BooleanLiteral
 * NullLiteral
 * UnaryExpression
+* AwaitExpression
 * BinaryExpression
 * AssignmentExpression
 * CallExpression
@@ -362,13 +372,13 @@ Active AST nodes:
 
 New example files added in the latest completed stage:
 
-* `module-main.bn`
-* `module-utils.bn`
+* `async.bn`
 
 Runnable `.bn` examples in `examples/`:
 
 * `arrays.bn`
 * `assignments.bn`
+* `async.bn`
 * `break.bn`
 * `continue.bn`
 * `for.bn`
@@ -387,12 +397,12 @@ Runnable `.bn` examples in `examples/`:
 
 New tests added in the latest completed stage:
 
-* Parser coverage for single imports, multiple imports, exported functions, exported variables, exported constants, and invalid module syntax.
-* Analyzer coverage for imported identifier resolution, duplicate import declarations, string-literal import sources, valid exports, and invalid export declarations.
-* Generator coverage for named imports, `.bn` to `.js` source path conversion, exported functions, exported variables, and exported constants.
-* Integration coverage for `tests/integration/module-main.bn` and `tests/integration/module-utils.bn`.
+* Parser coverage for async function declarations, await expressions, and nested await call expressions.
+* Analyzer coverage for await inside async functions and await outside async functions.
+* Generator coverage for async function output, await output, and combined async/await programs.
+* Integration coverage for `tests/integration/async.bn`.
 
-Current total passing tests: `202`
+Current total passing tests: `211`
 
 Primary test files:
 
@@ -409,11 +419,13 @@ Primary test files:
   * `tests/stage11-12.integration.test.js`
   * `tests/stage13-14.integration.test.js`
   * `tests/stage15.integration.test.js`
+  * `tests/stage16.integration.test.js`
 
 Integration fixtures in `tests/integration/`:
 
 * `arrays.bn`
 * `assignments.bn`
+* `async.bn`
 * `break.bn`
 * `continue.bn`
 * `for.bn`
@@ -430,7 +442,7 @@ Integration fixtures in `tests/integration/`:
 
 ## Current Test Count
 
-Current total passing tests: `202`
+Current total passing tests: `211`
 
 ## Known Limitations
 
@@ -442,8 +454,9 @@ Major missing or incomplete features:
 * Full module graph analysis
 * Cross-file semantic validation
 * Circular dependency diagnostics
-* Async/await
 * Top-level await execution model
+* Promise API design
+* Async runtime helper integration
 * Try/catch/finally
 * Simple repeat `bar 5 { ... }` loops
 * Function default parameters
@@ -460,10 +473,6 @@ Major missing or incomplete features:
 * Source maps
 
 ## Recommended Next Stage
-
-Stage 16:
-
-* Async / Await
 
 Stage 17:
 

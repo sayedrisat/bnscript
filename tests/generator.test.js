@@ -56,6 +56,32 @@ test("generator: import multiple output", () => {
   );
 });
 
+test("generator: runtime helper call output", () => {
+  const output = compileSource(`dhori user = env("USER")
+
+async kaj main() {
+  dhori content = await fileRead("data.txt")
+  await fileWrite("out.txt", content)
+  await wait(1)
+  dhori data = await httpGet("https://example.com")
+  ferot data
+}`);
+
+  assert.strictEqual(
+    output,
+    expected(`import * as runtime from "./src/runtime/index.js";
+
+let user = runtime.env("USER");
+async function main() {
+  let content = await runtime.fileRead("data.txt");
+  await runtime.fileWrite("out.txt", content);
+  await runtime.wait(1);
+  let data = await runtime.httpGet("https://example.com");
+  return data;
+}`)
+  );
+});
+
 test("generator: export function output", () => {
   const output = compileSource(`roptani kaj greet(name) {
   dekhi name

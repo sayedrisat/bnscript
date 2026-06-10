@@ -19,6 +19,7 @@ node src/cli.js run examples/hello.bn
 | `logic.bn` | Arithmetic, comparison, and logical expressions |
 | `functions.bn` | Function declarations, returns, parameters, and calls |
 | `async.bn` | Async functions and await expressions |
+| `runtime.bn` | Runtime helpers for env, files, wait, and HTTP GET |
 | `module-utils.bn` | Exported function declarations |
 | `module-main.bn` | Named imports from another BN Script file |
 | `assignments.bn` | Variable reassignment and compound assignment |

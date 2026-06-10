@@ -5,6 +5,11 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import {
   BNRuntimeError,
+  env,
+  fileRead,
+  fileWrite,
+  httpGet,
+  wait,
   __bn_env,
   __bn_fetch,
   __bn_file,
@@ -47,8 +52,28 @@ test("runtime: env default value", (t) => {
   assert.strictEqual(__bn_env("BN_RUNTIME_MISSING_VALUE", "fallback"), "fallback");
 });
 
+test("runtime: public env helper", (t) => {
+  const oldValue = process.env.BN_PUBLIC_ENV_TEST;
+  process.env.BN_PUBLIC_ENV_TEST = "public";
+
+  t.after(() => {
+    if (oldValue === undefined) {
+      delete process.env.BN_PUBLIC_ENV_TEST;
+    } else {
+      process.env.BN_PUBLIC_ENV_TEST = oldValue;
+    }
+  });
+
+  assert.strictEqual(env("BN_PUBLIC_ENV_TEST"), "public");
+});
+
 test("runtime: wait success", async () => {
   await __bn_wait(1);
+  assert.ok(true);
+});
+
+test("runtime: public wait helper", async () => {
+  await wait(1);
   assert.ok(true);
 });
 
@@ -75,6 +100,15 @@ test("runtime: file write and read", async (t) => {
   await __bn_file.write(filePath, "hello");
 
   assert.strictEqual(await __bn_file.read(filePath), "hello");
+});
+
+test("runtime: public fileRead and fileWrite helpers", async (t) => {
+  const dir = await withTempDir(t);
+  const filePath = join(dir, "public-message.txt");
+
+  await fileWrite(filePath, "hello public");
+
+  assert.strictEqual(await fileRead(filePath), "hello public");
 });
 
 test("runtime: file append", async (t) => {
@@ -162,6 +196,25 @@ test("runtime: fetch parses JSON without internet", async (t) => {
   assert.deepStrictEqual(await __bn_fetch("https://example.test/data"), {
     ok: true,
   });
+});
+
+test("runtime: public httpGet helper returns text", async (t) => {
+  const oldFetch = globalThis.fetch;
+  globalThis.fetch = async () => ({
+    ok: true,
+    status: 200,
+    statusText: "OK",
+    headers: {
+      get: () => "application/json",
+    },
+    text: async () => "{\"ok\":true}",
+  });
+
+  t.after(() => {
+    globalThis.fetch = oldFetch;
+  });
+
+  assert.strictEqual(await httpGet("https://example.test/data"), "{\"ok\":true}");
 });
 
 test("runtime: fetch wraps failed requests", async (t) => {

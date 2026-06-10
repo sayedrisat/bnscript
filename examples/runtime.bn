@@ -1,0 +1,13 @@
+dhori user = env("USER")
+dekhi user
+
+async kaj main() {
+  await fileWrite("runtime-output.txt", "BN Script")
+  dhori content = await fileRead("runtime-output.txt")
+  await wait(1)
+  dhori data = await httpGet(
+    "https://example.com"
+  )
+  dekhi content
+  dekhi data
+}

@@ -235,6 +235,16 @@ test("parser: function call", () => {
   assert.strictEqual(expression.arguments[0].value, "Risat");
 });
 
+test("parser: runtime helper calls are ordinary calls", () => {
+  const statement = firstStatement('fileWrite("out.txt", content)');
+  const expression = statement.expression;
+
+  assert.strictEqual(expression.type, "CallExpression");
+  assert.strictEqual(expression.callee.type, "Identifier");
+  assert.strictEqual(expression.callee.name, "fileWrite");
+  assert.strictEqual(expression.arguments.length, 2);
+});
+
 test("parser: await expression", () => {
   const statement = firstStatement("dhori result = await fetchData()");
 
