@@ -28,5 +28,6 @@ node src/cli.js run examples/hello.bn
 | `foreach.bn` | For-each loops with `bar`, `ekti`, and arrays |
 | `break.bn` | Loop exit with `bekkhon` |
 | `continue.bn` | Loop skipping with `cholo` |
+| `try.bn` | Error handling shape with `dhoro`, `error`, and `sheshe` |
 | `arrays.bn` | Array literals, index access, and index assignment |
 | `objects.bn` | Object literals, member access, chained access, and member assignment |

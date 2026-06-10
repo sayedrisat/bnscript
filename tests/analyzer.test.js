@@ -238,6 +238,35 @@ test("analyzer: invalid export declaration", () => {
   );
 });
 
+test("analyzer: catch variable resolves inside catch block", () => {
+  const ast = analyzeSource(`dhoro {
+  dekhi "try"
+} error err {
+  dekhi err
+}`);
+
+  const statement = ast.body[0];
+  const identifier = statement.catchBlock.body[0].arguments[0];
+
+  assert.strictEqual(statement.type, "TryStatement");
+  assert.strictEqual(statement.catchParam.semantic.declared, true);
+  assert.strictEqual(identifier.semantic.resolved, true);
+  assert.strictEqual(identifier.semantic.symbolKind, "catch");
+});
+
+test("analyzer: catch variable does not leak outside catch block", () => {
+  semanticError(
+    () =>
+      analyzeSource(`dhoro {
+  dekhi "try"
+} error err {
+  dekhi err
+}
+dekhi err`),
+    'Use before declaration: "err"'
+  );
+});
+
 test("analyzer: valid assignment to dhori", () => {
   const ast = analyzeSource(`dhori count = 0
 count = count + 1`);

@@ -114,6 +114,8 @@ export class Generator {
         return this.emitter.emitLine(`${this.generateExpression(node.expression)};`);
       case "IfStatement":
         return this.emitIfStatement(node);
+      case "TryStatement":
+        return this.emitTryStatement(node);
       case "WhileStatement":
         return this.emitWhileStatement(node);
       case "ForLoop":
@@ -220,6 +222,12 @@ export class Generator {
           ) ||
           this.usesRuntimeHelpers(node.elseBlock)
         );
+      case "TryStatement":
+        return (
+          this.usesRuntimeHelpers(node.tryBlock) ||
+          this.usesRuntimeHelpers(node.catchBlock) ||
+          this.usesRuntimeHelpers(node.finallyBlock)
+        );
       case "WhileStatement":
         return (
           this.usesRuntimeHelpers(node.condition) ||
@@ -308,6 +316,23 @@ export class Generator {
     if (node.elseBlock) {
       this.emitter.emitLine("} else {");
       this.emitBlockBody(node.elseBlock);
+    }
+
+    this.emitter.emitLine("}");
+  }
+
+  emitTryStatement(node) {
+    this.emitter.emitLine("try {");
+    this.emitBlockBody(node.tryBlock);
+
+    if (node.catchBlock) {
+      this.emitter.emitLine(`} catch (${node.catchParam.name}) {`);
+      this.emitBlockBody(node.catchBlock);
+    }
+
+    if (node.finallyBlock) {
+      this.emitter.emitLine("} finally {");
+      this.emitBlockBody(node.finallyBlock);
     }
 
     this.emitter.emitLine("}");

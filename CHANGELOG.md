@@ -1,5 +1,38 @@
 # Changelog
 
+## Day 10 - 2026-06-10 (Try/Catch/Finally Stage 18)
+
+### Completed: Try/Catch/Finally
+- Added `TryStatement` AST support.
+- Added parser support for `dhoro { ... } error err { ... }`.
+- Added parser support for `dhoro { ... } sheshe { ... }`.
+- Added parser support for `dhoro { ... } error err { ... } sheshe { ... }`.
+- Added semantic analysis for catch variable scoping.
+- Added JavaScript generation for `try`, `catch`, and `finally`.
+- Added `examples/try.bn` and integration fixture coverage.
+
+### Tests Added
+- Parser coverage for try/catch, try/finally, try/catch/finally, and invalid try without catch/finally.
+- Analyzer coverage for catch variable resolution and catch variable non-leakage.
+- Generator coverage for try/catch, try/finally, and try/catch/finally output.
+- Integration coverage for `tests/integration/try.bn`.
+
+### Known Issues
+- Catch variable type/shape validation is not implemented.
+- Runtime helpers remain intentionally small.
+- Full module graph analysis, default imports, namespace imports, re-exports, top-level await, AI helpers, package publishing, editor tooling, LSP, and REPL support remain future work.
+- `README.md` still contains pre-existing mojibake and was skipped in this run to avoid fragile patching.
+
+### Test Result
+- `npm.cmd test` passed 229 tests.
+- `node src/cli.js check examples/try.bn` passed.
+- `node src/cli.js build examples/try.bn` generated JavaScript `try`, `catch`, and `finally`.
+
+### Recommended Next Task
+- Stage 19 Module Graph Analysis
+
+---
+
 ## Day 9 - 2026-06-09 (Imports and Exports Stage 15)
 
 ### Completed: Imports and Exports

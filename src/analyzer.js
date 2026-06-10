@@ -73,6 +73,8 @@ export class SemanticAnalyzer {
         return this.visitPrintStatement(node);
       case "IfStatement":
         return this.visitIfStatement(node);
+      case "TryStatement":
+        return this.visitTryStatement(node);
       case "ExpressionStatement":
         return this.visit(node.expression);
       case "Assignment":
@@ -275,6 +277,34 @@ export class SemanticAnalyzer {
     }
 
     this.visit(node.elseBlock);
+  }
+
+  visitTryStatement(node) {
+    node.semantic.kind = "try";
+    node.semantic.scopeType = this.currentScope.type;
+
+    this.visit(node.tryBlock);
+
+    if (node.catchBlock) {
+      this.withScope(createBlockScope(this.currentScope), () => {
+        this.declareCatchParameter(node.catchParam, node);
+        this.visitCatchBlock(node.catchBlock);
+      });
+    }
+
+    this.visit(node.finallyBlock);
+  }
+
+  visitCatchBlock(node) {
+    this.markChecked(node);
+    node.semantic.scopeType = "catch";
+
+    for (const statement of node.body || []) {
+      this.visit(statement);
+      if (this.errors.length >= MAX_ERRORS) {
+        break;
+      }
+    }
   }
 
   visitAssignmentExpression(node) {
@@ -553,6 +583,33 @@ export class SemanticAnalyzer {
         node,
         `Duplicate declaration of "${name}" in the same scope.`,
         `Rename this iterator or remove the earlier declaration on line ${result.existing.line}.`
+      );
+    }
+  }
+
+  declareCatchParameter(param, node) {
+    if (!param?.name) {
+      return;
+    }
+
+    this.markChecked(param);
+    const result = this.currentScope.declare(param.name, {
+      kind: "catch",
+      mutable: true,
+      declaration: param,
+      line: param.line || node.line,
+      column: param.column || node.column,
+    });
+
+    param.semantic.kind = "catch";
+    param.semantic.mutable = true;
+    param.semantic.declared = result.ok;
+
+    if (!result.ok) {
+      this.addError(
+        param,
+        `Duplicate catch variable "${param.name}".`,
+        `Rename this catch variable or remove the earlier declaration on line ${result.existing.line}.`
       );
     }
   }

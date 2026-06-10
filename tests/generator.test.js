@@ -143,6 +143,61 @@ if (ready) {
   );
 });
 
+test("generator: try catch output", () => {
+  const output = compileSource(`dhoro {
+  dekhi "try"
+} error err {
+  dekhi err
+}`);
+
+  assert.strictEqual(
+    output,
+    expected(`try {
+  console.log("try");
+} catch (err) {
+  console.log(err);
+}`)
+  );
+});
+
+test("generator: try finally output", () => {
+  const output = compileSource(`dhoro {
+  dekhi "try"
+} sheshe {
+  dekhi "done"
+}`);
+
+  assert.strictEqual(
+    output,
+    expected(`try {
+  console.log("try");
+} finally {
+  console.log("done");
+}`)
+  );
+});
+
+test("generator: try catch finally output", () => {
+  const output = compileSource(`dhoro {
+  dekhi "try"
+} error err {
+  dekhi err
+} sheshe {
+  dekhi "done"
+}`);
+
+  assert.strictEqual(
+    output,
+    expected(`try {
+  console.log("try");
+} catch (err) {
+  console.log(err);
+} finally {
+  console.log("done");
+}`)
+  );
+});
+
 test("generator: nested blocks", () => {
   const output = compileSource(`{
   dhori x = 1

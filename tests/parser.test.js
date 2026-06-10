@@ -181,6 +181,61 @@ test("parser: else-if chain", () => {
   assert.strictEqual(statement.elseBlock.body[0].arguments[0].value, "F");
 });
 
+test("parser: try catch statement", () => {
+  const statement = firstStatement(`dhoro {
+  dekhi "try"
+} error err {
+  dekhi err
+}`);
+
+  assert.strictEqual(statement.type, "TryStatement");
+  assert.strictEqual(statement.tryBlock.type, "BlockStatement");
+  assert.strictEqual(statement.catchParam.name, "err");
+  assert.strictEqual(statement.catchBlock.body[0].type, "PrintStatement");
+  assert.strictEqual(statement.finallyBlock, null);
+});
+
+test("parser: try finally statement", () => {
+  const statement = firstStatement(`dhoro {
+  dekhi "try"
+} sheshe {
+  dekhi "done"
+}`);
+
+  assert.strictEqual(statement.type, "TryStatement");
+  assert.strictEqual(statement.catchParam, null);
+  assert.strictEqual(statement.catchBlock, null);
+  assert.strictEqual(statement.finallyBlock.type, "BlockStatement");
+});
+
+test("parser: try catch finally statement", () => {
+  const statement = firstStatement(`dhoro {
+  dekhi "try"
+} error err {
+  dekhi err
+} sheshe {
+  dekhi "done"
+}`);
+
+  assert.strictEqual(statement.type, "TryStatement");
+  assert.strictEqual(statement.catchParam.name, "err");
+  assert.strictEqual(statement.catchBlock.type, "BlockStatement");
+  assert.strictEqual(statement.finallyBlock.type, "BlockStatement");
+});
+
+test("parser: invalid try without catch or finally", () => {
+  assert.throws(
+    () =>
+      parseSource(`dhoro {
+  dekhi "try"
+}`),
+    (err) =>
+      err.name === "BNError" &&
+      err.category === "ParseError" &&
+      err.message.includes('"dhoro" must include "error" or "sheshe"')
+  );
+});
+
 test("parser: function declaration", () => {
   const statement = firstStatement(`kaj greet(name) {
   ferot name

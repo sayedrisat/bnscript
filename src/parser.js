@@ -45,9 +45,6 @@ const EXPRESSION_STARTS = new Set([
 const UNSUPPORTED_STATEMENTS = new Map([
   [TOKENS.NAO, '"nao" imports are not supported in this alpha compiler.'],
   [TOKENS.DAO, '"dao" exports are not supported in this alpha compiler.'],
-  [TOKENS.DHORO, '"dhoro" try blocks are not supported in this alpha compiler.'],
-  [TOKENS.ERROR, '"error" catch blocks are not supported in this alpha compiler.'],
-  [TOKENS.SHESHE, '"sheshe" finally blocks are not supported in this alpha compiler.'],
 ]);
 
 export class Parser {
@@ -118,6 +115,8 @@ export class Parser {
         return this.parseIfStatement();
       case TOKENS.JOTOKKHON:
         return this.parseWhileStatement();
+      case TOKENS.DHORO:
+        return this.parseTryStatement();
       case TOKENS.BAR:
         return this.parseForStatement();
       case TOKENS.KAJ:
@@ -146,6 +145,20 @@ export class Parser {
           'Use "nahole" immediately after the closing "}" of a "jodi" statement.'
         );
         break;
+      case TOKENS.ERROR:
+        this.raise(
+          token,
+          '"error" must follow a "dhoro" block.',
+          'Use "error err { ... }" immediately after a "dhoro { ... }" block.'
+        );
+        break;
+      case TOKENS.SHESHE:
+        this.raise(
+          token,
+          '"sheshe" must follow a "dhoro" or "error" block.',
+          'Use "sheshe { ... }" after a "dhoro { ... }" or "error err { ... }" block.'
+        );
+        break;
       case TOKENS.SEMICOLON:
         this.raise(
           token,
@@ -169,7 +182,7 @@ export class Parser {
         this.raise(
           token,
           `Unexpected token "${this.describeToken(token)}".`,
-          "Start a statement with amdani, roptani, dhori, sthir, dekhi, jodi, jotokkhon, bar, async kaj, kaj, ferot, a block, or an expression."
+          "Start a statement with amdani, roptani, dhori, sthir, dekhi, jodi, jotokkhon, dhoro, bar, async kaj, kaj, ferot, a block, or an expression."
         );
     }
   }
@@ -395,6 +408,62 @@ export class Parser {
       condition,
       body,
       this.locationFrom(startToken, body)
+    );
+  }
+
+  parseTryStatement() {
+    const startToken = this.consume(TOKENS.DHORO);
+    const tryBlock = this.parseRequiredBlock('"dhoro" try');
+    let newlinesAfterBlock = this.skipNewlines();
+    let catchParam = null;
+    let catchBlock = null;
+    let finallyBlock = null;
+    let lastBlock = tryBlock;
+
+    if (this.match(TOKENS.ERROR)) {
+      const errorToken = this.previous();
+      const paramToken = this.consume(
+        TOKENS.IDENTIFIER,
+        'Expected catch variable after "error".',
+        'Use: dhoro { ... } error err { ... }'
+      );
+      catchParam = AST.Parameter(
+        paramToken.value,
+        this.locationFrom(paramToken, paramToken)
+      );
+      catchBlock = this.parseRequiredBlock('"error" catch');
+      lastBlock = catchBlock;
+      newlinesAfterBlock = this.skipNewlines();
+
+      if (!newlinesAfterBlock && !this.check(TOKENS.SHESHE)) {
+        this.ensureCompoundStatementBoundary(newlinesAfterBlock);
+      }
+
+      catchParam.errorKeyword = this.locationFrom(errorToken, errorToken);
+    }
+
+    if (this.match(TOKENS.SHESHE)) {
+      finallyBlock = this.parseRequiredBlock('"sheshe" finally');
+      lastBlock = finallyBlock;
+      newlinesAfterBlock = this.skipNewlines();
+    }
+
+    if (!catchBlock && !finallyBlock) {
+      this.raise(
+        this.peek(),
+        '"dhoro" must include "error" or "sheshe".',
+        'Use: dhoro { ... } error err { ... }, dhoro { ... } sheshe { ... }, or both.'
+      );
+    }
+
+    this.ensureCompoundStatementBoundary(newlinesAfterBlock);
+
+    return AST.TryStatement(
+      tryBlock,
+      catchParam,
+      catchBlock,
+      finallyBlock,
+      this.locationFrom(startToken, lastBlock)
     );
   }
 

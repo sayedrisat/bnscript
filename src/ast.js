@@ -65,6 +65,20 @@ export function WhileStatement(condition, body, location = {}) {
   return node("WhileStatement", { condition, body }, location);
 }
 
+export function TryStatement(
+  tryBlock,
+  catchParam = null,
+  catchBlock = null,
+  finallyBlock = null,
+  location = {}
+) {
+  return node(
+    "TryStatement",
+    { tryBlock, catchParam, catchBlock, finallyBlock },
+    location
+  );
+}
+
 export function ForLoop(iterator, start, end, body, location = {}) {
   return {
     type: "ForLoop",
@@ -193,6 +207,7 @@ export default {
   PrintStatement,
   IfStatement,
   WhileStatement,
+  TryStatement,
   ForLoop,
   ForEachLoop,
   BlockStatement,
