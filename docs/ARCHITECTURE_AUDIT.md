@@ -12,7 +12,7 @@ Repository URL: `https://github.com/sayedrisat/bnscript`
 
 Latest Stage: `Stage 18 - Try/Catch/Finally`
 
-Current Commit: `Pending Stage 18 release commit`
+Current Commit: `455dbbbad9e1b03f99532914a0853608498e2de6`
 
 Current Test Count: `229` passing tests
 
@@ -488,8 +488,12 @@ Major missing or incomplete features:
 
 Stage 19:
 
-* Module Graph Analysis
+* REPL
 
 Stage 20:
+
+* Module Graph Analysis
+
+Stage 21:
 
 * Advanced Runtime Helpers and AI Integration
