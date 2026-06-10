@@ -82,6 +82,28 @@ test("repl: variable persistence", async () => {
   assert.strictEqual(io.stderr.text, "");
 });
 
+test("repl: top-level await", async () => {
+  const io = memoryIO();
+  const session = new ReplSession({ io });
+
+  const result = await session.handleLine("await wait(1)");
+
+  assert.strictEqual(result.ok, true);
+  assert.strictEqual(io.stdout.text, "");
+  assert.strictEqual(io.stderr.text, "");
+});
+
+test("repl: top-level await declaration persists", async () => {
+  const io = memoryIO();
+  const session = new ReplSession({ io });
+
+  await session.handleLine("dhori done = await wait(1)");
+  await session.handleLine("dekhi done");
+
+  assert.strictEqual(io.stdout.text, "undefined\n");
+  assert.strictEqual(io.stderr.text, "");
+});
+
 test("repl: compile error recovery", async () => {
   const io = memoryIO();
   const session = new ReplSession({ io });

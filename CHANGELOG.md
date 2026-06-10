@@ -1,5 +1,40 @@
 # Changelog
 
+## Day 10 - 2026-06-10 (Top-Level Await Stage 20)
+
+### Completed: Top-Level Await
+- Allowed `await` expressions in top-level program scope.
+- Kept `await` valid inside `async kaj` functions.
+- Kept `await` invalid inside non-async `kaj` functions.
+- Added declaration parsing support for multiline initializers after `=`.
+- Preserved existing JavaScript generation as native top-level `await`.
+- Updated REPL execution so top-level `await` runs in the interactive session.
+- Added `examples/top-level-await.bn`.
+
+### Tests Added
+- Parser coverage for multiline top-level await initializers.
+- Analyzer coverage for valid top-level await and invalid non-async function await.
+- Generator coverage for top-level await output with runtime helpers.
+- REPL coverage for top-level await execution and awaited declaration persistence.
+- Integration coverage for `tests/integration/top-level-await.bn`.
+
+### Known Issues
+- Top-level await uses native ES module semantics in built files and CLI run output.
+- Multi-line REPL block editing is still not implemented.
+- Full module graph analysis, AI helpers, editor tooling, LSP, source maps, and package publishing remain future work.
+
+### Test Result
+- `npm.cmd test` passed 244 tests.
+- `node src/cli.js check examples/top-level-await.bn` passed.
+- `node src/cli.js build examples/top-level-await.bn` passed.
+- `node src/cli.js run examples/top-level-await.bn` printed `done`.
+- REPL validation with `await wait(1)` passed.
+
+### Recommended Next Task
+- Stage 21 Module Graph Analysis
+
+---
+
 ## Day 10 - 2026-06-10 (REPL Stage 19)
 
 ### Completed: Interactive REPL

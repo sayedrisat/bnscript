@@ -318,6 +318,19 @@ test("parser: nested await expression", () => {
   assert.strictEqual(expression.argument.arguments[0].name, "id");
 });
 
+test("parser: multiline top-level await initializer", () => {
+  const statement = firstStatement(`dhori data =
+  await httpGet(
+    "https://example.com"
+  )`);
+
+  assert.strictEqual(statement.type, "VarDeclaration");
+  assert.strictEqual(statement.initializer.type, "AwaitExpression");
+  assert.strictEqual(statement.initializer.argument.type, "CallExpression");
+  assert.strictEqual(statement.initializer.argument.callee.name, "httpGet");
+  assert.strictEqual(statement.initializer.argument.arguments[0].value, "https://example.com");
+});
+
 test("parser: nested function body", () => {
   const statement = firstStatement(`kaj outer(name) {
   kaj inner(value) {

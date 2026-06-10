@@ -19,6 +19,7 @@ node src/cli.js run examples/hello.bn
 | `logic.bn` | Arithmetic, comparison, and logical expressions |
 | `functions.bn` | Function declarations, returns, parameters, and calls |
 | `async.bn` | Async functions and await expressions |
+| `top-level-await.bn` | Top-level await with runtime helpers |
 | `runtime.bn` | Runtime helpers for env, files, wait, and HTTP GET |
 | `repl.txt` | Interactive REPL transcript with persistent variables |
 | `module-utils.bn` | Exported function declarations |

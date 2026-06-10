@@ -10,11 +10,11 @@ Current Version: `0.1.0-alpha.0`
 
 Repository URL: `https://github.com/sayedrisat/bnscript`
 
-Latest Stage: `Stage 19 - REPL`
+Latest Stage: `Stage 20 - Top-Level Await`
 
-Current Commit: `c82aadb886fb5c7d57128ca68e91dec39b9fb932`
+Current Commit: `Pending Stage 20 release commit`
 
-Current Test Count: `238` passing tests
+Current Test Count: `244` passing tests
 
 Current Compiler Stages Completed:
 
@@ -40,6 +40,7 @@ Current Compiler Stages Completed:
 * Export declarations with `roptani`
 * Async function declarations with `async kaj`
 * Await expressions with `await`
+* Top-level await
 * Automation runtime helper calls
 * Try/catch/finally with `dhoro`, `error`, and `sheshe`
 * Interactive REPL
@@ -86,6 +87,7 @@ REPL:
 * Reuses the compiler pipeline for each submitted entry.
 * Validates accumulated session source so prior declarations remain visible to later entries.
 * Executes only the newly generated JavaScript chunk inside a shared Node.js VM context.
+* Wraps chunks that contain top-level await so awaited expressions execute cleanly.
 * Supports `.help`, `.exit`, `.clear`, and `.version`.
 
 Runtime:
@@ -112,7 +114,7 @@ Current implemented language features:
 * Named imports with `amdani { name } theke "./file.bn"`
 * Exported functions, variables, and constants with `roptani`
 * Async function declarations with `async kaj`
-* Await expressions inside async functions
+* Await expressions inside async functions and top-level programs
 * Runtime helper calls with `env`, `fileRead`, `fileWrite`, `wait`, and `httpGet`
 * Try/catch/finally statements with `dhoro`, `error`, and `sheshe`
 * Interactive REPL sessions with persistent variables
@@ -130,14 +132,14 @@ Current implemented language features:
 
 Latest completed stage:
 
-* Stage 19: REPL
+* Stage 20: Top-Level Await
 
 ## AST Changes
 
 Latest completed stage:
 
-* No AST node changes.
-* REPL entries reuse the existing `Program` and statement/expression AST nodes.
+* No new AST node types.
+* Reused `AwaitExpression` for both async function await and top-level await.
 
 Current AST model:
 
@@ -151,8 +153,8 @@ Current AST model:
 
 Latest completed stage:
 
-* No parser grammar changes.
-* REPL input is parsed with the same parser used by file compilation.
+* Continued parsing `AwaitExpression` through the existing unary-expression path.
+* Added declaration initializer continuation after `=` so multiline top-level await declarations parse cleanly.
 
 Current parser grammar support:
 
@@ -177,9 +179,9 @@ Current parser grammar support:
 
 Latest completed stage:
 
-* No new semantic node rules.
-* REPL validation analyzes the accumulated successful session source for persistent declarations.
-* Compiler and runtime errors are reported without exiting the REPL session.
+* `await` is valid in top-level program scope.
+* `await` remains valid inside `async kaj` functions.
+* `await` remains invalid inside non-async `kaj` functions.
 
 Current analyzer checks:
 
@@ -190,7 +192,7 @@ Current analyzer checks:
 * Function scopes and parameter scopes
 * Duplicate parameter errors
 * Return placement errors
-* Await placement errors
+* Await placement errors for non-async function bodies
 * Loop scopes and iterator scopes
 * Break/continue placement errors
 * Catch parameter scoping
@@ -204,7 +206,8 @@ Current analyzer checks:
 Latest completed stage:
 
 * No new JavaScript syntax generation rules.
-* REPL execution strips generated headers and runtime imports, then evaluates the newly generated JavaScript chunk in a shared VM context.
+* Top-level BN Script `await` continues to emit native JavaScript top-level `await`.
+* Runtime helper calls still emit `runtime.*` imports when needed.
 
 Current generator output support:
 
@@ -389,7 +392,7 @@ Active AST nodes:
 
 New example files added in the latest completed stage:
 
-* `repl.txt`
+* `top-level-await.bn`
 
 Runnable `.bn` examples in `examples/`:
 
@@ -409,6 +412,7 @@ Runnable `.bn` examples in `examples/`:
 * `objects.bn`
 * `repl.txt`
 * `runtime.bn`
+* `top-level-await.bn`
 * `try.bn`
 * `variables.bn`
 * `while.bn`
@@ -417,12 +421,13 @@ Runnable `.bn` examples in `examples/`:
 
 New tests added in the latest completed stage:
 
-* CLI coverage for launching the REPL command and exiting cleanly.
-* REPL coverage for `.help`, `.exit`, `.clear`, and `.version`.
-* REPL coverage for print statements and persistent variables.
-* REPL coverage for compile error recovery and runtime error recovery.
+* Parser coverage for multiline top-level await initializers.
+* Analyzer coverage for valid top-level await and invalid non-async function await.
+* Generator coverage for top-level await output with runtime helpers.
+* REPL coverage for top-level await execution and awaited declaration persistence.
+* Integration coverage for `tests/integration/top-level-await.bn`.
 
-Current total passing tests: `238`
+Current total passing tests: `244`
 
 Primary test files:
 
@@ -443,6 +448,7 @@ Primary test files:
   * `tests/stage16.integration.test.js`
   * `tests/stage17.integration.test.js`
   * `tests/stage18.integration.test.js`
+  * `tests/stage20.integration.test.js`
 
 Integration fixtures in `tests/integration/`:
 
@@ -461,13 +467,14 @@ Integration fixtures in `tests/integration/`:
 * `objects.bn`
 * `runtime.bn`
 * `semantic-error.bn`
+* `top-level-await.bn`
 * `try.bn`
 * `variables.bn`
 * `while.bn`
 
 ## Current Test Count
 
-Current total passing tests: `238`
+Current total passing tests: `244`
 
 ## Known Limitations
 
@@ -479,7 +486,6 @@ Major missing or incomplete features:
 * Full module graph analysis
 * Cross-file semantic validation
 * Circular dependency diagnostics
-* Top-level await execution model
 * Promise API design
 * Simple repeat `bar 5 { ... }` loops
 * Multi-line REPL block editing
@@ -497,10 +503,10 @@ Major missing or incomplete features:
 
 ## Recommended Next Stage
 
-Stage 20:
+Stage 21:
 
 * Module Graph Analysis
 
-Stage 21:
+Stage 22:
 
 * Advanced Runtime Helpers and AI Integration

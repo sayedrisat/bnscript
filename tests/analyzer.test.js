@@ -607,15 +607,29 @@ async kaj load() {
   assert.strictEqual(awaitExpression.argument.callee.semantic.resolved, true);
 });
 
-test("analyzer: await outside async function error", () => {
+test("analyzer: await at top level", () => {
+  const ast = analyzeSource(`await wait(1)
+dhori data =
+  await httpGet("https://example.com")`);
+
+  const waitAwait = ast.body[0].expression;
+  const dataAwait = ast.body[1].initializer;
+
+  assert.strictEqual(waitAwait.type, "AwaitExpression");
+  assert.strictEqual(waitAwait.semantic.kind, "await");
+  assert.strictEqual(waitAwait.argument.callee.semantic.symbolKind, "builtin");
+  assert.strictEqual(dataAwait.type, "AwaitExpression");
+  assert.strictEqual(dataAwait.argument.callee.semantic.symbolKind, "builtin");
+});
+
+test("analyzer: await inside non-async function error", () => {
   semanticError(
     () =>
       analyzeSource(`kaj fetchData() {
-  ferot 123
-}
-
-dhori data = await fetchData()`),
-    'Cannot use "await" outside an async function'
+  dhori data = await wait(1)
+  ferot data
+}`),
+    'Cannot use "await" inside a non-async function'
   );
 });
 

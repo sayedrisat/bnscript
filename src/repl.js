@@ -78,6 +78,135 @@ function newExecutableChunk(previous, next) {
   throw new Error("REPL execution state diverged from compiled session state.");
 }
 
+function containsTopLevelAwait(node) {
+  if (!node) {
+    return false;
+  }
+
+  switch (node.type) {
+    case "FunctionDeclaration":
+      return false;
+    case "AwaitExpression":
+      return true;
+    case "Program":
+    case "BlockStatement":
+    case "Block":
+      return (node.body || []).some((statement) =>
+        containsTopLevelAwait(statement)
+      );
+    case "ImportDeclaration":
+    case "BreakStatement":
+    case "ContinueStatement":
+    case "NumberLiteral":
+    case "StringLiteral":
+    case "BooleanLiteral":
+    case "NullLiteral":
+    case "Identifier":
+      return false;
+    case "ExportDeclaration":
+      return containsTopLevelAwait(node.declaration);
+    case "VarDeclaration":
+    case "ConstDeclaration":
+      return containsTopLevelAwait(node.initializer);
+    case "PrintStatement":
+      return (node.arguments || []).some((argument) =>
+        containsTopLevelAwait(argument)
+      );
+    case "ExpressionStatement":
+      return containsTopLevelAwait(node.expression);
+    case "IfStatement":
+      return (
+        containsTopLevelAwait(node.condition) ||
+        containsTopLevelAwait(node.consequent) ||
+        (node.alternates || []).some(
+          (alternate) =>
+            containsTopLevelAwait(alternate.condition) ||
+            containsTopLevelAwait(alternate.consequent)
+        ) ||
+        containsTopLevelAwait(node.elseBlock)
+      );
+    case "TryStatement":
+      return (
+        containsTopLevelAwait(node.tryBlock) ||
+        containsTopLevelAwait(node.catchBlock) ||
+        containsTopLevelAwait(node.finallyBlock)
+      );
+    case "WhileStatement":
+      return (
+        containsTopLevelAwait(node.condition) ||
+        containsTopLevelAwait(node.body)
+      );
+    case "ForLoop":
+      return (
+        containsTopLevelAwait(node.start) ||
+        containsTopLevelAwait(node.end) ||
+        containsTopLevelAwait(node.body)
+      );
+    case "ForEachLoop":
+      return (
+        containsTopLevelAwait(node.iterable) ||
+        containsTopLevelAwait(node.body)
+      );
+    case "ReturnStatement":
+      return containsTopLevelAwait(node.value);
+    case "UnaryExpression":
+      return containsTopLevelAwait(node.operand);
+    case "BinaryExpression":
+      return (
+        containsTopLevelAwait(node.left) ||
+        containsTopLevelAwait(node.right)
+      );
+    case "AssignmentExpression":
+    case "Assignment":
+      return (
+        containsTopLevelAwait(node.target) ||
+        containsTopLevelAwait(node.value)
+      );
+    case "CallExpression":
+      return (
+        containsTopLevelAwait(node.callee) ||
+        (node.arguments || []).some((argument) =>
+          containsTopLevelAwait(argument)
+        )
+      );
+    case "MemberExpression":
+      return (
+        containsTopLevelAwait(node.object) ||
+        (node.computed && containsTopLevelAwait(node.property))
+      );
+    case "ArrayLiteral":
+      return (node.elements || []).some((element) =>
+        containsTopLevelAwait(element)
+      );
+    case "ObjectLiteral":
+      return (node.properties || []).some((property) =>
+        containsTopLevelAwait(property.value)
+      );
+    default:
+      return false;
+  }
+}
+
+function prepareTopLevelAwaitChunk(chunk) {
+  return chunk.replace(
+    /^(let|const)\s+([A-Za-z_$][A-Za-z0-9_$]*)\s*=/gm,
+    "globalThis.$2 ="
+  );
+}
+
+async function runScriptChunk(chunk, context, filename, topLevelAwait) {
+  const source = topLevelAwait
+    ? `(async () => {\n${prepareTopLevelAwaitChunk(chunk)}\n})()`
+    : chunk;
+  const script = new Script(source, {
+    filename,
+  });
+  const value = script.runInContext(context);
+  if (value && typeof value.then === "function") {
+    await value;
+  }
+}
+
 export class ReplSession {
   constructor({
     io = { stdout, stderr },
@@ -87,6 +216,7 @@ export class ReplSession {
     this.filename = filename;
     this.source = "";
     this.executable = "";
+    this.statementCount = 0;
     this.context = this.createExecutionContext();
   }
 
@@ -167,17 +297,21 @@ export class ReplSession {
 
     try {
       if (chunk) {
-        const script = new Script(chunk, {
-          filename: this.filename,
-        });
-        const value = script.runInContext(this.context);
-        if (value && typeof value.then === "function") {
-          await value;
-        }
+        const newStatements = (result.ast?.body || []).slice(this.statementCount);
+        const topLevelAwait = newStatements.some((statement) =>
+          containsTopLevelAwait(statement)
+        );
+        await runScriptChunk(
+          chunk,
+          this.context,
+          this.filename,
+          topLevelAwait
+        );
       }
 
       this.source = candidateSource;
       this.executable = candidateExecutable;
+      this.statementCount = result.ast?.body?.length || this.statementCount;
       return { exit: false, ok: true };
     } catch (error) {
       write(this.io.stderr, `Runtime Error:\n${error?.message || String(error)}\n`);

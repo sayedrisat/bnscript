@@ -301,6 +301,7 @@ export class Parser {
       'Expected "=" after variable name.',
       'Use: dhori name = "Risat"'
     );
+    this.skipNewlines();
     const initializer = this.parseExpression('Expected initializer after "=".');
 
     return this.finishStatement(
@@ -324,6 +325,7 @@ export class Parser {
       'Expected "=" after constant name.',
       "Use: sthir NAME = value"
     );
+    this.skipNewlines();
     const initializer = this.parseExpression('Expected initializer after "=".');
 
     return this.finishStatement(

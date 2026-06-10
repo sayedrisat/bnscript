@@ -397,14 +397,15 @@ export class SemanticAnalyzer {
     node.semantic.kind = "await";
     node.semantic.scopeType = this.currentScope.type;
 
+    const insideFunction = this.functionAsyncStack.length > 0;
     const currentFunctionIsAsync =
       this.functionAsyncStack[this.functionAsyncStack.length - 1] === true;
 
-    if (!currentFunctionIsAsync) {
+    if (insideFunction && !currentFunctionIsAsync) {
       this.addError(
         node,
-        'Cannot use "await" outside an async function.',
-        'Move this expression inside an "async kaj" function body.'
+        'Cannot use "await" inside a non-async function.',
+        'Mark this function with "async kaj" or move the await expression to top-level code.'
       );
     }
 

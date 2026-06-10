@@ -159,6 +159,8 @@ async kaj load() {
   ferot text
 }
 
+await wait(10)
+
 dhoro {
   dekhi "try"
 } error err {
@@ -184,7 +186,7 @@ Supported today:
 - `ferot` return statements inside functions
 - Function parameters and calls
 - `async kaj` function declarations
-- `await` expressions inside async functions
+- `await` expressions inside async functions and top-level programs
 - Named imports with `amdani { name } theke "./file.bn"`
 - Exported functions, variables, and constants with `roptani`
 - Runtime helpers: `env`, `fileRead`, `fileWrite`, `wait`, and `httpGet`
@@ -198,6 +200,6 @@ Supported today:
 
 ## Current Limits
 
-Simple repeat `bar 5 { ... }` loops, default imports, namespace imports, re-exports, full module graph analysis, top-level await, AI helpers, package publishing, editor tooling, and LSP support are planned but not implemented in this alpha.
+Simple repeat `bar 5 { ... }` loops, default imports, namespace imports, re-exports, full module graph analysis, AI helpers, package publishing, editor tooling, and LSP support are planned but not implemented in this alpha.
 
 Function support currently covers named `kaj` declarations, positional parameters, `ferot`, and direct calls. Default parameters, function expressions, arrow functions, and methods are not implemented yet.

@@ -594,6 +594,22 @@ async function load() {
   );
 });
 
+test("generator: top-level await output", () => {
+  const output = compileSource(`await wait(1)
+dhori data =
+  await httpGet("https://example.com")
+dekhi data`);
+
+  assert.strictEqual(
+    output,
+    expected(`import * as runtime from "./src/runtime/index.js";
+
+await runtime.wait(1);
+let data = await runtime.httpGet("https://example.com");
+console.log(data);`)
+  );
+});
+
 test("generator: function call output", () => {
   const output = compileSource(`kaj greet(name) {
   ferot name
