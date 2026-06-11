@@ -74,6 +74,17 @@
         "title": "BN Script: Run Current File",
         "category": "BN Script"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "BN Script",
+      "properties": {
+        "bnscript.cliPath": {
+          "type": "string",
+          "default": "",
+          "scope": "resource",
+          "markdownDescription": "Absolute path to the BN Script CLI file (`src/cli.js`) for fresh workspaces. Example: `C:\\\\Users\\\\Lenovo\\\\Desktop\\\\Vs files\\\\bnscript\\\\src\\\\cli.js`."
+        }
+      }
+    }
   }
 }

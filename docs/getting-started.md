@@ -55,12 +55,19 @@ Run it:
 node src/cli.js run hello.bn
 ```
 
+Run it with shorthand:
+
+```sh
+node src/cli.js hello.bn
+```
+
 ## Local CLI
 
 During this alpha, the supported repository workflow is:
 
 ```sh
 node src/cli.js <check|build|run> file.bn
+node src/cli.js file.bn
 node src/cli.js repl
 ```
 
@@ -70,6 +77,7 @@ The package also exposes the intended binary name:
 bn check file.bn
 bn build file.bn
 bn run file.bn
+bn file.bn
 bn repl
 ```
 
@@ -128,7 +136,8 @@ REPL to list commands.
 ## VS Code Extension
 
 The local VS Code extension package lives in `vscode/`. It provides `.bn` file
-association, syntax highlighting, comment configuration, bracket handling, and
+association, syntax highlighting, diagnostics, autocomplete, hover docs,
+Command Palette actions, comment configuration, bracket handling, and
 auto-closing pairs.
 
 To test it during development:
@@ -157,6 +166,15 @@ to your user or workspace `settings.json`:
   "files.associations": {
     "*.bn": "bnscript"
   }
+}
+```
+
+When the extension is used from a fresh workspace outside this repository, set
+the CLI path so commands and diagnostics can find the compiler:
+
+```json
+{
+  "bnscript.cliPath": "C:\\Users\\Lenovo\\Desktop\\Vs files\\bnscript\\src\\cli.js"
 }
 ```
 

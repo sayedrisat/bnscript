@@ -1,7 +1,11 @@
 const { execFile } = require("child_process");
-const fs = require("fs");
 const path = require("path");
 const vscode = require("vscode");
+const {
+  CLI_NOT_FOUND_MESSAGE,
+  compilerPathFromCliPath,
+  findCliPath,
+} = require("./commands");
 
 const DIAGNOSTIC_COLLECTION_NAME = "bnscript";
 
@@ -32,24 +36,6 @@ function isBnScriptDocument(document) {
     (document.languageId === "bnscript" ||
       path.extname(document.uri.fsPath).toLowerCase() === ".bn")
   );
-}
-
-function findCompilerPath(context, document) {
-  const workspaceFolder = vscode.workspace.getWorkspaceFolder(document.uri);
-  const candidates = [
-    workspaceFolder?.uri.fsPath,
-    path.resolve(context.extensionPath, ".."),
-    context.extensionPath,
-  ].filter(Boolean);
-
-  for (const root of candidates) {
-    const compilerPath = path.join(root, "src", "compiler.js");
-    if (fs.existsSync(compilerPath)) {
-      return compilerPath;
-    }
-  }
-
-  return null;
 }
 
 function runCompilerCheck(compilerPath, filePath) {
@@ -126,14 +112,26 @@ function toVsCodeDiagnostic(document, diagnostic) {
   return item;
 }
 
+function createExtensionDiagnostic(document, message) {
+  return toVsCodeDiagnostic(document, {
+    category: "ExtensionError",
+    column: 1,
+    line: 1,
+    message,
+  });
+}
+
 async function validateDocument(context, collection, document) {
   if (!isBnScriptDocument(document)) {
     return;
   }
 
-  const compilerPath = findCompilerPath(context, document);
+  const cliPath = findCliPath(context, document.uri.fsPath);
+  const compilerPath = compilerPathFromCliPath(cliPath);
   if (!compilerPath) {
-    collection.delete(document.uri);
+    collection.set(document.uri, [
+      createExtensionDiagnostic(document, CLI_NOT_FOUND_MESSAGE),
+    ]);
     return;
   }
 

@@ -10,11 +10,11 @@ Current Version: `0.1.0-alpha.0`
 
 Repository URL: `https://github.com/sayedrisat/bnscript`
 
-Latest Stage: `Stage 29 - VS Code Diagnostics Provider`
+Latest Stage: `Reliability Update - VS Code CLI Resolution & CLI Shorthand`
 
-Current Commit: `Pending Stage 29 release commit`
+Current Commit: `Pending reliability update commit`
 
-Current Test Count: `292` passing tests
+Current Test Count: `298` passing tests
 
 Current Compiler Stages Completed:
 
@@ -54,6 +54,8 @@ Current Compiler Stages Completed:
 * VS Code keyword autocomplete and hover documentation
 * VS Code command palette integration
 * VS Code diagnostics provider
+* Configurable VS Code CLI path with `bnscript.cliPath`
+* CLI shorthand execution for `.bn` files
 
 ## Compiler Architecture
 
@@ -92,6 +94,7 @@ CLI:
 
 * Implemented in `src/cli.js`.
 * Supports `check`, `build`, `run`, and `repl`.
+* Supports shorthand execution where `node src/cli.js file.bn` runs the file.
 
 REPL:
 
@@ -128,6 +131,7 @@ Tooling:
 * `vscode/src/commands.js` stores shared command metadata for Command Palette actions.
 * `vscode/src/diagnostics.js` registers the diagnostics provider for `.bn` files.
 * The extension registers check, build, and run commands that call the BN Script CLI.
+* `bnscript.cliPath` lets fresh workspaces point the extension at a local BN Script CLI checkout.
 * `npm run build:vsix` packages the local extension with `@vscode/vsce`.
 * Generated VSIX files are written under ignored `dist/`.
 
@@ -162,6 +166,8 @@ Current implemented language features:
 * VS Code keyword autocomplete and hover documentation
 * VS Code commands for checking, building, and running the current `.bn` file
 * VS Code diagnostics in the Problems panel
+* Configurable VS Code CLI resolution with `bnscript.cliPath`
+* CLI shorthand execution with `node src/cli.js file.bn`
 * Assignment expressions
 * Compound assignment
 * Array literals
@@ -176,14 +182,14 @@ Current implemented language features:
 
 Latest completed stage:
 
-* Stage 29: VS Code Diagnostics Provider
+* Reliability Update: VS Code CLI Resolution & CLI Shorthand
 
 ## AST Changes
 
 Latest completed stage:
 
 * No AST changes.
-* Stage 29 added editor diagnostics tooling without changing AST node names.
+* The reliability update did not change AST node names.
 
 Current AST model:
 
@@ -198,7 +204,7 @@ Current AST model:
 Latest completed stage:
 
 * No parser changes.
-* Stage 29 uses VS Code extension APIs and the existing compiler outside the compiler parser.
+* The reliability update did not change parser grammar.
 
 Current parser grammar support:
 
@@ -224,7 +230,7 @@ Current parser grammar support:
 Latest completed stage:
 
 * No analyzer changes.
-* Stage 29 does not affect compiler semantic validation.
+* The reliability update does not affect compiler semantic validation.
 
 Current analyzer checks:
 
@@ -250,7 +256,7 @@ Current analyzer checks:
 Latest completed stage:
 
 * No generator changes.
-* Stage 29 does not affect JavaScript output.
+* The reliability update does not affect JavaScript output.
 
 Current generator output support:
 
@@ -298,10 +304,10 @@ Current bilingual diagnostic coverage:
 
 Latest completed stage:
 
-* Added a diagnostics provider for BN Script files.
-* Added a `bnscript` DiagnosticCollection for Problems panel entries.
-* Added validation on file open and save.
-* Converted compiler diagnostics into VS Code diagnostics with source ranges.
+* Added `bnscript.cliPath` setting for fresh-workspace CLI resolution.
+* Commands read configured CLI path before auto-detecting a repository checkout.
+* Diagnostics read configured CLI path before auto-detecting a repository checkout.
+* Missing CLI guidance now tells users to configure `bnscript.cliPath`.
 
 Current editor support:
 
@@ -319,6 +325,7 @@ Current editor support:
   * `BN Script: Build Current File`
   * `BN Script: Run Current File`
 * `BN Script Output` channel for compiler and runtime output
+* `bnscript.cliPath` setting for fresh workspaces
 
 ## Supported Statements
 
@@ -547,13 +554,14 @@ Runnable `.bn` examples in `examples/`:
 
 New tests added in the latest completed stage:
 
-* Diagnostics provider file and package inclusion coverage.
-* Diagnostic collection creation coverage.
-* Open/save/close validation registration coverage.
-* Compiler diagnostic to VS Code range mapping coverage.
-* Extension activation wiring coverage.
+* VS Code `bnscript.cliPath` configuration coverage.
+* Command resolver setting-read coverage.
+* Diagnostics provider setting-aware resolver coverage.
+* Auto-detection fallback coverage.
+* Missing CLI guidance coverage.
+* CLI shorthand run equivalence coverage.
 
-Current total passing tests: `292`
+Current total passing tests: `298`
 
 Primary test files:
 
@@ -584,6 +592,7 @@ Primary test files:
   * `tests/stage27.vscode.test.js`
   * `tests/stage28.commands.test.js`
   * `tests/stage29.diagnostics-provider.test.js`
+  * `tests/stage30.cli-resolution.test.js`
 
 Integration fixtures in `tests/integration/`:
 
@@ -609,7 +618,7 @@ Integration fixtures in `tests/integration/`:
 
 ## Current Test Count
 
-Current total passing tests: `292`
+Current total passing tests: `298`
 
 ## Known Limitations
 
@@ -636,8 +645,8 @@ Major missing or incomplete features:
 * VS Code Marketplace publishing
 * VS Code language server features
 * VS Code formatter, snippets, debugger, code actions, and semantic completions
-* VS Code commands currently require CLI source access from the active workspace or local development checkout
-* VS Code diagnostics currently require compiler source access from the active workspace or local development checkout
+* VS Code commands and diagnostics require `bnscript.cliPath` or an auto-detectable local checkout
+* VS Code extension does not yet bundle the compiler for standalone Marketplace-style installs
 * VS Code diagnostics validate on open/save rather than full incremental LSP-style analysis
 * Language Server Protocol (LSP)
 * Source maps

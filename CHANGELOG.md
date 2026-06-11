@@ -1,5 +1,37 @@
 # Changelog
 
+## Day 12 - 2026-06-11 (VS Code CLI Resolution and CLI UX)
+
+### Completed: VS Code CLI Resolution and CLI Shorthand
+- Added the `bnscript.cliPath` VS Code setting for fresh workspaces.
+- Updated VS Code command integration to use the configured CLI path before auto-detection.
+- Updated VS Code diagnostics to use the same configured CLI path before auto-detection.
+- Added bilingual missing-CLI guidance that points users to `bnscript.cliPath`.
+- Added CLI shorthand execution so `node src/cli.js file.bn` behaves like `node src/cli.js run file.bn`.
+- Documented shorthand execution and fresh-workspace VS Code setup.
+
+### Tests Added
+- VS Code `bnscript.cliPath` configuration coverage.
+- Command resolver setting-read coverage.
+- Diagnostics provider setting-aware resolver coverage.
+- Auto-detection fallback coverage.
+- Missing CLI guidance coverage.
+- CLI shorthand run equivalence coverage.
+
+### Known Issues
+- `bnscript.cliPath` still points at a local BN Script checkout because the extension is not Marketplace-published with a bundled compiler yet.
+- Full LSP packaging and compiler bundling remain future work.
+
+### Test Result
+- `npm.cmd test` passed 298 tests.
+- `npm run build:vsix` generated `dist/bnscript-0.1.0-alpha.0.vsix`.
+- `node src/cli.js examples/hello.bn` ran successfully.
+
+### Recommended Next Task
+- Stage 30 Module Graph Analysis
+
+---
+
 ## Day 12 - 2026-06-11 (VS Code Diagnostics Provider Stage 29)
 
 ### Completed: VS Code Diagnostics Provider

@@ -14,6 +14,7 @@ function usage() {
   bn check file.bn
   bn build file.bn
   bn run file.bn
+  bn file.bn
   bn repl
 `;
 }
@@ -110,7 +111,17 @@ export async function main(argv = process.argv.slice(2), io = {
   stdout: process.stdout,
   stderr: process.stderr,
 }) {
-  const [command, filePath] = argv;
+  let [command, filePath] = argv;
+
+  if (typeof command === "string" && command.toLowerCase().endsWith(".bn")) {
+    if (filePath) {
+      write(io.stderr, usage());
+      return 1;
+    }
+
+    filePath = command;
+    command = "run";
+  }
 
   if (!COMMANDS.has(command)) {
     write(io.stderr, usage());

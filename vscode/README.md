@@ -48,6 +48,22 @@ Hovering a supported keyword shows a short BN Script reference entry with:
 The autocomplete and hover providers share keyword data from
 `src/keywords.js` so the wording stays consistent.
 
+## Fresh Workspace Setup
+
+When this extension is installed in a workspace that is not the BN Script
+repository, configure the CLI path so commands and diagnostics can run the local
+compiler:
+
+```json
+{
+  "bnscript.cliPath": "C:\\Users\\Lenovo\\Desktop\\Vs files\\bnscript\\src\\cli.js"
+}
+```
+
+This setting points to the `src/cli.js` file in your BN Script checkout. If the
+setting is empty, the extension tries to auto-detect the CLI from the active
+workspace and local development checkout.
+
 ## Diagnostics
 
 The extension validates BN Script files and reports compiler diagnostics as VS
@@ -100,6 +116,8 @@ Eta BN Script file noy.
 English:
 The active file is not a BN Script file.
 ```
+
+If the CLI cannot be found, set `bnscript.cliPath` in VS Code Settings.
 
 ## Manual Install
 
@@ -182,6 +200,6 @@ The TextMate grammar highlights:
 - No formatter.
 - No snippets.
 - No debugger integration.
-- Command integration expects the BN Script CLI source to be available from the
-  active workspace or local development checkout.
+- Commands and diagnostics require `bnscript.cliPath` or an auto-detectable BN
+  Script checkout.
 - Not published to the VS Code Marketplace.

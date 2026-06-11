@@ -1,8 +1,12 @@
 const vscode = require("vscode");
 const { execFile } = require("child_process");
-const fs = require("fs");
 const path = require("path");
-const { COMMANDS } = require("./commands");
+const {
+  CLI_NOT_FOUND_MESSAGE,
+  COMMANDS,
+  bilingualMessage,
+  findCliPath,
+} = require("./commands");
 const { registerDiagnostics } = require("./diagnostics");
 const { KEYWORDS, getKeyword } = require("./keywords");
 
@@ -33,10 +37,6 @@ function createCompletionItem(entry) {
   return item;
 }
 
-function bilingualMessage(bn, en) {
-  return `Bangla:\n${bn}\n\nEnglish:\n${en}`;
-}
-
 function resolveActiveBnFile() {
   const editor = vscode.window.activeTextEditor;
   if (!editor) {
@@ -59,26 +59,6 @@ function resolveActiveBnFile() {
   }
 
   return { filePath };
-}
-
-function findCliPath(context, filePath) {
-  const workspaceFolder = vscode.workspace.getWorkspaceFolder(
-    vscode.Uri.file(filePath)
-  );
-  const candidates = [
-    workspaceFolder?.uri.fsPath,
-    path.resolve(context.extensionPath, ".."),
-    context.extensionPath,
-  ].filter(Boolean);
-
-  for (const root of candidates) {
-    const cliPath = path.join(root, "src", "cli.js");
-    if (fs.existsSync(cliPath)) {
-      return cliPath;
-    }
-  }
-
-  return null;
 }
 
 function runCli(action, filePath, cliPath, outputChannel, commandTitle) {
@@ -128,12 +108,8 @@ function registerBnScriptCommand(context, outputChannel, command) {
 
     const cliPath = findCliPath(context, activeFile.filePath);
     if (!cliPath) {
-      const message = bilingualMessage(
-        "BN Script CLI khuje paoa jayni.",
-        "Could not find the BN Script CLI."
-      );
-      outputChannel.appendLine(message);
-      vscode.window.showErrorMessage(message);
+      outputChannel.appendLine(CLI_NOT_FOUND_MESSAGE);
+      vscode.window.showErrorMessage(CLI_NOT_FOUND_MESSAGE);
       outputChannel.appendLine("");
       return;
     }

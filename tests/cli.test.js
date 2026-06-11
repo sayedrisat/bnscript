@@ -114,6 +114,42 @@ test("cli: run success", async (t) => {
   assert.strictEqual(io.stderr.text, "");
 });
 
+test("cli: file path shorthand runs like run command", async (t) => {
+  const dir = await withTempDir(t);
+  const filePath = join(dir, "shorthand.bn");
+  const originalLog = console.log;
+
+  async function runWithArgs(args) {
+    const io = memoryIO();
+    const messages = [];
+    console.log = (...values) => {
+      messages.push(values.join(" "));
+    };
+
+    const exitCode = await main(args, io);
+    return {
+      exitCode,
+      messages,
+      stderr: io.stderr.text,
+      stdout: io.stdout.text,
+    };
+  }
+
+  t.after(() => {
+    console.log = originalLog;
+  });
+
+  await writeFile(filePath, 'dekhi "hello shorthand"', "utf8");
+
+  const shorthand = await runWithArgs([filePath]);
+  const explicit = await runWithArgs(["run", filePath]);
+
+  assert.deepStrictEqual(shorthand, explicit);
+  assert.strictEqual(shorthand.exitCode, 0);
+  assert.deepStrictEqual(shorthand.messages, ["hello shorthand"]);
+  assert.strictEqual(shorthand.stderr, "");
+});
+
 test("cli: repl exits cleanly", async () => {
   const input = new PassThrough();
   const io = {
