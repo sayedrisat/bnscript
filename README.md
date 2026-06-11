@@ -1,266 +1,95 @@
-# 🚀 BN Script
+# BN Script
 
-**An automation-first programming language that compiles to JavaScript.**
+> A Bangla-inspired programming language that compiles to JavaScript.
 
-BN Script is a programming language designed to make automation scripts easier to write, read, and maintain while still generating clean JavaScript that runs on Node.js.
+BN Script is an open-source programming language designed to make programming more accessible through Bangla-inspired syntax while still supporting familiar English alternatives.
 
-It combines a real compiler architecture with a beginner-friendly syntax inspired by Bangla-transliterated keywords.
-
----
-
-## ✨ Current Status
-
-**Version:** `v0.1.0-alpha.0`
-
-### Implemented
-
-✅ Lexer
-✅ Parser
-✅ Abstract Syntax Tree (AST)
-✅ Semantic Analyzer
-✅ JavaScript Generator
-✅ Runtime System
-✅ CLI Tool
-✅ Assignment Expressions
-✅ While Loops
-✅ Range For Loops
-✅ For-Each Loops
-✅ Break and Continue
-✅ Array Literals
-✅ Object Literals
-✅ Member and Index Access
-✅ Function Support
-✅ 182 Automated Tests
+It compiles directly to JavaScript and includes a custom VS Code extension with syntax highlighting, autocomplete, hover documentation, diagnostics, and developer tooling.
 
 ---
 
-## 🔥 Why BN Script?
+## Features
 
-Modern automation often requires repetitive JavaScript boilerplate for:
+### Language Features
 
-* File operations
-* API requests
-* Environment variables
-* Task automation
-* Future AI workflows
+* Variables (`dhori`, `sthir`, `let`, `const`)
+* Functions (`kaj`, `function`)
+* Conditional Statements (`jodi`, `nahole`, `if`, `else`)
+* Loops
+* Arrays
+* Objects
+* Recursion
+* Async / Await
+* Top-Level Await
+* Modules (`amdani`, `roptani`)
+* Try / Catch / Finally
+* Runtime Helpers
 
-BN Script aims to make these workflows simpler while still compiling into readable JavaScript.
+### Developer Experience
 
-Instead of replacing JavaScript, BN Script sits on top of it.
-
-Write BN Script.
-
-Compile to JavaScript.
-
-Run anywhere Node.js runs.
-
----
-
-## 🏗 Architecture
-
-BN Script follows a real compiler pipeline:
-
-```text
-BN Script Source
-        ↓
-      Lexer
-        ↓
-      Parser
-        ↓
- Semantic Analyzer
-        ↓
- JavaScript Generator
-        ↓
-      Runtime
-        ↓
-        CLI
-```
-
-Unlike simple text replacement tools, BN Script performs proper parsing, semantic analysis, and code generation.
+* Interactive REPL
+* Bilingual Diagnostics (Bangla + English)
+* VS Code Extension
+* Syntax Highlighting
+* Autocomplete
+* Hover Documentation
+* Problems Panel Integration
+* Run / Build / Check Commands
+* VSIX Packaging Support
 
 ---
 
-## 🚀 Quick Example
-
-### BN Script
+## Example
 
 ```bn
-kaj greet(name) {
-  ferot "Hello " + name
+async kaj talentAudit(team) {
+    dhori motScore = 0
+
+    bar member ekti team {
+        motScore += member.score
+    }
+
+    dhori average = motScore / team.length
+
+    jodi average >= 90 {
+        dekhi "Elite Engineering Team"
+    } nahole {
+        dekhi "Growing Team"
+    }
 }
 
-dekhi greet("Risat")
+dhori developers = [
+    { nam: "Risat", score: 95 },
+    { nam: "Rahim", score: 88 },
+    { nam: "Karim", score: 91 }
+]
+
+await talentAudit(developers)
 ```
 
-### Generated JavaScript
+Generated JavaScript:
 
 ```js
-function greet(name) {
-  return "Hello " + name;
+async function talentAudit(team) {
+    let motScore = 0;
+
+    for (const member of team) {
+        motScore += member.score;
+    }
+
+    const average = motScore / team.length;
+
+    if (average >= 90) {
+        console.log("Elite Engineering Team");
+    } else {
+        console.log("Growing Team");
+    }
 }
-
-console.log(greet("Risat"));
-```
-
-### Output
-
-```txt
-Hello Risat
 ```
 
 ---
 
-## ✨ Features
-
-### Variables
-
-```bn
-dhori name = "Risat"
-```
-
-### Constants
-
-```bn
-sthir version = 0.1
-```
-
-### Output
-
-```bn
-dekhi "Hello World"
-```
-
-### Conditionals
-
-```bn
-jodi score >= 90 {
-  dekhi "Excellent"
-} nahole {
-  dekhi "Keep Going"
-}
-```
-
-### Assignment
-
-```bn
-dhori count = 0
-count = count + 1
-count += 4
-```
-
-### While Loops
-
-```bn
-dhori i = 0
-
-jotokkhon i < 3 {
-  dekhi i
-  i = i + 1
-}
-```
-
-### Range For Loops
-
-```bn
-bar i = 0 theke 5 {
-  dekhi i
-}
-```
-
-### For-Each Loops
-
-```bn
-dhori names = ["Risat", "BN", "Script"]
-
-bar item ekti names {
-  dekhi item
-}
-```
-
-### Loop Control
-
-```bn
-bar i = 0 theke 5 {
-  jodi i == 2 {
-    cholo
-  }
-
-  jodi i == 4 {
-    bekkhon
-  }
-
-  dekhi i
-}
-```
-
-### Arrays
-
-```bn
-dhori names = ["Risat", "BN"]
-dekhi names[0]
-names[1] = "Script"
-```
-
-### Objects
-
-```bn
-dhori user = {
-  name: "Risat",
-  profile: {
-    city: "Dhaka"
-  }
-}
-
-dekhi user.name
-dekhi user.profile.city
-user.name = "Sayed"
-```
-
-### Functions
-
-```bn
-kaj greet(name) {
-  ferot "Hello " + name
-}
-
-dekhi greet("Risat")
-```
-
-### Literals
-
-```bn
-sotti
-mittha
-khali
-```
-
-### Operators
-
-```bn
-+
--
-*
-/
-%
-**
-==
-!=
->
-<
->=
-<=
-ebong
-othoba
-na
-```
-
----
-
-## 📦 Installation
-
-Requirements:
-
-* Node.js 18+
+## Installation
 
 Clone the repository:
 
@@ -270,196 +99,152 @@ cd bnscript
 npm install
 ```
 
-Run tests:
-
-```bash
-npm test
-```
-
-Windows PowerShell:
-
-```powershell
-npm.cmd test
-```
-
 ---
 
-## 🖥 CLI Usage
+## Usage
 
-Check a BN Script file:
+### Check
 
 ```bash
 node src/cli.js check examples/hello.bn
 ```
 
-Build JavaScript:
+### Build
 
 ```bash
 node src/cli.js build examples/hello.bn
 ```
 
-Run directly:
+### Run
 
 ```bash
 node src/cli.js run examples/hello.bn
 ```
 
-Future installed usage:
+### Shorthand Run
 
 ```bash
-bn check file.bn
-bn build file.bn
-bn run file.bn
+node src/cli.js examples/hello.bn
+```
+
+### REPL
+
+```bash
+node src/cli.js repl
 ```
 
 ---
 
-## 📚 Supported In Alpha
+## VS Code Extension
 
-- `dhori` variable declarations
-- `sthir` constant declarations
-- `dekhi` print statements
-- `jodi` and `nahole` conditionals
-- `jotokkhon` while loops
-- Range `bar` loops with `theke`
-- For-each `bar` loops with `ekti`
-- `bekkhon` break statements inside loops
-- `cholo` continue statements inside loops
-- Assignment expressions
-- Variable reassignment
-- Compound assignment: `+=`, `-=`, `*=`, `/=`
-- Array literals
-- Object literals
-- Member access
-- Index access
-- Assignment to member and index targets
-- `kaj` function declarations
-- `ferot` return statements inside functions
-- Function parameters
-- Function calls
-- Block statements
-- Expression statements
-- Identifiers
-- Number, string, boolean, and null literals
-- Booleans: `sotti`, `mittha`
-- Null: `khali`
-- Unary operators: `na`, `-`
-- Binary operators: `+`, `-`, `*`, `/`, `%`, `**`, `==`, `!=`, `>`, `<`, `>=`, `<=`, `ebong`, `othoba`
-- Grouped expressions with parentheses
+BN Script includes a VS Code extension with:
+
+* Syntax Highlighting
+* Autocomplete
+* Hover Documentation
+* Diagnostics
+* Problems Panel Integration
+* Run / Build / Check Commands
+
+### Install
+
+```bash
+npm run build:vsix
+```
+
+Then:
+
+Extensions → Install from VSIX
+
+Select:
+
+```txt
+dist/bnscript-0.1.0-alpha.0.vsix
+```
 
 ---
 
-## ⚠ Current Limitations
+## Diagnostics Example
 
-Not implemented yet:
+Bangla:
 
-* Simple repeat `bar 5 { ... }` loops
-* Imports / Exports
+```txt
+Variable "user" age declare kora hoyni.
+```
+
+English:
+
+```txt
+Variable "user" is not declared.
+```
+
+Hint:
+
+```txt
+Prothome variable declare korun.
+```
+
+---
+
+## Project Status
+
+Current Version:
+
+```txt
+v0.1.0-alpha.0
+```
+
+Current Test Status:
+
+```txt
+298 / 298 Tests Passing
+```
+
+---
+
+## Roadmap
+
+### Completed
+
+* Compiler Pipeline
+* Semantic Analysis
 * Async / Await
-* AI Runtime Helpers
-* Package Manager
-* REPL
-* LSP
-* VS Code Extension
-
-This project is currently in Alpha and focused on compiler stability.
-
----
-
-## 🗺 Roadmap
-
-### v0.2
-
-* Imports / Exports
+* Top-Level Await
 * Modules
-
-### v0.3
-
-* Async / Await
-* File/API Automation Helpers
-
-### v0.4
-
-* Runtime Helper Expansion
-* Source Maps
-
-### Future
-
-* AI Runtime Helpers
+* Runtime Helpers
 * REPL
-* Language Server Protocol (LSP)
 * VS Code Extension
-* Package Ecosystem
+* Diagnostics
+* Autocomplete
+* Hover Documentation
+
+### Planned
+
+* Global CLI (`bn`)
+* Marketplace Publishing
+* Incremental Diagnostics
+* Code Actions
+* LSP Support
+* Workspace Symbol Navigation
 
 ---
 
-## 🧪 Testing
+## Contributing
 
-Current test coverage includes:
+Contributions, bug reports, feature requests, and discussions are welcome.
 
-* Lexer Tests
-* Parser Tests
-* Semantic Analyzer Tests
-* Generator Tests
-* Runtime Tests
-* CLI Tests
-* Integration Tests
+Please check:
 
-**182 tests passing**
+* CONTRIBUTING.md
+* Issues
+* Discussions
 
 ---
 
-## 🤝 Contributing
+## License
 
-Contributions are welcome.
-
-Good first contributions:
-
-* Compiler improvements
-* Parser edge cases
-* Better diagnostics
-* Documentation
-* Examples
-* Tests
-
-Before submitting a PR:
-
-1. Run tests
-2. Add/update tests
-3. Keep changes focused
-4. Document limitations
+MIT License
 
 ---
 
-## 📖 Documentation
-
-* Getting Started
-* CLI Reference
-* Language Specification
-* Compiler Architecture
-* Runtime Design
-
-See the `docs/` directory.
-
----
-
-## ⭐ Support The Project
-
-If you find BN Script interesting:
-
-* Star the repository
-* Report bugs
-* Open feature requests
-* Share the project
-
-Repository:
-
-https://github.com/sayedrisat/bnscript
-
----
-
-## 📄 License
-
-Released under the MIT License.
-
-See `LICENSE` for details.
+Built by Sayed Risat ❤️
