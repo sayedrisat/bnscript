@@ -1,97 +1,264 @@
-# BN Script
+# BN Script 🚀
 
-> A Bangla-inspired programming language that compiles to JavaScript.
+> Write code in Bangla. Compile to JavaScript. Build with modern developer tools.
 
-BN Script is an open-source programming language designed to make programming more accessible through Bangla-inspired syntax while still supporting familiar English alternatives.
+BN Script is an open-source programming language that combines Bangla-inspired syntax with the power of JavaScript.
 
-It compiles directly to JavaScript and includes a custom VS Code extension with syntax highlighting, autocomplete, hover documentation, diagnostics, and developer tooling.
+It compiles directly to JavaScript and ships with a custom VS Code extension featuring syntax highlighting, autocomplete, hover documentation, diagnostics, and developer tooling.
 
----
-
-## Features
-
-### Language Features
-
-* Variables (`dhori`, `sthir`, `let`, `const`)
-* Functions (`kaj`, `function`)
-* Conditional Statements (`jodi`, `nahole`, `if`, `else`)
-* Loops
-* Arrays
-* Objects
-* Recursion
-* Async / Await
-* Top-Level Await
-* Modules (`amdani`, `roptani`)
-* Try / Catch / Finally
-* Runtime Helpers
-
-### Developer Experience
-
-* Interactive REPL
-* Bilingual Diagnostics (Bangla + English)
-* VS Code Extension
-* Syntax Highlighting
-* Autocomplete
-* Hover Documentation
-* Problems Panel Integration
-* Run / Build / Check Commands
-* VSIX Packaging Support
+Whether you're learning programming, exploring compiler design, or building developer tools, BN Script provides a familiar yet unique coding experience.
 
 ---
 
-## Example
+## Why BN Script?
+
+Most programming languages are designed around English keywords.
+
+BN Script explores a different idea:
 
 ```bn
-async kaj talentAudit(team) {
-    dhori motScore = 0
+dhori nam = "Risat"
 
-    bar member ekti team {
-        motScore += member.score
-    }
-
-    dhori average = motScore / team.length
-
-    jodi average >= 90 {
-        dekhi "Elite Engineering Team"
-    } nahole {
-        dekhi "Growing Team"
-    }
+jodi nam == "Risat" {
+    dekhi "Welcome!"
 }
+```
 
+while still supporting:
+
+```bn
+let name = "Risat"
+
+if (name == "Risat") {
+    print("Welcome!")
+}
+```
+
+This means developers can use Bangla-inspired syntax, English syntax, or a mix of both.
+
+---
+
+# Features
+
+## Language Features
+
+### Variables
+
+```bn
+dhori nam = "Risat"
+sthir version = "0.1.0"
+```
+
+or
+
+```bn
+let name = "Risat"
+const version = "0.1.0"
+```
+
+### Functions
+
+```bn
+kaj greet(user) {
+    dekhi user
+}
+```
+
+### Conditions
+
+```bn
+jodi score >= 90 {
+    dekhi "Excellent"
+} nahole {
+    dekhi "Keep Learning"
+}
+```
+
+### Loops
+
+```bn
+bar member ekti team {
+    dekhi member
+}
+```
+
+### Arrays & Objects
+
+```bn
 dhori developers = [
     { nam: "Risat", score: 95 },
-    { nam: "Rahim", score: 88 },
-    { nam: "Karim", score: 91 }
+    { nam: "Rahim", score: 88 }
 ]
+```
 
-await talentAudit(developers)
+### Async / Await
+
+```bn
+await wait(1000)
+
+dekhi "Done"
+```
+
+### Modules
+
+```bn
+amdani { greet } theke "./utils"
+
+roptani kaj hello() {
+    dekhi "Hello"
+}
+```
+
+### Error Handling
+
+```bn
+dhoro {
+    dekhi "Trying..."
+} error err {
+    dekhi err
+} sheshe {
+    dekhi "Done"
+}
+```
+
+---
+
+# VS Code Extension
+
+BN Script includes a dedicated VS Code extension.
+
+## Supported Features
+
+✅ Syntax Highlighting
+
+✅ Autocomplete
+
+✅ Hover Documentation
+
+✅ Bilingual Diagnostics
+
+✅ Problems Panel Integration
+
+✅ Check / Build / Run Commands
+
+✅ VSIX Packaging
+
+---
+
+## Syntax Highlighting
+
+BN Script keywords are highlighted automatically.
+
+Supported categories:
+
+* Keywords
+* Strings
+* Numbers
+* Functions
+* Imports / Exports
+* Runtime Helpers
+* Operators
+* Comments
+
+---
+
+## Autocomplete
+
+Suggestions appear while typing:
+
+```bn
+dho...
+```
+
+Suggestions:
+
+```txt
+dhori
+dhoro
+```
+
+or
+
+```bn
+asy...
+```
+
+Suggestions:
+
+```txt
+async
+await
+```
+
+---
+
+## Hover Documentation
+
+Hover over:
+
+```bn
+dhori
+kaj
+await
+amdani
+roptani
+```
+
+to view language documentation directly inside VS Code.
+
+---
+
+## Diagnostics
+
+BN Script provides bilingual diagnostics.
+
+Example:
+
+### Bangla
+
+```txt
+Variable "user" age declare kora hoyni.
+```
+
+### English
+
+```txt
+Variable "user" is not declared.
+```
+
+### Hint
+
+```txt
+Prothome variable declare korun.
+```
+
+Diagnostics appear as:
+
+* Red Squiggles
+* Problems Panel Entries
+* Click-to-Navigate Errors
+
+---
+
+# How Compilation Works
+
+BN Script source:
+
+```bn
+dekhi "Hello BN Script"
 ```
 
 Generated JavaScript:
 
 ```js
-async function talentAudit(team) {
-    let motScore = 0;
-
-    for (const member of team) {
-        motScore += member.score;
-    }
-
-    const average = motScore / team.length;
-
-    if (average >= 90) {
-        console.log("Elite Engineering Team");
-    } else {
-        console.log("Growing Team");
-    }
-}
+console.log("Hello BN Script");
 ```
 
 ---
 
-## Installation
+# Installation
 
-Clone the repository:
+## Clone Repository
 
 ```bash
 git clone https://github.com/sayedrisat/bnscript.git
@@ -101,33 +268,47 @@ npm install
 
 ---
 
-## Usage
+# CLI Usage
 
-### Check
+## Check
+
+Validate syntax and semantics:
 
 ```bash
 node src/cli.js check examples/hello.bn
 ```
 
-### Build
+---
+
+## Build
+
+Generate JavaScript output:
 
 ```bash
 node src/cli.js build examples/hello.bn
 ```
 
-### Run
+---
+
+## Run
+
+Execute BN Script:
 
 ```bash
 node src/cli.js run examples/hello.bn
 ```
 
-### Shorthand Run
+or
 
 ```bash
 node src/cli.js examples/hello.bn
 ```
 
-### REPL
+---
+
+## REPL
+
+Interactive shell:
 
 ```bash
 node src/cli.js repl
@@ -135,82 +316,95 @@ node src/cli.js repl
 
 ---
 
-## VS Code Extension
+# VS Code Extension Installation
 
-BN Script includes a VS Code extension with:
-
-* Syntax Highlighting
-* Autocomplete
-* Hover Documentation
-* Diagnostics
-* Problems Panel Integration
-* Run / Build / Check Commands
-
-### Install
+Build VSIX:
 
 ```bash
 npm run build:vsix
 ```
 
-Then:
-
-Extensions → Install from VSIX
-
-Select:
+Generated file:
 
 ```txt
 dist/bnscript-0.1.0-alpha.0.vsix
 ```
 
----
+Install:
 
-## Diagnostics Example
-
-Bangla:
-
-```txt
-Variable "user" age declare kora hoyni.
-```
-
-English:
-
-```txt
-Variable "user" is not declared.
-```
-
-Hint:
-
-```txt
-Prothome variable declare korun.
-```
+1. Open VS Code
+2. Extensions (`Ctrl + Shift + X`)
+3. Click `...`
+4. Install from VSIX
+5. Select generated file
+6. Reload VS Code
 
 ---
 
-## Project Status
+# Advantages
 
-Current Version:
+* Bangla-inspired syntax
+* Familiar English aliases
+* Compiles to JavaScript
+* Modern async support
+* Module system
+* REPL
+* VS Code integration
+* Open Source
+* Beginner friendly
+* Compiler design learning resource
 
-```txt
-v0.1.0-alpha.0
-```
+---
 
-Current Test Status:
+# Current Limitations
+
+* Alpha release
+* No LSP yet
+* No code actions yet
+* No semantic highlighting yet
+* No workspace symbol navigation
+* Marketplace publication pending
+* Ecosystem still growing
+
+---
+
+# Testing
+
+Current Status:
 
 ```txt
 298 / 298 Tests Passing
 ```
 
+Test Suite Covers:
+
+* Lexer
+* Parser
+* Semantic Analyzer
+* Generator
+* Runtime Helpers
+* CLI
+* REPL
+* VS Code Extension
+* Diagnostics
+* Integration Tests
+
+Run tests:
+
+```bash
+npm test
+```
+
 ---
 
-## Roadmap
+# Roadmap
 
 ### Completed
 
 * Compiler Pipeline
-* Semantic Analysis
+* Modules
 * Async / Await
 * Top-Level Await
-* Modules
 * Runtime Helpers
 * REPL
 * VS Code Extension
@@ -218,33 +412,33 @@ Current Test Status:
 * Autocomplete
 * Hover Documentation
 
-### Planned
+### Next
 
 * Global CLI (`bn`)
 * Marketplace Publishing
 * Incremental Diagnostics
 * Code Actions
-* LSP Support
-* Workspace Symbol Navigation
+* LSP
+* Symbol Navigation
 
 ---
 
-## Contributing
+# Contributing
 
-Contributions, bug reports, feature requests, and discussions are welcome.
+Contributions are welcome.
 
 Please check:
 
-* CONTRIBUTING.md
 * Issues
 * Discussions
+* CONTRIBUTING.md
 
 ---
 
-## License
+# License
 
 MIT License
 
 ---
 
-Built by Sayed Risat ❤️
+Built with ❤️ by Sayed Risat
