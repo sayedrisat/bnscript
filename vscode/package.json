@@ -1,7 +1,7 @@
 {
   "name": "bnscript",
   "displayName": "BN Script",
-  "description": "BN Script language support with syntax highlighting, autocomplete, hover docs, commands, and .bn file association.",
+  "description": "BN Script language support with syntax highlighting, diagnostics, autocomplete, hover docs, commands, and .bn file association.",
   "version": "0.1.0-alpha.0",
   "publisher": "bnscript-dev",
   "main": "./src/extension.js",
@@ -30,6 +30,7 @@
     "bnscript.tmLanguage.json",
     "language-configuration.json",
     "src/commands.js",
+    "src/diagnostics.js",
     "src/extension.js",
     "src/keywords.js",
     "assets/icon.png",

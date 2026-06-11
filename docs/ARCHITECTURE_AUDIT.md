@@ -10,11 +10,11 @@ Current Version: `0.1.0-alpha.0`
 
 Repository URL: `https://github.com/sayedrisat/bnscript`
 
-Latest Stage: `Stage 28 - VS Code Commands`
+Latest Stage: `Stage 29 - VS Code Diagnostics Provider`
 
-Current Commit: `Pending Stage 28 release commit`
+Current Commit: `Pending Stage 29 release commit`
 
-Current Test Count: `287` passing tests
+Current Test Count: `292` passing tests
 
 Current Compiler Stages Completed:
 
@@ -53,6 +53,7 @@ Current Compiler Stages Completed:
 * Bilingual diagnostics message catalog and formatter
 * VS Code keyword autocomplete and hover documentation
 * VS Code command palette integration
+* VS Code diagnostics provider
 
 ## Compiler Architecture
 
@@ -125,6 +126,7 @@ Tooling:
 * `vscode/src/keywords.js` stores shared keyword metadata for editor features.
 * `vscode/src/extension.js` registers keyword autocomplete and hover documentation providers.
 * `vscode/src/commands.js` stores shared command metadata for Command Palette actions.
+* `vscode/src/diagnostics.js` registers the diagnostics provider for `.bn` files.
 * The extension registers check, build, and run commands that call the BN Script CLI.
 * `npm run build:vsix` packages the local extension with `@vscode/vsce`.
 * Generated VSIX files are written under ignored `dist/`.
@@ -159,6 +161,7 @@ Current implemented language features:
 * Bilingual compiler diagnostics with Bangla/Banglish text, English text, and hints
 * VS Code keyword autocomplete and hover documentation
 * VS Code commands for checking, building, and running the current `.bn` file
+* VS Code diagnostics in the Problems panel
 * Assignment expressions
 * Compound assignment
 * Array literals
@@ -173,14 +176,14 @@ Current implemented language features:
 
 Latest completed stage:
 
-* Stage 28: VS Code Commands
+* Stage 29: VS Code Diagnostics Provider
 
 ## AST Changes
 
 Latest completed stage:
 
 * No AST changes.
-* Stage 28 added editor command tooling without changing AST node names.
+* Stage 29 added editor diagnostics tooling without changing AST node names.
 
 Current AST model:
 
@@ -195,7 +198,7 @@ Current AST model:
 Latest completed stage:
 
 * No parser changes.
-* Stage 28 uses VS Code extension APIs and the existing CLI outside the compiler parser.
+* Stage 29 uses VS Code extension APIs and the existing compiler outside the compiler parser.
 
 Current parser grammar support:
 
@@ -221,7 +224,7 @@ Current parser grammar support:
 Latest completed stage:
 
 * No analyzer changes.
-* Stage 28 does not affect compiler semantic validation.
+* Stage 29 does not affect compiler semantic validation.
 
 Current analyzer checks:
 
@@ -247,7 +250,7 @@ Current analyzer checks:
 Latest completed stage:
 
 * No generator changes.
-* Stage 28 does not affect JavaScript output.
+* Stage 29 does not affect JavaScript output.
 
 Current generator output support:
 
@@ -295,10 +298,10 @@ Current bilingual diagnostic coverage:
 
 Latest completed stage:
 
-* Added Command Palette commands for checking, building, and running the current BN Script file.
-* Added active editor and `.bn` file validation with bilingual UX messages.
-* Added `BN Script Output` channel logging for command execution.
-* Added shared command metadata in `vscode/src/commands.js`.
+* Added a diagnostics provider for BN Script files.
+* Added a `bnscript` DiagnosticCollection for Problems panel entries.
+* Added validation on file open and save.
+* Converted compiler diagnostics into VS Code diagnostics with source ranges.
 
 Current editor support:
 
@@ -306,6 +309,9 @@ Current editor support:
 * TextMate syntax highlighting
 * Language configuration for comments, brackets, and auto-closing pairs
 * VSIX packaging with `npm run build:vsix`
+* Red squiggles and Problems panel diagnostics
+* Click-to-jump diagnostic source ranges
+* Live validation on open and save
 * Keyword autocomplete for Bangla-style keywords and English aliases
 * Hover documentation with Bangla/Banglish and English descriptions
 * Command Palette actions:
@@ -541,12 +547,13 @@ Runnable `.bn` examples in `examples/`:
 
 New tests added in the latest completed stage:
 
-* Command registry coverage for check, build, and run actions.
-* VS Code manifest command contribution coverage.
-* Command activation and package-file coverage.
-* Output channel implementation coverage.
+* Diagnostics provider file and package inclusion coverage.
+* Diagnostic collection creation coverage.
+* Open/save/close validation registration coverage.
+* Compiler diagnostic to VS Code range mapping coverage.
+* Extension activation wiring coverage.
 
-Current total passing tests: `287`
+Current total passing tests: `292`
 
 Primary test files:
 
@@ -576,6 +583,7 @@ Primary test files:
   * `tests/stage26.diagnostics.test.js`
   * `tests/stage27.vscode.test.js`
   * `tests/stage28.commands.test.js`
+  * `tests/stage29.diagnostics-provider.test.js`
 
 Integration fixtures in `tests/integration/`:
 
@@ -601,7 +609,7 @@ Integration fixtures in `tests/integration/`:
 
 ## Current Test Count
 
-Current total passing tests: `287`
+Current total passing tests: `292`
 
 ## Known Limitations
 
@@ -627,8 +635,10 @@ Major missing or incomplete features:
 * Package publishing
 * VS Code Marketplace publishing
 * VS Code language server features
-* VS Code diagnostics integration, formatter, snippets, debugger, and semantic completions
+* VS Code formatter, snippets, debugger, code actions, and semantic completions
 * VS Code commands currently require CLI source access from the active workspace or local development checkout
+* VS Code diagnostics currently require compiler source access from the active workspace or local development checkout
+* VS Code diagnostics validate on open/save rather than full incremental LSP-style analysis
 * Language Server Protocol (LSP)
 * Source maps
 * Remaining lower-priority parser, lexer, runtime, and CLI diagnostics still need bilingual migration
@@ -636,10 +646,10 @@ Major missing or incomplete features:
 
 ## Recommended Next Stage
 
-Stage 29:
+Stage 30:
 
 * Module Graph Analysis
 
-Stage 30:
+Stage 31:
 
 * Advanced Runtime Helpers and AI Integration

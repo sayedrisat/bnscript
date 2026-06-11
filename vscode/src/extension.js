@@ -3,6 +3,7 @@ const { execFile } = require("child_process");
 const fs = require("fs");
 const path = require("path");
 const { COMMANDS } = require("./commands");
+const { registerDiagnostics } = require("./diagnostics");
 const { KEYWORDS, getKeyword } = require("./keywords");
 
 const LANGUAGE_SELECTOR = {
@@ -165,6 +166,7 @@ function registerBnScriptCommand(context, outputChannel, command) {
 
 function activate(context) {
   const outputChannel = vscode.window.createOutputChannel(OUTPUT_CHANNEL_NAME);
+  registerDiagnostics(context);
 
   const completionProvider = vscode.languages.registerCompletionItemProvider(
     LANGUAGE_SELECTOR,

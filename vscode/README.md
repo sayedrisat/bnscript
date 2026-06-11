@@ -8,6 +8,7 @@ JavaScript. This VS Code package provides local editor support for `.bn` files.
 - BN Script language id: `bnscript`
 - `.bn` file association
 - TextMate syntax highlighting
+- Compiler diagnostics in the Problems panel
 - Keyword autocomplete for Bangla-style keywords and English aliases
 - Hover documentation with Bangla/Banglish and English explanations
 - Command Palette actions for checking, building, and running the current file
@@ -46,6 +47,36 @@ Hovering a supported keyword shows a short BN Script reference entry with:
 
 The autocomplete and hover providers share keyword data from
 `src/keywords.js` so the wording stays consistent.
+
+## Diagnostics
+
+The extension validates BN Script files and reports compiler diagnostics as VS
+Code diagnostics:
+
+- Red squiggles in the editor
+- Problems panel entries
+- Click-to-jump source locations
+- Bilingual messages from the BN Script compiler
+
+Validation runs when a `.bn` file is opened and when it is saved. Diagnostics
+reuse the compiler's Bangla/Banglish, English, and hint text:
+
+```txt
+BNError:
+
+Bangla:
+Variable "name" age declare kora hoyni.
+
+English:
+Use before declaration: "name" is not declared.
+
+Hint:
+Prothome:
+dhori name = ...
+ba
+let name = ...
+likhun.
+```
 
 ## Using Commands
 

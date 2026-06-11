@@ -1,5 +1,36 @@
 # Changelog
 
+## Day 12 - 2026-06-11 (VS Code Diagnostics Provider Stage 29)
+
+### Completed: VS Code Diagnostics Provider
+- Added a lightweight VS Code diagnostics provider for `.bn` files.
+- Created a `bnscript` diagnostic collection for Problems panel integration.
+- Added validation on file open and file save.
+- Converted BN Script compiler diagnostics into VS Code diagnostics with source ranges.
+- Reused Stage 26 bilingual diagnostic messages in editor diagnostics.
+- Wired diagnostics into extension activation without introducing an LSP.
+
+### Tests Added
+- Diagnostics provider file and package inclusion coverage.
+- Diagnostic collection creation coverage.
+- Open/save/close validation registration coverage.
+- Compiler diagnostic to VS Code range mapping coverage.
+- Extension activation wiring coverage.
+
+### Known Issues
+- Diagnostics run through the local compiler source and currently expect the BN Script repo/CLI source to be available in the workspace or development checkout.
+- Validation is on open/save, not full incremental LSP-style validation.
+- No code actions, quick fixes, or source maps yet.
+
+### Test Result
+- `npm.cmd test` passed 292 tests.
+- `npm run build:vsix` generated `dist/bnscript-0.1.0-alpha.0.vsix`.
+
+### Recommended Next Task
+- Stage 30 Module Graph Analysis
+
+---
+
 ## Day 12 - 2026-06-11 (VS Code Commands Stage 28)
 
 ### Completed: VS Code Commands
