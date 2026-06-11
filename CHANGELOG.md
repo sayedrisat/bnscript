@@ -1,5 +1,33 @@
 # Changelog
 
+## Day 12 - 2026-06-11 (VS Code Autocomplete & Hover Stage 27)
+
+### Completed: VS Code Autocomplete & Hover
+- Added a lightweight VS Code extension activation entry for `.bn` files.
+- Added keyword autocomplete using the VS Code CompletionItem API.
+- Added hover documentation for BN Script keywords.
+- Added `vscode/src/keywords.js` as the shared keyword registry for autocomplete and hover.
+- Updated the VS Code extension manifest to activate on the `bnscript` language.
+- Packaged the new extension source files into the VSIX build.
+
+### Tests Added
+- Keyword registry coverage for core Bangla-style keywords and English aliases.
+- Hover documentation coverage for `dhori`, `kaj`, and `await`.
+- Duplicate keyword guard for the registry.
+- Extension manifest activation and package-file coverage.
+
+### Known Issues
+- This is still a lightweight VS Code extension, not an LSP.
+- Diagnostics, completions from project symbols, snippets, formatter, debugger, and semantic highlighting remain future work.
+
+### Test Result
+- `npm.cmd test` passed 283 tests.
+
+### Recommended Next Task
+- Stage 28 Module Graph Analysis
+
+---
+
 ## Day 12 - 2026-06-11 (Bilingual Diagnostics Stage 26)
 
 ### Completed: Bilingual Diagnostics

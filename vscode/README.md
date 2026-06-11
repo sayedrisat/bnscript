@@ -8,6 +8,8 @@ JavaScript. This VS Code package provides local editor support for `.bn` files.
 - BN Script language id: `bnscript`
 - `.bn` file association
 - TextMate syntax highlighting
+- Keyword autocomplete for Bangla-style keywords and English aliases
+- Hover documentation with Bangla/Banglish and English explanations
 - Line and block comment configuration
 - Bracket, quote, and auto-closing pair configuration
 - Sample BN Script program under `samples/demo.bn`
@@ -20,6 +22,28 @@ JavaScript. This VS Code package provides local editor support for `.bn` files.
 
 Screenshot assets are not included yet. Add screenshots here after the extension
 is installed in VS Code and the theme coverage is reviewed.
+
+## Autocomplete
+
+The extension registers a lightweight completion provider for `.bn` files. It
+suggests Bangla-style BN Script keywords and English aliases, including:
+
+- `dhori`, `sthir`, `dekhi`, `jodi`, `kaj`, `ferot`
+- `let`, `const`, `print`, `if`, `function`, `return`
+- `amdani`, `roptani`, `dhoro`, `error`, `sheshe`
+- `import`, `export`, `try`, `catch`, `finally`
+- `async`, `await`, `true`, `false`, `null`
+
+## Hover Documentation
+
+Hovering a supported keyword shows a short BN Script reference entry with:
+
+- Keyword title
+- Bangla/Banglish explanation
+- English explanation
+
+The autocomplete and hover providers share keyword data from
+`src/keywords.js` so the wording stays consistent.
 
 ## Manual Install
 
@@ -98,10 +122,8 @@ The TextMate grammar highlights:
 
 ## Known Limitations
 
-- Syntax highlighting only.
 - No language server diagnostics.
 - No formatter.
-- No completion provider.
 - No snippets.
 - No debugger integration.
 - Not published to the VS Code Marketplace.

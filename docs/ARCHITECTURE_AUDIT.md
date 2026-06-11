@@ -10,11 +10,11 @@ Current Version: `0.1.0-alpha.0`
 
 Repository URL: `https://github.com/sayedrisat/bnscript`
 
-Latest Stage: `Stage 26 - Bilingual Diagnostics`
+Latest Stage: `Stage 27 - VS Code Autocomplete & Hover`
 
-Current Commit: `Pending Stage 26 release commit`
+Current Commit: `Pending Stage 27 release commit`
 
-Current Test Count: `279` passing tests
+Current Test Count: `283` passing tests
 
 Current Compiler Stages Completed:
 
@@ -51,6 +51,7 @@ Current Compiler Stages Completed:
 * String interpolation output
 * English keyword aliases
 * Bilingual diagnostics message catalog and formatter
+* VS Code keyword autocomplete and hover documentation
 
 ## Compiler Architecture
 
@@ -120,6 +121,8 @@ Tooling:
 * `vscode/assets/icon.png` provides the package-safe extension icon.
 * `vscode/assets/icon.svg` remains a source placeholder icon.
 * `vscode/samples/demo.bn` provides a syntax showcase inside the extension package.
+* `vscode/src/keywords.js` stores shared keyword metadata for editor features.
+* `vscode/src/extension.js` registers keyword autocomplete and hover documentation providers.
 * `npm run build:vsix` packages the local extension with `@vscode/vsce`.
 * Generated VSIX files are written under ignored `dist/`.
 
@@ -151,6 +154,7 @@ Current implemented language features:
 * English keyword aliases for Bangla-style keywords
 * Mixed Bangla/English source style
 * Bilingual compiler diagnostics with Bangla/Banglish text, English text, and hints
+* VS Code keyword autocomplete and hover documentation
 * Assignment expressions
 * Compound assignment
 * Array literals
@@ -165,14 +169,14 @@ Current implemented language features:
 
 Latest completed stage:
 
-* Stage 26: Bilingual Diagnostics
+* Stage 27: VS Code Autocomplete & Hover
 
 ## AST Changes
 
 Latest completed stage:
 
 * No AST changes.
-* Stage 26 added diagnostics infrastructure without changing AST node names.
+* Stage 27 added editor tooling without changing AST node names.
 
 Current AST model:
 
@@ -186,8 +190,8 @@ Current AST model:
 
 Latest completed stage:
 
-* Import and export syntax errors can use the shared bilingual diagnostic formatter where practical.
-* Most parser syntax errors remain on the legacy error path for now.
+* No parser changes.
+* Stage 27 uses VS Code extension APIs outside the compiler parser.
 
 Current parser grammar support:
 
@@ -212,9 +216,8 @@ Current parser grammar support:
 
 Latest completed stage:
 
-* Added bilingual diagnostics for the highest-value semantic errors.
-* Analyzer errors now preserve diagnostic `code` and structured `details` on `BNError`.
-* Existing English error phrases are preserved inside the English diagnostic section.
+* No analyzer changes.
+* Stage 27 does not affect compiler semantic validation.
 
 Current analyzer checks:
 
@@ -240,7 +243,7 @@ Current analyzer checks:
 Latest completed stage:
 
 * No generator changes.
-* Stage 26 does not affect JavaScript output.
+* Stage 27 does not affect JavaScript output.
 
 Current generator output support:
 
@@ -283,6 +286,24 @@ Current bilingual diagnostic coverage:
 * `DUPLICATE_PARAMETER`
 * `IMPORT_ERROR`
 * `EXPORT_ERROR`
+
+## VS Code Extension
+
+Latest completed stage:
+
+* Added a Completion Provider for BN Script keywords.
+* Added a Hover Provider for keyword documentation.
+* Added shared keyword metadata in `vscode/src/keywords.js`.
+* Updated the extension manifest with `main` and `onLanguage:bnscript` activation.
+
+Current editor support:
+
+* `.bn` file association
+* TextMate syntax highlighting
+* Language configuration for comments, brackets, and auto-closing pairs
+* VSIX packaging with `npm run build:vsix`
+* Keyword autocomplete for Bangla-style keywords and English aliases
+* Hover documentation with Bangla/Banglish and English descriptions
 
 ## Supported Statements
 
@@ -475,9 +496,7 @@ Active AST nodes:
 
 New example files added in the latest completed stage:
 
-* `errors/await-error.bn`
-* `errors/const-error.bn`
-* `errors/undeclared.bn`
+* None
 
 Runnable `.bn` examples in `examples/`:
 
@@ -513,14 +532,12 @@ Runnable `.bn` examples in `examples/`:
 
 New tests added in the latest completed stage:
 
-* Formatter section coverage for `BNError`, `Bangla`, `English`, and `Hint`.
-* Compiler diagnostic coverage for undeclared variables.
-* Compiler diagnostic coverage for constant reassignment.
-* Compiler diagnostic coverage for await scope errors.
-* Compiler diagnostic coverage for break outside loop.
-* Compiler diagnostic coverage for continue outside loop.
+* Keyword registry coverage for core Bangla-style keywords and English aliases.
+* Hover documentation coverage for `dhori`, `kaj`, and `await`.
+* Duplicate keyword guard for the registry.
+* Extension manifest activation and package-file coverage.
 
-Current total passing tests: `279`
+Current total passing tests: `283`
 
 Primary test files:
 
@@ -548,6 +565,7 @@ Primary test files:
   * `tests/stage24.vsix.test.js`
   * `tests/stage25.aliases.test.js`
   * `tests/stage26.diagnostics.test.js`
+  * `tests/stage27.vscode.test.js`
 
 Integration fixtures in `tests/integration/`:
 
@@ -573,7 +591,7 @@ Integration fixtures in `tests/integration/`:
 
 ## Current Test Count
 
-Current total passing tests: `279`
+Current total passing tests: `283`
 
 ## Known Limitations
 
@@ -599,7 +617,7 @@ Major missing or incomplete features:
 * Package publishing
 * VS Code Marketplace publishing
 * VS Code language server features
-* VS Code formatter, snippets, debugger, and completions
+* VS Code diagnostics integration, formatter, snippets, debugger, and semantic completions
 * Language Server Protocol (LSP)
 * Source maps
 * Remaining lower-priority parser, lexer, runtime, and CLI diagnostics still need bilingual migration
@@ -607,10 +625,10 @@ Major missing or incomplete features:
 
 ## Recommended Next Stage
 
-Stage 27:
+Stage 28:
 
 * Module Graph Analysis
 
-Stage 28:
+Stage 29:
 
 * Advanced Runtime Helpers and AI Integration
