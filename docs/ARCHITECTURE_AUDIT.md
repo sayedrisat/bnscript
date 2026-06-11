@@ -12,7 +12,7 @@ Repository URL: `https://github.com/sayedrisat/bnscript`
 
 Latest Stage: `Stage 25 - English Keyword Aliases`
 
-Current Commit: `Pending Stage 25 release commit`
+Current Commit: `39eb3f058067a87cd0f8e1edf4d7fc3d375db749`
 
 Current Test Count: `273` passing tests
 
