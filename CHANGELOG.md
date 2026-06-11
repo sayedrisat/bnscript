@@ -1,5 +1,33 @@
 # Changelog
 
+## Day 12 - 2026-06-11 (VS Code Commands Stage 28)
+
+### Completed: VS Code Commands
+- Added Command Palette entries for checking, building, and running the current BN Script file.
+- Registered command handlers in the VS Code extension activation path.
+- Added active editor and `.bn` file validation with bilingual messages.
+- Added a `BN Script Output` channel for command execution, compiler output, runtime output, success messages, and errors.
+- Added shared command metadata in `vscode/src/commands.js`.
+
+### Tests Added
+- Command registry coverage for check, build, and run actions.
+- VS Code manifest command contribution coverage.
+- Command activation and package-file coverage.
+- Output channel implementation coverage.
+
+### Known Issues
+- Command integration expects the BN Script CLI source to be available from the active workspace or local development checkout.
+- Diagnostics provider integration, project-symbol completions, snippets, formatter, debugger, semantic highlighting, and LSP remain future work.
+
+### Test Result
+- `npm.cmd test` passed 287 tests.
+- `npm run build:vsix` generated `dist/bnscript-0.1.0-alpha.0.vsix`.
+
+### Recommended Next Task
+- Stage 29 Module Graph Analysis
+
+---
+
 ## Day 12 - 2026-06-11 (VS Code Autocomplete & Hover Stage 27)
 
 ### Completed: VS Code Autocomplete & Hover

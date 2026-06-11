@@ -1,12 +1,15 @@
 {
   "name": "bnscript",
   "displayName": "BN Script",
-  "description": "BN Script language support with syntax highlighting, autocomplete, hover docs, and .bn file association.",
+  "description": "BN Script language support with syntax highlighting, autocomplete, hover docs, commands, and .bn file association.",
   "version": "0.1.0-alpha.0",
   "publisher": "bnscript-dev",
   "main": "./src/extension.js",
   "activationEvents": [
-    "onLanguage:bnscript"
+    "onLanguage:bnscript",
+    "onCommand:bnscript.checkCurrentFile",
+    "onCommand:bnscript.buildCurrentFile",
+    "onCommand:bnscript.runCurrentFile"
   ],
   "engines": {
     "vscode": "^1.80.0"
@@ -26,6 +29,7 @@
     "package.json",
     "bnscript.tmLanguage.json",
     "language-configuration.json",
+    "src/commands.js",
     "src/extension.js",
     "src/keywords.js",
     "assets/icon.png",
@@ -51,6 +55,23 @@
         "language": "bnscript",
         "scopeName": "source.bnscript",
         "path": "./bnscript.tmLanguage.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "bnscript.checkCurrentFile",
+        "title": "BN Script: Check Current File",
+        "category": "BN Script"
+      },
+      {
+        "command": "bnscript.buildCurrentFile",
+        "title": "BN Script: Build Current File",
+        "category": "BN Script"
+      },
+      {
+        "command": "bnscript.runCurrentFile",
+        "title": "BN Script: Run Current File",
+        "category": "BN Script"
       }
     ]
   }

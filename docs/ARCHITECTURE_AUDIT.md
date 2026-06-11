@@ -10,11 +10,11 @@ Current Version: `0.1.0-alpha.0`
 
 Repository URL: `https://github.com/sayedrisat/bnscript`
 
-Latest Stage: `Stage 27 - VS Code Autocomplete & Hover`
+Latest Stage: `Stage 28 - VS Code Commands`
 
-Current Commit: `Pending Stage 27 release commit`
+Current Commit: `Pending Stage 28 release commit`
 
-Current Test Count: `283` passing tests
+Current Test Count: `287` passing tests
 
 Current Compiler Stages Completed:
 
@@ -52,6 +52,7 @@ Current Compiler Stages Completed:
 * English keyword aliases
 * Bilingual diagnostics message catalog and formatter
 * VS Code keyword autocomplete and hover documentation
+* VS Code command palette integration
 
 ## Compiler Architecture
 
@@ -123,6 +124,8 @@ Tooling:
 * `vscode/samples/demo.bn` provides a syntax showcase inside the extension package.
 * `vscode/src/keywords.js` stores shared keyword metadata for editor features.
 * `vscode/src/extension.js` registers keyword autocomplete and hover documentation providers.
+* `vscode/src/commands.js` stores shared command metadata for Command Palette actions.
+* The extension registers check, build, and run commands that call the BN Script CLI.
 * `npm run build:vsix` packages the local extension with `@vscode/vsce`.
 * Generated VSIX files are written under ignored `dist/`.
 
@@ -155,6 +158,7 @@ Current implemented language features:
 * Mixed Bangla/English source style
 * Bilingual compiler diagnostics with Bangla/Banglish text, English text, and hints
 * VS Code keyword autocomplete and hover documentation
+* VS Code commands for checking, building, and running the current `.bn` file
 * Assignment expressions
 * Compound assignment
 * Array literals
@@ -169,14 +173,14 @@ Current implemented language features:
 
 Latest completed stage:
 
-* Stage 27: VS Code Autocomplete & Hover
+* Stage 28: VS Code Commands
 
 ## AST Changes
 
 Latest completed stage:
 
 * No AST changes.
-* Stage 27 added editor tooling without changing AST node names.
+* Stage 28 added editor command tooling without changing AST node names.
 
 Current AST model:
 
@@ -191,7 +195,7 @@ Current AST model:
 Latest completed stage:
 
 * No parser changes.
-* Stage 27 uses VS Code extension APIs outside the compiler parser.
+* Stage 28 uses VS Code extension APIs and the existing CLI outside the compiler parser.
 
 Current parser grammar support:
 
@@ -217,7 +221,7 @@ Current parser grammar support:
 Latest completed stage:
 
 * No analyzer changes.
-* Stage 27 does not affect compiler semantic validation.
+* Stage 28 does not affect compiler semantic validation.
 
 Current analyzer checks:
 
@@ -243,7 +247,7 @@ Current analyzer checks:
 Latest completed stage:
 
 * No generator changes.
-* Stage 27 does not affect JavaScript output.
+* Stage 28 does not affect JavaScript output.
 
 Current generator output support:
 
@@ -291,10 +295,10 @@ Current bilingual diagnostic coverage:
 
 Latest completed stage:
 
-* Added a Completion Provider for BN Script keywords.
-* Added a Hover Provider for keyword documentation.
-* Added shared keyword metadata in `vscode/src/keywords.js`.
-* Updated the extension manifest with `main` and `onLanguage:bnscript` activation.
+* Added Command Palette commands for checking, building, and running the current BN Script file.
+* Added active editor and `.bn` file validation with bilingual UX messages.
+* Added `BN Script Output` channel logging for command execution.
+* Added shared command metadata in `vscode/src/commands.js`.
 
 Current editor support:
 
@@ -304,6 +308,11 @@ Current editor support:
 * VSIX packaging with `npm run build:vsix`
 * Keyword autocomplete for Bangla-style keywords and English aliases
 * Hover documentation with Bangla/Banglish and English descriptions
+* Command Palette actions:
+  * `BN Script: Check Current File`
+  * `BN Script: Build Current File`
+  * `BN Script: Run Current File`
+* `BN Script Output` channel for compiler and runtime output
 
 ## Supported Statements
 
@@ -532,12 +541,12 @@ Runnable `.bn` examples in `examples/`:
 
 New tests added in the latest completed stage:
 
-* Keyword registry coverage for core Bangla-style keywords and English aliases.
-* Hover documentation coverage for `dhori`, `kaj`, and `await`.
-* Duplicate keyword guard for the registry.
-* Extension manifest activation and package-file coverage.
+* Command registry coverage for check, build, and run actions.
+* VS Code manifest command contribution coverage.
+* Command activation and package-file coverage.
+* Output channel implementation coverage.
 
-Current total passing tests: `283`
+Current total passing tests: `287`
 
 Primary test files:
 
@@ -566,6 +575,7 @@ Primary test files:
   * `tests/stage25.aliases.test.js`
   * `tests/stage26.diagnostics.test.js`
   * `tests/stage27.vscode.test.js`
+  * `tests/stage28.commands.test.js`
 
 Integration fixtures in `tests/integration/`:
 
@@ -591,7 +601,7 @@ Integration fixtures in `tests/integration/`:
 
 ## Current Test Count
 
-Current total passing tests: `283`
+Current total passing tests: `287`
 
 ## Known Limitations
 
@@ -618,6 +628,7 @@ Major missing or incomplete features:
 * VS Code Marketplace publishing
 * VS Code language server features
 * VS Code diagnostics integration, formatter, snippets, debugger, and semantic completions
+* VS Code commands currently require CLI source access from the active workspace or local development checkout
 * Language Server Protocol (LSP)
 * Source maps
 * Remaining lower-priority parser, lexer, runtime, and CLI diagnostics still need bilingual migration
@@ -625,10 +636,10 @@ Major missing or incomplete features:
 
 ## Recommended Next Stage
 
-Stage 28:
+Stage 29:
 
 * Module Graph Analysis
 
-Stage 29:
+Stage 30:
 
 * Advanced Runtime Helpers and AI Integration

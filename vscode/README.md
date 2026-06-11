@@ -10,6 +10,8 @@ JavaScript. This VS Code package provides local editor support for `.bn` files.
 - TextMate syntax highlighting
 - Keyword autocomplete for Bangla-style keywords and English aliases
 - Hover documentation with Bangla/Banglish and English explanations
+- Command Palette actions for checking, building, and running the current file
+- `BN Script Output` channel for command output
 - Line and block comment configuration
 - Bracket, quote, and auto-closing pair configuration
 - Sample BN Script program under `samples/demo.bn`
@@ -44,6 +46,29 @@ Hovering a supported keyword shows a short BN Script reference entry with:
 
 The autocomplete and hover providers share keyword data from
 `src/keywords.js` so the wording stays consistent.
+
+## Using Commands
+
+Open a `.bn` file, then open the Command Palette with `Ctrl+Shift+P` and run:
+
+- `BN Script: Check Current File`
+- `BN Script: Build Current File`
+- `BN Script: Run Current File`
+
+Command output appears in the `BN Script Output` channel. The output includes
+the command that was executed, compiler output, runtime output, success
+messages, and errors.
+
+If the active editor is missing or the active file is not a `.bn` file, the
+extension shows a bilingual error:
+
+```txt
+Bangla:
+Eta BN Script file noy.
+
+English:
+The active file is not a BN Script file.
+```
 
 ## Manual Install
 
@@ -126,4 +151,6 @@ The TextMate grammar highlights:
 - No formatter.
 - No snippets.
 - No debugger integration.
+- Command integration expects the BN Script CLI source to be available from the
+  active workspace or local development checkout.
 - Not published to the VS Code Marketplace.
