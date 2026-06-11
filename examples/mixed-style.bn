@@ -1,0 +1,11 @@
+let name = "Risat"
+dhori count = 0
+
+jodi sotti {
+  print name
+}
+
+while count < 2 {
+  dekhi count
+  count += 1
+}

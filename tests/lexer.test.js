@@ -17,6 +17,38 @@ test('lexer: all keywords', () => {
   }
 });
 
+test('lexer: English aliases normalize to existing keyword token types', () => {
+  const aliases = {
+    let: TOKENS.DHORI,
+    const: TOKENS.STHIR,
+    print: TOKENS.DEKHI,
+    if: TOKENS.JODI,
+    else: TOKENS.NAHOLE,
+    while: TOKENS.JOTOKKHON,
+    function: TOKENS.KAJ,
+    return: TOKENS.FEROT,
+    true: TOKENS.SOTTI,
+    false: TOKENS.MITTHA,
+    null: TOKENS.KHALI,
+    and: TOKENS.EBONG,
+    or: TOKENS.OTHOBA,
+    not: TOKENS.NA,
+    break: TOKENS.BEKKHON,
+    continue: TOKENS.CHOLO,
+    import: TOKENS.AMDANI,
+    from: TOKENS.THEKE,
+    export: TOKENS.ROPTANI,
+    try: TOKENS.DHORO,
+    catch: TOKENS.ERROR,
+    finally: TOKENS.SHESHE,
+  };
+
+  for (const [source, expectedType] of Object.entries(aliases)) {
+    const tokens = tokenize(source);
+    assert.strictEqual(tokens[0].type, expectedType, `${source} should normalize`);
+  }
+});
+
 test('lexer: automation primitives tokenize as IDENTIFIER', () => {
   const primitives = ['anro', 'faile', 'ai', 'env', 'wait', 'json'];
   for (const p of primitives) {

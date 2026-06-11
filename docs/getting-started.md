@@ -1,6 +1,6 @@
 # Getting Started With BN Script
 
-BN Script is an automation-first language that compiles to JavaScript. The v0.1 alpha supports declarations, assignments, printing, conditionals, while loops, range loops, for-each loops, break/continue loop control, functions, async/await, named imports, exports, runtime helper calls, try/catch/finally, arrays, objects, member/index access, blocks, primitive values, calls, and basic expressions.
+BN Script is an automation-first language that compiles to JavaScript. The v0.1 alpha supports declarations, assignments, printing, conditionals, while loops, range loops, for-each loops, break/continue loop control, functions, async/await, named imports, exports, runtime helper calls, try/catch/finally, arrays, objects, member/index access, blocks, primitive values, calls, basic expressions, Bangla-style keywords, and English keyword aliases.
 
 ## Requirements
 
@@ -140,6 +140,19 @@ features remain future work.
 
 ## Alpha Syntax
 
+BN Script supports both Bangla-style keywords and English aliases. These compile
+the same way:
+
+```bn
+dhori name = "Risat"
+dekhi name
+```
+
+```bn
+let name = "Risat"
+print name
+```
+
 ```bn
 dhori name = "BN Script"
 sthir version = 0.1
@@ -206,29 +219,41 @@ dhoro {
 } sheshe {
   dekhi "done"
 }
+
+let englishName = "Risat"
+if true and not false {
+  print englishName
+}
 ```
 
 Supported today:
 
 - `dhori`, `sthir`, and `dekhi`
+- English aliases: `let`, `const`, and `print`
 - `jodi` / `nahole`
+- English aliases: `if` / `else`
 - `jotokkhon` while loops
+- English alias: `while`
 - Range `bar` loops with `theke`
 - For-each `bar` loops with `ekti`
 - `bekkhon` and `cholo` inside loops
+- English aliases: `break` and `continue`
 - Assignment expressions, variable reassignment, and compound assignment
 - Array literals and index access
 - Object literals and member access
 - Assignment to member and index targets
 - `kaj` function declarations
 - `ferot` return statements inside functions
+- English aliases: `function` and `return`
 - Function parameters and calls
 - `async kaj` function declarations
 - `await` expressions inside async functions and top-level programs
 - Named imports with `amdani { name } theke "./file.bn"`
 - Exported functions, variables, and constants with `roptani`
+- English aliases: `import { name } from "./file.bn"` and `export`
 - Runtime helpers: `env`, `fileRead`, `fileWrite`, `wait`, and `httpGet`
 - Try/catch/finally with `dhoro`, `error`, and `sheshe`
+- English aliases: `try`, `catch`, and `finally`
 - Interactive REPL via `node src/cli.js repl`
 - Local VS Code extension package for `.bn` syntax highlighting
 - Blocks with `{` and `}`

@@ -86,7 +86,7 @@ publishing or packaging it.
 
 The TextMate grammar highlights:
 
-- Keywords and keyword-like operators
+- Bangla-style keywords and English aliases
 - Strings and interpolation markers
 - Numbers
 - Line and block comments

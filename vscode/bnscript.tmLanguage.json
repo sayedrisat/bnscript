@@ -79,12 +79,12 @@
       "patterns": [
         {
           "name": "meta.import.list.bnscript",
-          "begin": "\\b(amdani)\\s*(\\{)",
+          "begin": "\\b(amdani|import)\\s*(\\{)",
           "beginCaptures": {
             "1": { "name": "keyword.control.import.bnscript" },
             "2": { "name": "punctuation.definition.imports.begin.bnscript" }
           },
-          "end": "(\\})\\s*(theke)\\s*(\"(?:[^\"\\\\]|\\\\.)*\"|'(?:[^'\\\\]|\\\\.)*')",
+          "end": "(\\})\\s*(theke|from)\\s*(\"(?:[^\"\\\\]|\\\\.)*\"|'(?:[^'\\\\]|\\\\.)*')",
           "endCaptures": {
             "1": { "name": "punctuation.definition.imports.end.bnscript" },
             "2": { "name": "keyword.control.from.bnscript" },
@@ -107,7 +107,7 @@
       "patterns": [
         {
           "name": "meta.export.function.bnscript",
-          "match": "\\b(roptani)\\s+(async\\s+)?(kaj)\\s+([A-Za-z_][A-Za-z0-9_]*)",
+          "match": "\\b(roptani|export)\\s+(async\\s+)?(kaj|function)\\s+([A-Za-z_][A-Za-z0-9_]*)",
           "captures": {
             "1": { "name": "keyword.control.export.bnscript" },
             "2": { "name": "storage.modifier.async.bnscript" },
@@ -117,7 +117,7 @@
         },
         {
           "name": "meta.export.variable.bnscript",
-          "match": "\\b(roptani)\\s+(dhori|sthir)\\s+([A-Za-z_][A-Za-z0-9_]*)",
+          "match": "\\b(roptani|export)\\s+(dhori|sthir|let|const)\\s+([A-Za-z_][A-Za-z0-9_]*)",
           "captures": {
             "1": { "name": "keyword.control.export.bnscript" },
             "2": { "name": "storage.type.variable.bnscript" },
@@ -130,7 +130,7 @@
       "patterns": [
         {
           "name": "meta.function.bnscript",
-          "match": "\\b(async\\s+)?(kaj)\\s+([A-Za-z_][A-Za-z0-9_]*)",
+          "match": "\\b(async\\s+)?(kaj|function)\\s+([A-Za-z_][A-Za-z0-9_]*)",
           "captures": {
             "1": { "name": "storage.modifier.async.bnscript" },
             "2": { "name": "storage.type.function.bnscript" },
@@ -147,7 +147,7 @@
       "patterns": [
         {
           "name": "meta.declaration.variable.bnscript",
-          "match": "\\b(dhori|sthir)\\s+([A-Za-z_][A-Za-z0-9_]*)",
+          "match": "\\b(dhori|sthir|let|const)\\s+([A-Za-z_][A-Za-z0-9_]*)",
           "captures": {
             "1": { "name": "storage.type.variable.bnscript" },
             "2": { "name": "variable.other.definition.bnscript" }
@@ -159,7 +159,7 @@
       "patterns": [
         {
           "name": "keyword.control.bnscript",
-          "match": "\\b(?:dekhi|jodi|nahole|jotokkhon|bar|theke|ekti|amdani|roptani|kaj|ferot|bekkhon|cholo|dhoro|error|sheshe)\\b"
+          "match": "\\b(?:dekhi|print|jodi|if|nahole|else|jotokkhon|while|bar|for|theke|from|to|ekti|of|amdani|import|roptani|export|kaj|function|ferot|return|bekkhon|break|cholo|continue|dhoro|try|error|catch|sheshe|finally)\\b"
         },
         {
           "name": "storage.modifier.async.bnscript",
@@ -167,15 +167,15 @@
         },
         {
           "name": "keyword.operator.word.bnscript",
-          "match": "\\b(?:await|ebong|othoba|na)\\b"
+          "match": "\\b(?:await|ebong|and|othoba|or|na|not)\\b"
         },
         {
           "name": "constant.language.boolean.bnscript",
-          "match": "\\b(?:sotti|mittha)\\b"
+          "match": "\\b(?:sotti|mittha|true|false)\\b"
         },
         {
           "name": "constant.language.null.bnscript",
-          "match": "\\bkhali\\b"
+          "match": "\\b(?:khali|null)\\b"
         }
       ]
     },

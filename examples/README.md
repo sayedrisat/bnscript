@@ -14,6 +14,8 @@ node src/cli.js run examples/hello.bn
 | File | Shows |
 | --- | --- |
 | `hello.bn` | Printing a string with `dekhi` |
+| `english.bn` | English keyword aliases such as `let`, `print`, `if`, and `function` |
+| `mixed-style.bn` | Mixed Bangla-style and English keywords in one program |
 | `variables.bn` | Variables, constants, booleans, and printing values |
 | `if.bn` | Conditional control flow with `jodi` and `nahole` |
 | `logic.bn` | Arithmetic, comparison, and logical expressions |

@@ -1,6 +1,6 @@
 # BN Script Architecture Audit
 
-Last updated: 2026-06-10
+Last updated: 2026-06-11
 
 This audit is the public project dashboard for BN Script architecture, implemented language features, test coverage, examples, known limitations, and the recommended roadmap.
 
@@ -10,11 +10,11 @@ Current Version: `0.1.0-alpha.0`
 
 Repository URL: `https://github.com/sayedrisat/bnscript`
 
-Latest Stage: `Stage 24 - VSIX Packaging`
+Latest Stage: `Stage 25 - English Keyword Aliases`
 
-Current Commit: `d745a3ebfeff78eed49a0d0bf3f83a2d9d793360`
+Current Commit: `Pending Stage 25 release commit`
 
-Current Test Count: `263` passing tests
+Current Test Count: `273` passing tests
 
 Current Compiler Stages Completed:
 
@@ -49,6 +49,8 @@ Current Compiler Stages Completed:
 * VSIX packaging support
 * Shared AST traversal utilities
 * String interpolation output
+* English keyword aliases
+* Bilingual diagnostics message foundation
 
 ## Compiler Architecture
 
@@ -57,6 +59,7 @@ Lexer:
 * Implemented in `src/lexer.js`.
 * Converts BN Script source into tokens with source locations.
 * Supports identifiers, numbers, strings, comments, keywords, operators, punctuation, newlines, and EOF.
+* Normalizes Bangla-style keywords and English aliases to the same token types.
 
 Parser:
 
@@ -106,6 +109,7 @@ Compiler Utilities:
 
 * `src/ast-walker.js` provides reusable safe AST traversal for compiler utilities.
 * The generator and REPL reuse the shared AST walker for helper and top-level await detection.
+* `src/diagnostics/messages.js` provides the initial bilingual diagnostics message catalog.
 
 Tooling:
 
@@ -144,6 +148,8 @@ Current implemented language features:
 * Interactive REPL sessions with persistent variables
 * Local VS Code extension package for `.bn` syntax highlighting
 * String interpolation output for strings containing `${...}`
+* English keyword aliases for Bangla-style keywords
+* Mixed Bangla/English source style
 * Assignment expressions
 * Compound assignment
 * Array literals
@@ -158,14 +164,14 @@ Current implemented language features:
 
 Latest completed stage:
 
-* Stage 24: VSIX Packaging
+* Stage 25: English Keyword Aliases
 
 ## AST Changes
 
 Latest completed stage:
 
 * No AST changes.
-* Stage 24 added editor packaging workflow only.
+* Stage 25 added lexer-level keyword aliases without changing AST node names.
 
 Current AST model:
 
@@ -179,8 +185,8 @@ Current AST model:
 
 Latest completed stage:
 
-* No parser changes.
-* Stage 24 uses the existing TextMate grammar outside the compiler parser.
+* English keyword aliases normalize to existing token types before parsing.
+* English logical operator values normalize to canonical BN operator values in the AST.
 
 Current parser grammar support:
 
@@ -205,8 +211,8 @@ Current parser grammar support:
 
 Latest completed stage:
 
-* No analyzer changes.
-* VSIX package validation is covered by lightweight metadata and file existence tests.
+* No analyzer behavior changes.
+* Added bilingual diagnostics message foundation in `src/diagnostics/messages.js`.
 
 Current analyzer checks:
 
@@ -231,7 +237,7 @@ Current analyzer checks:
 Latest completed stage:
 
 * No generator changes.
-* Stage 24 does not affect JavaScript output.
+* English aliases generate the same JavaScript as their Bangla-style keyword equivalents.
 
 Current generator output support:
 
@@ -292,7 +298,7 @@ Current generator output support:
 
 ## Keywords
 
-Fully supported keywords and keyword-like operators:
+Fully supported Bangla-style keywords and keyword-like operators:
 
 * `dhori`
 * `sthir`
@@ -320,6 +326,34 @@ Fully supported keywords and keyword-like operators:
 * `ebong`
 * `othoba`
 * `na`
+
+Fully supported English aliases:
+
+* `let`
+* `const`
+* `print`
+* `if`
+* `else`
+* `while`
+* `for`
+* `from`
+* `to`
+* `of`
+* `import`
+* `export`
+* `function`
+* `return`
+* `break`
+* `continue`
+* `try`
+* `catch`
+* `finally`
+* `true`
+* `false`
+* `null`
+* `and`
+* `or`
+* `not`
 
 Lexed compatibility spelling:
 
@@ -417,7 +451,8 @@ Active AST nodes:
 
 New example files added in the latest completed stage:
 
-* None
+* `english.bn`
+* `mixed-style.bn`
 
 Runnable `.bn` examples in `examples/`:
 
@@ -426,6 +461,7 @@ Runnable `.bn` examples in `examples/`:
 * `async.bn`
 * `break.bn`
 * `continue.bn`
+* `english.bn`
 * `for.bn`
 * `foreach.bn`
 * `functions.bn`
@@ -435,6 +471,7 @@ Runnable `.bn` examples in `examples/`:
 * `logic.bn`
 * `module-main.bn`
 * `module-utils.bn`
+* `mixed-style.bn`
 * `objects.bn`
 * `repl.txt`
 * `runtime.bn`
@@ -448,12 +485,16 @@ Runnable `.bn` examples in `examples/`:
 
 New tests added in the latest completed stage:
 
-* Root VSIX build script validation.
-* `@vscode/vsce` dev dependency validation.
-* Extension manifest metadata validation for packageability.
-* Grammar, language configuration, icon, and README path validation.
+* Lexer alias normalization coverage.
+* Parser canonicalization coverage for `and`, `or`, and `not`.
+* Bangla and English output equivalence coverage.
+* English control-flow, function, logic, and loop coverage.
+* Bangla, English, and mixed logical operator coverage.
+* Mixed-style compilation coverage.
+* English module and exception keyword coverage.
+* Bilingual diagnostics message foundation coverage.
 
-Current total passing tests: `263`
+Current total passing tests: `273`
 
 Primary test files:
 
@@ -479,6 +520,7 @@ Primary test files:
   * `tests/stage22.audit.test.js`
   * `tests/stage23.extension.test.js`
   * `tests/stage24.vsix.test.js`
+  * `tests/stage25.aliases.test.js`
 
 Integration fixtures in `tests/integration/`:
 
@@ -504,7 +546,7 @@ Integration fixtures in `tests/integration/`:
 
 ## Current Test Count
 
-Current total passing tests: `263`
+Current total passing tests: `273`
 
 ## Known Limitations
 
@@ -533,13 +575,14 @@ Major missing or incomplete features:
 * VS Code formatter, snippets, debugger, and completions
 * Language Server Protocol (LSP)
 * Source maps
+* Full bilingual diagnostic refactor
 
 ## Recommended Next Stage
 
-Stage 25:
+Stage 26:
 
 * Module Graph Analysis
 
-Stage 26:
+Stage 27:
 
 * Advanced Runtime Helpers and AI Integration

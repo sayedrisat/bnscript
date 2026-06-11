@@ -134,6 +134,18 @@ test("parser: unary expression", () => {
   assert.strictEqual(expression.operand.type, "BooleanLiteral");
 });
 
+test("parser: English logical aliases canonicalize operator values", () => {
+  const andExpression = firstStatement("ready and not false").expression;
+  const orExpression = firstStatement("ready or false").expression;
+
+  assert.strictEqual(andExpression.type, "BinaryExpression");
+  assert.strictEqual(andExpression.operator, "ebong");
+  assert.strictEqual(andExpression.right.type, "UnaryExpression");
+  assert.strictEqual(andExpression.right.operator, "na");
+  assert.strictEqual(orExpression.type, "BinaryExpression");
+  assert.strictEqual(orExpression.operator, "othoba");
+});
+
 test("parser: if statement", () => {
   const statement = firstStatement(`jodi age >= 18 {
   dekhi "Adult"

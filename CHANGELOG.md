@@ -1,5 +1,39 @@
 # Changelog
 
+## Day 11 - 2026-06-11 (English Keyword Aliases Stage 25)
+
+### Completed: English Keyword Aliases
+- Added English keyword aliases while keeping Bangla-style keywords first-class.
+- Normalized English aliases in the lexer so the parser continues to receive the existing token types.
+- Added support for mixed Bangla/English source style in the same program.
+- Canonicalized English logical operator values in the parser so `and`, `or`, and `not` reach the generator as `ebong`, `othoba`, and `na`.
+- Added English aliases for declarations, output, conditionals, loops, functions, booleans, null, logic, loop control, modules, exceptions, and async/await.
+- Added `src/diagnostics/messages.js` as the foundation for future bilingual diagnostics.
+- Updated VS Code grammar coverage for English aliases.
+- Added `examples/english.bn` and `examples/mixed-style.bn`.
+
+### Tests Added
+- Lexer alias normalization coverage.
+- Parser canonicalization coverage for `and`, `or`, and `not`.
+- Bangla and English output equivalence coverage.
+- English control-flow, function, logic, and loop coverage.
+- Bangla, English, and mixed logical operator coverage.
+- Mixed-style compilation coverage.
+- English module and exception keyword coverage.
+- Bilingual diagnostics message foundation coverage.
+
+### Known Issues
+- Diagnostics are not fully bilingual yet.
+- Alias support is lexical normalization; parser and AST node names remain canonical.
+
+### Test Result
+- `npm.cmd test` passed 273 tests.
+
+### Recommended Next Task
+- Stage 26 Module Graph Analysis
+
+---
+
 ## Day 10 - 2026-06-10 (VSIX Packaging Stage 24)
 
 ### Completed: VSIX Packaging

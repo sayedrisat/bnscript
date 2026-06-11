@@ -47,6 +47,19 @@ const UNSUPPORTED_STATEMENTS = new Map([
   [TOKENS.DAO, '"dao" exports are not supported in this alpha compiler.'],
 ]);
 
+function canonicalOperator(value) {
+  switch (value) {
+    case "and":
+      return "ebong";
+    case "or":
+      return "othoba";
+    case "not":
+      return "na";
+    default:
+      return value;
+  }
+}
+
 export class Parser {
   constructor(tokens, { filename = "<anonymous>", source = "" } = {}) {
     this.tokens = tokens;
@@ -739,7 +752,7 @@ export class Parser {
         operatorToken.type === TOKENS.STAR_STAR ? precedence : precedence + 1;
       const right = this.parseBinaryExpression(nextMinPrecedence);
       left = AST.BinaryExpression(
-        operatorToken.value,
+        canonicalOperator(operatorToken.value),
         left,
         right,
         this.locationFrom(left, right)
@@ -765,7 +778,7 @@ export class Parser {
       this.skipNewlines();
       const operand = this.parseUnaryExpression();
       return AST.UnaryExpression(
-        operatorToken.value,
+        canonicalOperator(operatorToken.value),
         operand,
         this.locationFrom(operatorToken, operand)
       );
