@@ -1,3 +1,4 @@
+import { formatDiagnostic } from "./diagnostics/messages.js";
 import { createError } from "./errors.js";
 import {
   createBlockScope,
@@ -144,11 +145,9 @@ export class SemanticAnalyzer {
     node.semantic.scopeType = this.currentScope.type;
 
     if (node.source?.type !== "StringLiteral") {
-      this.addError(
-        node.source || node,
-        "Import source must be a string literal.",
-        'Use a string path after "theke", like: "./utils.bn".'
-      );
+      this.addDiagnostic(node.source || node, "IMPORT_ERROR", {
+        message: "Import source must be a string literal.",
+      });
     }
 
     for (const specifier of node.imports || []) {
@@ -169,11 +168,9 @@ export class SemanticAnalyzer {
       };
 
       if (!result.ok) {
-        this.addError(
-          specifier,
-          `Duplicate declaration of "${specifier.name}" in the same scope.`,
-          `Rename this import or remove the earlier declaration on line ${result.existing.line}.`
-        );
+        this.addDiagnostic(specifier, "DUPLICATE_DECLARATION", {
+          name: specifier.name,
+        });
       }
     }
   }
@@ -184,11 +181,9 @@ export class SemanticAnalyzer {
     node.semantic.scopeType = this.currentScope.type;
 
     if (!node.declaration) {
-      this.addError(
-        node,
-        "Invalid export declaration.",
-        'Export a function, variable, or constant with "roptani kaj", "roptani dhori", or "roptani sthir".'
-      );
+      this.addDiagnostic(node, "EXPORT_ERROR", {
+        message: "Invalid export declaration.",
+      });
       return;
     }
 
@@ -199,11 +194,9 @@ export class SemanticAnalyzer {
       node.declaration.type !== "VarDeclaration" &&
       node.declaration.type !== "ConstDeclaration"
     ) {
-      this.addError(
-        node.declaration,
-        "Invalid export declaration.",
-        'Export a function, variable, or constant with "roptani kaj", "roptani dhori", or "roptani sthir".'
-      );
+      this.addDiagnostic(node.declaration, "EXPORT_ERROR", {
+        message: "Invalid export declaration.",
+      });
       return;
     }
 
@@ -230,11 +223,9 @@ export class SemanticAnalyzer {
 
     if (!result.ok) {
       node.semantic.declared = false;
-      this.addError(
-        node,
-        `Duplicate declaration of "${node.name}" in the same scope.`,
-        `Rename this ${keyword} declaration or remove the earlier declaration on line ${result.existing.line}.`
-      );
+      this.addDiagnostic(node, "DUPLICATE_DECLARATION", {
+        name: node.name,
+      });
       return;
     }
 
@@ -321,11 +312,9 @@ export class SemanticAnalyzer {
     const targetResolution = this.visitAssignmentTarget(node.target);
 
     if (targetResolution && !targetResolution.symbol.mutable) {
-      this.addError(
-        node.target,
-        `Cannot reassign constant "${node.target.name}".`,
-        `Use "dhori" instead of "sthir" if "${node.target.name}" needs to change.`
-      );
+      this.addDiagnostic(node.target, "CONST_REASSIGNMENT", {
+        name: node.target.name,
+      });
     }
 
     if (targetResolution) {
@@ -369,11 +358,7 @@ export class SemanticAnalyzer {
 
   visitReturnStatement(node) {
     if (this.functionDepth === 0) {
-      this.addError(
-        node,
-        'Cannot use "ferot" at the top level.',
-        'Move "ferot" inside a "kaj" function body.'
-      );
+      this.addDiagnostic(node, "RETURN_OUTSIDE_FUNCTION");
     }
 
     this.visit(node.value);
@@ -396,11 +381,7 @@ export class SemanticAnalyzer {
       this.functionAsyncStack[this.functionAsyncStack.length - 1] === true;
 
     if (insideFunction && !currentFunctionIsAsync) {
-      this.addError(
-        node,
-        'Cannot use "await" inside a non-async function.',
-        'Mark this function with "async kaj" or move the await expression to top-level code.'
-      );
+      this.addDiagnostic(node, "AWAIT_SCOPE_ERROR");
     }
 
     this.visit(node.argument);
@@ -432,21 +413,13 @@ export class SemanticAnalyzer {
 
   visitBreakStatement(node) {
     if (this.loopDepth === 0) {
-      this.addError(
-        node,
-        'Cannot use "bekkhon" outside a loop.',
-        'Move "bekkhon" inside a "bar" or "jotokkhon" loop.'
-      );
+      this.addDiagnostic(node, "BREAK_OUTSIDE_LOOP");
     }
   }
 
   visitContinueStatement(node) {
     if (this.loopDepth === 0) {
-      this.addError(
-        node,
-        'Cannot use "cholo" outside a loop.',
-        'Move "cholo" inside a "bar" or "jotokkhon" loop.'
-      );
+      this.addDiagnostic(node, "CONTINUE_OUTSIDE_LOOP");
     }
   }
 
@@ -495,11 +468,9 @@ export class SemanticAnalyzer {
     node.semantic.isAsync = node.isAsync === true;
 
     if (!result.ok) {
-      this.addError(
-        node,
-        `Duplicate declaration of "${node.name}" in the same scope.`,
-        `Rename this function or remove the earlier declaration on line ${result.existing.line}.`
-      );
+      this.addDiagnostic(node, "DUPLICATE_DECLARATION", {
+        name: node.name,
+      });
       return;
     }
 
@@ -522,11 +493,10 @@ export class SemanticAnalyzer {
           });
 
           if (!result.ok) {
-            this.addError(
-              param,
-              `Duplicate parameter "${name}" in function "${node.name}".`,
-              `Rename this parameter or remove the earlier parameter on line ${result.existing.line}.`
-            );
+            this.addDiagnostic(param, "DUPLICATE_PARAMETER", {
+              functionName: node.name,
+              name,
+            });
           }
         }
         this.visitFunctionBody(node.body);
@@ -574,11 +544,9 @@ export class SemanticAnalyzer {
     });
 
     if (!result.ok) {
-      this.addError(
-        node,
-        `Duplicate declaration of "${name}" in the same scope.`,
-        `Rename this iterator or remove the earlier declaration on line ${result.existing.line}.`
-      );
+      this.addDiagnostic(node, "DUPLICATE_DECLARATION", {
+        name,
+      });
     }
   }
 
@@ -601,11 +569,9 @@ export class SemanticAnalyzer {
     param.semantic.declared = result.ok;
 
     if (!result.ok) {
-      this.addError(
-        param,
-        `Duplicate catch variable "${param.name}".`,
-        `Rename this catch variable or remove the earlier declaration on line ${result.existing.line}.`
-      );
+      this.addDiagnostic(param, "DUPLICATE_DECLARATION", {
+        name: param.name,
+      });
     }
   }
 
@@ -615,13 +581,9 @@ export class SemanticAnalyzer {
 
     if (!resolution) {
       node.semantic.resolved = false;
-      this.addError(
-        node,
-        `Use before declaration: "${node.name}" is not declared.`,
-        assignmentTarget
-          ? `Declare "${node.name}" with "dhori" before assigning to it.`
-          : `Declare "${node.name}" with "dhori" or "sthir" before using it.`
-      );
+      this.addDiagnostic(node, "UNDECLARED_VARIABLE", {
+        name: node.name,
+      });
       return null;
     }
 
@@ -666,6 +628,25 @@ export class SemanticAnalyzer {
 
   isAssignmentTarget(node) {
     return node?.type === "Identifier" || node?.type === "MemberExpression";
+  }
+
+  addDiagnostic(node, code, details = {}) {
+    if (this.errors.length >= MAX_ERRORS) {
+      return;
+    }
+
+    this.errors.push(
+      createError({
+        category: "SemanticError",
+        message: formatDiagnostic(code, details),
+        filename: this.filename,
+        line: node?.line,
+        column: node?.column,
+        sourceLine: this.sourceLine(node?.line),
+        code,
+        details,
+      })
+    );
   }
 
   addError(node, message, suggestion) {

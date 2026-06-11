@@ -1,4 +1,5 @@
 import { TOKENS } from "./tokens.js";
+import { formatDiagnostic } from "./diagnostics/messages.js";
 import { createError } from "./errors.js";
 import * as AST from "./ast.js";
 
@@ -205,8 +206,9 @@ export class Parser {
 
     this.consume(
       TOKENS.LEFT_BRACE,
-      'Expected "{" after "amdani".',
-      'Use: amdani { greet } theke "./utils.bn"'
+      formatDiagnostic("IMPORT_ERROR", {
+        message: 'Expected "{" after "amdani".',
+      })
     );
 
     const imports = [];
@@ -215,8 +217,9 @@ export class Parser {
     if (this.check(TOKENS.RIGHT_BRACE)) {
       this.raise(
         this.peek(),
-        "Expected imported name.",
-        'Use one or more imported names, like: amdani { greet } theke "./utils.bn"'
+        formatDiagnostic("IMPORT_ERROR", {
+          message: "Expected imported name.",
+        })
       );
     }
 
@@ -224,8 +227,9 @@ export class Parser {
       this.skipNewlines();
       const nameToken = this.consume(
         TOKENS.IDENTIFIER,
-        "Expected imported name.",
-        "Use comma-separated imported names inside the braces."
+        formatDiagnostic("IMPORT_ERROR", {
+          message: "Expected imported name.",
+        })
       );
       imports.push(
         AST.ImportSpecifier(
@@ -238,20 +242,23 @@ export class Parser {
 
     this.consume(
       TOKENS.RIGHT_BRACE,
-      'Expected "}" after imported names.',
-      'Close the import list before "theke".'
+      formatDiagnostic("IMPORT_ERROR", {
+        message: 'Expected "}" after imported names.',
+      })
     );
 
     this.consume(
       TOKENS.THEKE,
-      'Expected "theke" after import list.',
-      'Use: amdani { greet } theke "./utils.bn"'
+      formatDiagnostic("IMPORT_ERROR", {
+        message: 'Expected "theke" after import list.',
+      })
     );
 
     const sourceToken = this.consume(
       TOKENS.STRING,
-      "Expected import source string after \"theke\".",
-      'Use a string path ending in ".bn", like: "./utils.bn"'
+      formatDiagnostic("IMPORT_ERROR", {
+        message: 'Expected import source string after "theke".',
+      })
     );
     const source = AST.StringLiteral(
       sourceToken.value,
@@ -297,8 +304,9 @@ export class Parser {
 
     this.raise(
       this.peek(),
-      'Expected "kaj", "async", "dhori", or "sthir" after "roptani".',
-      'Use: roptani kaj greet() { ... }, roptani async kaj load() { ... }, roptani dhori x = 1, or roptani sthir y = 2.'
+      formatDiagnostic("EXPORT_ERROR", {
+        message: 'Expected "kaj", "async", "dhori", or "sthir" after "roptani".',
+      })
     );
   }
 

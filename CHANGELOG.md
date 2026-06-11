@@ -1,5 +1,47 @@
 # Changelog
 
+## Day 12 - 2026-06-11 (Bilingual Diagnostics Stage 26)
+
+### Completed: Bilingual Diagnostics
+- Expanded `src/diagnostics/messages.js` into a reusable diagnostic catalog with Bangla/Banglish text, English text, and hints.
+- Added `formatDiagnostic(code, details)` for compiler and future editor tooling reuse.
+- Wired high-value semantic analyzer errors into bilingual diagnostics.
+- Added practical parser diagnostic formatting for import/export syntax errors.
+- Preserved existing English error phrases inside the English section for compatibility with current tests and user expectations.
+- Added invalid diagnostic example programs under `examples/errors/`.
+
+### Diagnostics Covered
+- Undeclared variables
+- Duplicate declarations
+- Constant reassignment
+- Await inside non-async functions
+- Return outside functions
+- Break outside loops
+- Continue outside loops
+- Duplicate function parameters
+- Import errors
+- Export errors
+
+### Tests Added
+- Formatter section coverage for `BNError`, `Bangla`, `English`, and `Hint`.
+- Compiler diagnostic coverage for undeclared variables.
+- Compiler diagnostic coverage for constant reassignment.
+- Compiler diagnostic coverage for await scope errors.
+- Compiler diagnostic coverage for break outside loop.
+- Compiler diagnostic coverage for continue outside loop.
+
+### Known Issues
+- Some lower-priority parser, lexer, runtime, and CLI diagnostics still use legacy single-language wording.
+- Full diagnostic localization settings are not implemented yet.
+
+### Test Result
+- `npm.cmd test` passed 279 tests.
+
+### Recommended Next Task
+- Stage 27 Module Graph Analysis
+
+---
+
 ## Day 11 - 2026-06-11 (English Keyword Aliases Stage 25)
 
 ### Completed: English Keyword Aliases

@@ -10,11 +10,11 @@ Current Version: `0.1.0-alpha.0`
 
 Repository URL: `https://github.com/sayedrisat/bnscript`
 
-Latest Stage: `Stage 25 - English Keyword Aliases`
+Latest Stage: `Stage 26 - Bilingual Diagnostics`
 
-Current Commit: `39eb3f058067a87cd0f8e1edf4d7fc3d375db749`
+Current Commit: `Pending Stage 26 release commit`
 
-Current Test Count: `273` passing tests
+Current Test Count: `279` passing tests
 
 Current Compiler Stages Completed:
 
@@ -50,7 +50,7 @@ Current Compiler Stages Completed:
 * Shared AST traversal utilities
 * String interpolation output
 * English keyword aliases
-* Bilingual diagnostics message foundation
+* Bilingual diagnostics message catalog and formatter
 
 ## Compiler Architecture
 
@@ -109,7 +109,7 @@ Compiler Utilities:
 
 * `src/ast-walker.js` provides reusable safe AST traversal for compiler utilities.
 * The generator and REPL reuse the shared AST walker for helper and top-level await detection.
-* `src/diagnostics/messages.js` provides the initial bilingual diagnostics message catalog.
+* `src/diagnostics/messages.js` provides the bilingual diagnostics message catalog and `formatDiagnostic()` formatter.
 
 Tooling:
 
@@ -150,6 +150,7 @@ Current implemented language features:
 * String interpolation output for strings containing `${...}`
 * English keyword aliases for Bangla-style keywords
 * Mixed Bangla/English source style
+* Bilingual compiler diagnostics with Bangla/Banglish text, English text, and hints
 * Assignment expressions
 * Compound assignment
 * Array literals
@@ -164,14 +165,14 @@ Current implemented language features:
 
 Latest completed stage:
 
-* Stage 25: English Keyword Aliases
+* Stage 26: Bilingual Diagnostics
 
 ## AST Changes
 
 Latest completed stage:
 
 * No AST changes.
-* Stage 25 added lexer-level keyword aliases without changing AST node names.
+* Stage 26 added diagnostics infrastructure without changing AST node names.
 
 Current AST model:
 
@@ -185,8 +186,8 @@ Current AST model:
 
 Latest completed stage:
 
-* English keyword aliases normalize to existing token types before parsing.
-* English logical operator values normalize to canonical BN operator values in the AST.
+* Import and export syntax errors can use the shared bilingual diagnostic formatter where practical.
+* Most parser syntax errors remain on the legacy error path for now.
 
 Current parser grammar support:
 
@@ -211,8 +212,9 @@ Current parser grammar support:
 
 Latest completed stage:
 
-* No analyzer behavior changes.
-* Added bilingual diagnostics message foundation in `src/diagnostics/messages.js`.
+* Added bilingual diagnostics for the highest-value semantic errors.
+* Analyzer errors now preserve diagnostic `code` and structured `details` on `BNError`.
+* Existing English error phrases are preserved inside the English diagnostic section.
 
 Current analyzer checks:
 
@@ -231,13 +233,14 @@ Current analyzer checks:
 * Export-wrapped declaration validation
 * Member/index base resolution
 * Assignment target validation
+* Bilingual formatting for major semantic diagnostics
 
 ## Generator Changes
 
 Latest completed stage:
 
 * No generator changes.
-* English aliases generate the same JavaScript as their Bangla-style keyword equivalents.
+* Stage 26 does not affect JavaScript output.
 
 Current generator output support:
 
@@ -259,6 +262,27 @@ Current generator output support:
 * `roptani` -> ESM `export`
 * interpolated BN strings -> JavaScript template literals
 * BN Script expressions -> readable JavaScript expressions
+
+## Diagnostics
+
+Latest completed stage:
+
+* Added `formatDiagnostic(code, details)` in `src/diagnostics/messages.js`.
+* Major diagnostics now include `Bangla`, `English`, and `Hint` sections.
+* Analyzer diagnostics carry reusable `code` and `details` metadata on `BNError`.
+
+Current bilingual diagnostic coverage:
+
+* `UNDECLARED_VARIABLE`
+* `DUPLICATE_DECLARATION`
+* `CONST_REASSIGNMENT`
+* `AWAIT_SCOPE_ERROR`
+* `RETURN_OUTSIDE_FUNCTION`
+* `BREAK_OUTSIDE_LOOP`
+* `CONTINUE_OUTSIDE_LOOP`
+* `DUPLICATE_PARAMETER`
+* `IMPORT_ERROR`
+* `EXPORT_ERROR`
 
 ## Supported Statements
 
@@ -451,8 +475,9 @@ Active AST nodes:
 
 New example files added in the latest completed stage:
 
-* `english.bn`
-* `mixed-style.bn`
+* `errors/await-error.bn`
+* `errors/const-error.bn`
+* `errors/undeclared.bn`
 
 Runnable `.bn` examples in `examples/`:
 
@@ -462,6 +487,9 @@ Runnable `.bn` examples in `examples/`:
 * `break.bn`
 * `continue.bn`
 * `english.bn`
+* `errors/await-error.bn`
+* `errors/const-error.bn`
+* `errors/undeclared.bn`
 * `for.bn`
 * `foreach.bn`
 * `functions.bn`
@@ -485,16 +513,14 @@ Runnable `.bn` examples in `examples/`:
 
 New tests added in the latest completed stage:
 
-* Lexer alias normalization coverage.
-* Parser canonicalization coverage for `and`, `or`, and `not`.
-* Bangla and English output equivalence coverage.
-* English control-flow, function, logic, and loop coverage.
-* Bangla, English, and mixed logical operator coverage.
-* Mixed-style compilation coverage.
-* English module and exception keyword coverage.
-* Bilingual diagnostics message foundation coverage.
+* Formatter section coverage for `BNError`, `Bangla`, `English`, and `Hint`.
+* Compiler diagnostic coverage for undeclared variables.
+* Compiler diagnostic coverage for constant reassignment.
+* Compiler diagnostic coverage for await scope errors.
+* Compiler diagnostic coverage for break outside loop.
+* Compiler diagnostic coverage for continue outside loop.
 
-Current total passing tests: `273`
+Current total passing tests: `279`
 
 Primary test files:
 
@@ -521,6 +547,7 @@ Primary test files:
   * `tests/stage23.extension.test.js`
   * `tests/stage24.vsix.test.js`
   * `tests/stage25.aliases.test.js`
+  * `tests/stage26.diagnostics.test.js`
 
 Integration fixtures in `tests/integration/`:
 
@@ -546,7 +573,7 @@ Integration fixtures in `tests/integration/`:
 
 ## Current Test Count
 
-Current total passing tests: `273`
+Current total passing tests: `279`
 
 ## Known Limitations
 
@@ -575,14 +602,15 @@ Major missing or incomplete features:
 * VS Code formatter, snippets, debugger, and completions
 * Language Server Protocol (LSP)
 * Source maps
-* Full bilingual diagnostic refactor
+* Remaining lower-priority parser, lexer, runtime, and CLI diagnostics still need bilingual migration
+* Diagnostic localization preferences are not implemented yet
 
 ## Recommended Next Stage
 
-Stage 26:
+Stage 27:
 
 * Module Graph Analysis
 
-Stage 27:
+Stage 28:
 
 * Advanced Runtime Helpers and AI Integration

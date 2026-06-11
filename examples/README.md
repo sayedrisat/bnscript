@@ -37,3 +37,13 @@ node src/cli.js run examples/hello.bn
 | `try.bn` | Error handling shape with `dhoro`, `error`, and `sheshe` |
 | `arrays.bn` | Array literals, index access, and index assignment |
 | `objects.bn` | Object literals, member access, chained access, and member assignment |
+
+## Diagnostic Examples
+
+These files intentionally fail so compiler diagnostics can be reviewed:
+
+| File | Shows |
+| --- | --- |
+| `errors/undeclared.bn` | Undeclared variable diagnostic |
+| `errors/await-error.bn` | Await scope diagnostic |
+| `errors/const-error.bn` | Constant reassignment diagnostic |

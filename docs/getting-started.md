@@ -1,6 +1,6 @@
 # Getting Started With BN Script
 
-BN Script is an automation-first language that compiles to JavaScript. The v0.1 alpha supports declarations, assignments, printing, conditionals, while loops, range loops, for-each loops, break/continue loop control, functions, async/await, named imports, exports, runtime helper calls, try/catch/finally, arrays, objects, member/index access, blocks, primitive values, calls, basic expressions, Bangla-style keywords, and English keyword aliases.
+BN Script is an automation-first language that compiles to JavaScript. The v0.1 alpha supports declarations, assignments, printing, conditionals, while loops, range loops, for-each loops, break/continue loop control, functions, async/await, named imports, exports, runtime helper calls, try/catch/finally, arrays, objects, member/index access, blocks, primitive values, calls, basic expressions, Bangla-style keywords, English keyword aliases, and bilingual compiler diagnostics.
 
 ## Requirements
 
@@ -74,6 +74,31 @@ bn repl
 ```
 
 Use `npm link` only when you want to test that local binary behavior.
+
+## Bilingual Diagnostics
+
+Major compiler errors now include Bangla/Banglish guidance, English guidance,
+and a practical hint:
+
+```txt
+BNError:
+
+Bangla:
+Variable "name" age declare kora hoyni.
+
+English:
+Use before declaration: "name" is not declared.
+
+Hint:
+Prothome:
+dhori name = ...
+ba
+let name = ...
+likhun.
+```
+
+Intentional failing examples live under `examples/errors/` for diagnostics
+review and future editor integration work.
 
 ## Interactive REPL
 
@@ -256,6 +281,7 @@ Supported today:
 - English aliases: `try`, `catch`, and `finally`
 - Interactive REPL via `node src/cli.js repl`
 - Local VS Code extension package for `.bn` syntax highlighting
+- Bilingual compiler diagnostics with Bangla/Banglish text, English text, and hints
 - Blocks with `{` and `}`
 - Numbers, strings, booleans, null, and identifiers
 - Unary `na` and `-`
@@ -264,6 +290,6 @@ Supported today:
 
 ## Current Limits
 
-Simple repeat `bar 5 { ... }` loops, default imports, namespace imports, re-exports, full module graph analysis, AI helpers, package publishing, advanced editor tooling, and LSP support are planned but not implemented in this alpha.
+Simple repeat `bar 5 { ... }` loops, default imports, namespace imports, re-exports, full module graph analysis, AI helpers, package publishing, advanced editor tooling, and LSP support are planned but not implemented in this alpha. Some lower-priority parser, lexer, runtime, and CLI diagnostics still use legacy wording.
 
 Function support currently covers named `kaj` declarations, positional parameters, `ferot`, and direct calls. Default parameters, function expressions, arrow functions, and methods are not implemented yet.

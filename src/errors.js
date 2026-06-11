@@ -1,5 +1,5 @@
 export class BNError extends Error {
-  constructor({ category, message, filename, line, column, sourceLine, suggestion }) {
+  constructor({ category, message, filename, line, column, sourceLine, suggestion, code, details }) {
     super(message);
     this.name = "BNError";
     this.category = category || "Error";
@@ -8,6 +8,8 @@ export class BNError extends Error {
     this.column = column;
     this.sourceLine = sourceLine;
     this.suggestion = suggestion;
+    this.code = code;
+    this.details = details;
   }
 
   format() {
